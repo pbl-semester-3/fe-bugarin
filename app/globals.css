@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* Dark mode manual via class "dark" di <html> — dikontrol dari data tema profil
+   (siang/malam), BUKAN prefers-color-scheme OS. Lihat skill shadcn-ui-patterns. */
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+}
+
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #f1f5f9;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
