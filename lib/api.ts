@@ -12,6 +12,7 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (typeof window !== "undefined" && err.response?.status === 401) {
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = "/login";
     }
     return Promise.reject(err);
