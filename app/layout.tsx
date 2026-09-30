@@ -1,25 +1,24 @@
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import type { Metadata } from "next";
+import "./globals.css";
+import { QueryProvider } from "@/providers/query-provider";
 
-// TODO: ganti fetch dummy ini dengan panggilan nyata ke GET /admin/profile.
-async function getRole(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-  if (!token) return null;
-  return "admin";
-}
+export const metadata: Metadata = {
+  title: "Bugarin Dashboard",
+  description: "Bugarin Personal Trainer & Admin Dashboard",
+};
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const role = await getRole();
-  if (role !== "admin") redirect("/login");
-
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <div className="flex min-h-screen">
-      <nav className="w-56 border-r p-4">
-        {/* TODO: nav item Dashboard, CRUD User, Riwayat, Profil */}
-        <p className="font-semibold">Bugarin Admin</p>
-      </nav>
-      <main className="flex-1 p-6">{children}</main>
-    </div>
+    <html lang="id">
+      <body className="antialiased">
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+      </body>
+    </html>
   );
 }
