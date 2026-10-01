@@ -85,13 +85,28 @@ Untuk kembali ke data asli:
 
 ## 8. Testing
 
-Dilakukan oleh agent (otomatis) dan manual oleh pemilik repo.
+### 8.1 Otomatis + runtime (agent) — 2026-10-01
+- [x] `npm run lint` → 0 error
+- [x] `npm run typecheck` → 0 error
+- [x] `npm run build` → sukses (12 route ter-generate, termasuk seluruh `/pt/*`)
+- [x] Runtime (dev server + curl):
+  - `GET /dev-login` → **200** (di luar matcher `proxy.ts`)
+  - `GET /pt/dashboard` **tanpa cookie** → **307** `location: /login`
+  - `GET /pt/dashboard` dengan `--cookie token=dev` → **200**
+  - `GET /pt/verifikasi` dengan `token=dev` → **200**
+  - `GET /pt/klien/5` dengan `token=dev` → **200**
+  - `dev.log` bersih; `proxy.ts` ikut dieksekusi pada route `/pt/*`
 
-- [ ] `npm run lint` → 0 error
-- [ ] `npm run typecheck` → 0 error
-- [ ] `npm run build` → sukses
-- [ ] Manual agent: `/dev-login` → `/pt/dashboard` dapat diakses; `/pt/verifikasi`
-      menampilkan tabel dummy + dialog Tolak; navigasi sidebar; console bersih
-- [ ] Manual pemilik repo (visual): hasil diisi di sini setelah dilaporkan
+### 8.2 Manual (pemilik repo) — 2026-10-01 — **HASIL: LOLOS SEMUA**
+Langkah yang dijalankan dan hasilnya:
+1. **Guard tanpa login** — `/pt/dashboard` di Incognito → redirect `/login`; `/login` tampil 200 tanpa redirect loop. ✅
+2. **Dev helper** — `/dev-login` → klik "Masuk sebagai PT (dev)" → masuk `/pt/dashboard`; cookie `token=dev` terlihat di DevTools; setelah cookie dihapus → kembali redirect ke `/login`. ✅
+3. **Shell & navigasi** — sidebar (Dashboard, Verifikasi, Klien, Riwayat, Feedback, Profil) tampil; active state berpindah sesuai halaman; Console browser bersih (tanpa `No QueryClient set`). ✅
+4. **Dashboard dummy** — card "Klien Aktif" = 8; tabel "Jadwal Latihan Minggu Ini" terisi 3 baris. ✅
+5. **Verifikasi** — tabel 3 request dummy; aksi Terima tanpa error; dialog Tolak disabled saat alasan kosong, aktif setelah diisi; animasi buka/tutup dialog jalan. ✅
+6. **Placeholder** — `/pt/klien`, `/pt/riwayat`, `/pt/feedback`, `/pt/profil`, `/pt/klien/5` semua 200. ✅
+7. **Login UI** — validasi Zod muncul saat field kosong; submit menampilkan pesan TODO (expected, belum wiring backend). ✅
+8. **Dark mode** — toggle class `.dark` mengganti warna background/teks; ring fokus input tampil di mode terang & gelap. ✅
 
-<!-- Isi hasil pengujian manual di bawah ini, mis. tanggal + catatan -->
+Catatan pemilik repo: seluruh pengujian manual berjalan sesuai harapan.
+
