@@ -41,9 +41,9 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen">
-      {/* Panel kiri: foto. Gambar dari public/dashboard.webp (fallback gradient bila belum ada). */}
+      {/* Panel kiri: foto. Gambar dari public/login-bugarin.webp (fallback gradient bila belum ada). */}
       <div className="relative hidden bg-gradient-to-br from-primary via-success/80 to-sidebar lg:block lg:w-1/2">
-        <div className="absolute inset-0 bg-[url('/dashboard.webp')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[url('/login-bugarin.webp')] bg-cover bg-center" />
       </div>
 
       {/* Panel kanan: form */}

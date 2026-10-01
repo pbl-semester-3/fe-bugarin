@@ -16,17 +16,33 @@ export type PairingRequest = {
   };
 };
 
-export type JadwalLatihan = {
-  klienNama: string;
-  hari: string;
+export type WeekIndicator = "green" | "red" | "gray";
+
+export type WeekDay = {
+  label: string; // MON..SUN
+  date: number;
+  isToday?: boolean;
+  indicator: WeekIndicator;
+};
+
+export type SessionSlot = "TIME" | "NEXT UP" | "DONE";
+
+export type TrainingSession = {
+  id: number;
+  slotLabel: SessionSlot;
   jam: string;
-  jenis: string;
+  klienNama: string;
+  durasi: string;
+  tujuan: Tujuan;
   lokasi: string;
+  status: "queued" | "done";
 };
 
 export type DashboardSummary = {
-  jumlahKlien: number;
-  jadwalMingguIni: JadwalLatihan[];
+  totalKlien: number;
+  pendingVerifikasi: number;
+  week: WeekDay[];
+  sesi: TrainingSession[];
 };
 
 // Meniru GET /pt/pairing-requests -> { data: [...] }
@@ -49,30 +65,59 @@ export const mockPairingRequests: PairingRequest[] = [
 ];
 
 // Meniru GET /pt/dashboard-summary -> { data: {...} }
-// (endpoint backend belum ada; ini dummy tampilan)
+// (endpoint backend belum ada; ini dummy tampilan, acuan design/DASHBOARD.md)
 export const mockDashboardSummary: DashboardSummary = {
-  jumlahKlien: 8,
-  jadwalMingguIni: [
+  totalKlien: 24,
+  pendingVerifikasi: 3,
+  week: [
+    { label: "MON", date: 21, indicator: "green" },
+    { label: "TUE", date: 22, indicator: "gray" },
+    { label: "WED", date: 23, indicator: "red" },
+    { label: "THU", date: 24, isToday: true, indicator: "green" },
+    { label: "FRI", date: 25, indicator: "green" },
+    { label: "SAT", date: 26, indicator: "gray" },
+    { label: "SUN", date: 27, indicator: "gray" },
+  ],
+  sesi: [
     {
-      klienNama: "Andi Saputra",
-      hari: "Senin",
-      jam: "07:00",
-      jenis: "Upper Body",
-      lokasi: "Gym Merdeka",
+      id: 1,
+      slotLabel: "NEXT UP",
+      jam: "09:30",
+      klienNama: "Marcus Sterling",
+      durasi: "45 min",
+      tujuan: "turun_bb",
+      lokasi: "pusatgym",
+      status: "queued",
     },
     {
-      klienNama: "Bella Kartika",
-      hari: "Selasa",
-      jam: "18:30",
-      jenis: "Kardio",
-      lokasi: "Gym Merdeka",
+      id: 2,
+      slotLabel: "TIME",
+      jam: "11:00",
+      klienNama: "Sarah Chen",
+      durasi: "60 min",
+      tujuan: "naik_bb",
+      lokasi: "pusatgym",
+      status: "queued",
     },
     {
-      klienNama: "Candra Wijaya",
-      hari: "Kamis",
-      jam: "06:30",
-      jenis: "HIIT",
-      lokasi: "Gym Sudirman",
+      id: 3,
+      slotLabel: "DONE",
+      jam: "14:00",
+      klienNama: "David Kim",
+      durasi: "45 min",
+      tujuan: "turun_bb",
+      lokasi: "pusatgym",
+      status: "done",
+    },
+    {
+      id: 4,
+      slotLabel: "TIME",
+      jam: "17:30",
+      klienNama: "Elena Rodriguez",
+      durasi: "30 min",
+      tujuan: "naik_bb",
+      lokasi: "pusatgym",
+      status: "queued",
     },
   ],
 };
