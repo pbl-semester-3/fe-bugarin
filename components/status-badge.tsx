@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 
-export type StatusType = 
+export type StatusType =
   | "pending"
   | "diterima"
   | "ditolak"
@@ -14,16 +14,19 @@ interface StatusBadgeProps {
   status: StatusType;
 }
 
+// Mapping status -> varian badge desain PT (docs/DESIGN_PT.md §6).
 export function StatusBadge({ status }: StatusBadgeProps) {
-  let variant: "default" | "secondary" | "destructive" | "outline" = "default";
-  
-  // Mapping warna sementara, UI/UX akan sesuaikan dengan warna dari Figma nanti
+  let variant:
+    | "done"
+    | "destructive"
+    | "queued" = "queued";
+
   switch (status) {
     case "diterima":
     case "aktif":
     case "disetujui":
     case "selesai":
-      variant = "default"; // Akan dikustomisasi ke warna success jika ada di theme
+      variant = "done";
       break;
     case "ditolak":
     case "override":
@@ -31,11 +34,11 @@ export function StatusBadge({ status }: StatusBadgeProps) {
       break;
     case "pending":
     case "pending_review":
-      variant = "secondary";
+      variant = "queued";
       break;
   }
 
-  const label = status.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase());
+  const label = status.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
   return <Badge variant={variant}>{label}</Badge>;
 }
