@@ -1,0 +1,65 @@
+import { ChevronLeft, ChevronRight, Hourglass, Zap } from "lucide-react";
+import { EmptyState } from "@/components/pt/empty-state";
+import { Badge } from "@/components/ui/badge";
+import type { DashboardSummary } from "@/lib/mock/pt";
+import { SessionRow } from "./session-row";
+import { WeekStrip } from "./week-strip";
+
+// Kartu "Daily Trajectory & Schedule" (design/DASHBOARD.md §4).
+export function ScheduleCard({ data }: { data: DashboardSummary }) {
+  return (
+    <section className="rounded-card bg-white p-6 shadow-card">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-semibold text-ink">
+              Daily Trajectory &amp; Schedule
+            </h2>
+            <Badge variant="ai">
+              <Zap className="size-3" />
+              AI Planned
+            </Badge>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Real-time biometrics re-route sequence automatically based on HRV.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            aria-label="Hari sebelumnya"
+            className="text-muted-foreground transition-colors hover:text-ink"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <span className="rounded-pill bg-surface-tint px-4 py-1.5 text-xs font-medium text-ink">
+            Thursday, 24 Oct
+          </span>
+          <button
+            type="button"
+            aria-label="Hari berikutnya"
+            className="text-muted-foreground transition-colors hover:text-ink"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <WeekStrip days={data.week} />
+      </div>
+
+      <div className="mt-6 flex flex-col gap-2">
+        {data.sesi.length > 0 ? (
+          data.sesi.map((sesi) => <SessionRow key={sesi.id} session={sesi} />)
+        ) : (
+          <EmptyState
+            icon={<Hourglass />}
+            title="Belum ada sesi hari ini"
+            description="Jadwal latihan akan muncul di sini setelah klien terhubung."
+          />
+        )}
+      </div>
+    </section>
+  );
+}
