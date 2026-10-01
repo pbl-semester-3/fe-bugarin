@@ -11,6 +11,8 @@ interface SidebarItemProps {
   icon?: LucideIcon;
 }
 
+// Item nav sidebar gelap desain PT (docs/DESIGN_PT.md §5.1).
+// Default: putih ~70%; aktif: background primary, teks putih.
 export function SidebarItem({ href, label, icon: Icon }: SidebarItemProps) {
   const pathname = usePathname();
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
@@ -19,14 +21,14 @@ export function SidebarItem({ href, label, icon: Icon }: SidebarItemProps) {
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+        "flex items-center gap-3 rounded-control px-3 py-2 text-sm font-medium transition-colors",
         isActive
-          ? "bg-primary text-primary-foreground"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          ? "bg-primary text-on-primary"
+          : "text-white/70 hover:bg-sidebar-accent hover:text-white"
       )}
     >
-      {Icon && <Icon className="h-4 w-4" />}
-      {label}
+      {Icon && <Icon className="size-5 shrink-0" />}
+      <span>{label}</span>
     </Link>
   );
 }
