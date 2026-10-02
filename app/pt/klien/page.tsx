@@ -1,11 +1,26 @@
-// TODO slicing: tabel klien yang sudah diterima (GET /pt/klien — PRD bab 4.3).
+"use client";
+
+import { PageHeader } from "@/components/pt/page-header";
+import { Badge } from "@/components/ui/badge";
+import { KlienList } from "@/components/pt/klien-list";
+import { useKlienList } from "@/hooks/useKlienList";
+
+// Halaman Klien PT (design/KLIEN.md). Data lewat useKlienList (mock sampai backend siap).
 export default function KlienPage() {
+  const { data, isLoading } = useKlienList();
+  const clients = data ?? [];
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Klien</h1>
-      <p className="text-sm text-muted-foreground">
-        Placeholder — menunggu slicing UI dari Figma.
-      </p>
+    <div className="space-y-6">
+      <PageHeader
+        title="Active Client"
+        badge={
+          <Badge variant="count">
+            {isLoading ? "-" : clients.length} Tracked
+          </Badge>
+        }
+      />
+      <KlienList clients={clients} isLoading={isLoading} />
     </div>
   );
 }

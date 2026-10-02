@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { cn } from "cn";
 
-type AvatarSize = 32 | 40 | 48 | 80;
+type AvatarSize = 32 | 40 | 48 | 56 | 80;
 
 interface AvatarProps {
   name: string;
@@ -30,7 +30,7 @@ export function Avatar({
   statusDot = false,
   className,
 }: AvatarProps) {
-  const rounded = shape === "circle" ? "rounded-full" : "rounded-card";
+  const rounded = shape === "circle" ? "rounded-full" : "rounded-panel";
   const dimension = { width: size, height: size };
 
   return (
