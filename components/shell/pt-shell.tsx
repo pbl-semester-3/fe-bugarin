@@ -45,9 +45,6 @@ export function PtShell({ children }: { children: React.ReactNode }) {
           </p>
         </div>
 
-        <p className="px-3 pb-2 text-[10px] font-semibold tracking-widest text-white/40 uppercase">
-          Main Command
-        </p>
         <nav className="flex flex-col gap-1">
           {navItems.map((item) => (
             <SidebarItem
