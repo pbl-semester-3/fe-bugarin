@@ -6,6 +6,7 @@ export const queryKeys = {
     klienDetail: (id: number) => ["pt", "klien", id] as const,
     weeklyPlan: (klienId: number) => ["pt", "klien", klienId, "weekly-plan"] as const,
     riwayat: ["pt", "riwayat"] as const,
+    feedback: ["pt", "feedback"] as const,
     profile: ["pt", "profile"] as const,
   },
   admin: {

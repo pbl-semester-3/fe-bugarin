@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { cn } from "cn";
 
-type AvatarSize = 32 | 40 | 48 | 56 | 80;
+type AvatarSize = 32 | 40 | 48 | 56 | 64 | 80;
 
 interface AvatarProps {
   name: string;
