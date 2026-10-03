@@ -55,7 +55,7 @@ export function KlienCard({ klien }: { klien: Klien }) {
       {/* Card footer action (§4.1 no.4) */}
       <Link
         href={`/pt/klien/${klien.id}`}
-        className="mt-4 flex items-center justify-center gap-1 rounded-card bg-surface-3 py-2.5 text-sm font-bold text-ink transition-colors hover:bg-surface-4"
+        className="mt-4 flex items-center justify-center gap-1 rounded-card bg-brand py-2.5 text-sm font-bold text-white transition-colors hover:bg-brand/90"
       >
         View Full Profile &amp; Program
         <ArrowRight className="size-3.5" />

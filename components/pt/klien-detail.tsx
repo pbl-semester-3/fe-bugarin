@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   CalendarDays,
   Clock,
-  Dumbbell,
   Sparkles,
   UserRound,
 } from "lucide-react";
@@ -111,10 +110,7 @@ export function KlienDetail({ id }: { id: number }) {
 
         <div className="mt-6">
           <div>
-            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-              <Dumbbell className="size-4 text-accent-indigo" />
-              Workout Plan
-            </p>
+            <p className="text-sm font-semibold text-ink">Workout Plan</p>
             <ul className="mt-3 space-y-3">
               {klien.program.workout.map((day) => (
                 <li key={day.hari} className="rounded-card bg-surface-alt p-4">
