@@ -73,7 +73,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="nama"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel tag="public">Professional Name</FieldLabel>
+                  <FieldLabel>Professional Name</FieldLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -90,9 +90,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel tag="verified" tone="success">
-                    Email Address
-                  </FieldLabel>
+                  <FieldLabel>Email Address</FieldLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -109,7 +107,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="tempatGym"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel tag="unique">Gym Location</FieldLabel>
+                  <FieldLabel>Gym Location</FieldLabel>
                   <FormControl>
                     <div className="relative">
                       <MapPin className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -172,7 +170,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="spesialisasi"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel tag="Multi-Select">Specializations</FieldLabel>
+                  <FieldLabel>Specializations</FieldLabel>
                   <div className="flex flex-wrap items-center gap-2">
                     {field.value.map((value) => (
                       <span
