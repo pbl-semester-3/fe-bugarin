@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Clock, MessageCircle, MoreVertical } from "lucide-react";
+import { ArrowRight, CalendarDays, Clock, MessageCircle } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
 import { Badge } from "@/components/ui/badge";
 import type { Klien } from "@/lib/mock/klien";
@@ -21,22 +21,14 @@ export function KlienCard({ klien }: { klien: Klien }) {
             </p>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            aria-label={`Kirim pesan ke ${klien.nama}`}
-            className="flex size-8 items-center justify-center rounded-pill text-ink-soft transition-colors hover:bg-surface-tint hover:text-ink"
-          >
-            <MessageCircle className="size-4" />
-          </button>
-          <button
-            type="button"
-            aria-label={`Menu aksi ${klien.nama}`}
-            className="flex size-8 items-center justify-center rounded-pill text-ink-soft transition-colors hover:bg-surface-tint hover:text-ink"
-          >
-            <MoreVertical className="size-4" />
-          </button>
-        </div>
+        {/* Ikon komen → Feedback untuk klien ini (tanpa menu kebab). */}
+        <Link
+          href={`/pt/feedback?klien=${klien.id}`}
+          aria-label={`Kirim feedback ke ${klien.nama}`}
+          className="flex size-8 shrink-0 items-center justify-center rounded-pill text-ink-soft transition-colors hover:bg-surface-tint hover:text-ink"
+        >
+          <MessageCircle className="size-4" />
+        </Link>
       </div>
 
       {/* Protocol badge: tanggal mulai (§4.1 no.2) */}

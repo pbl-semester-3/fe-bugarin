@@ -82,3 +82,253 @@ export const mockKlienList: Klien[] = [
     status: "active",
   },
 ];
+
+export type KlienGender = "pria" | "wanita";
+
+export function genderLabel(gender: KlienGender): string {
+  return gender === "wanita" ? "Perempuan" : "Laki-laki";
+}
+
+export type ProgramWorkoutDay = {
+  hari: string;
+  fokus: string;
+  latihan: string[];
+};
+
+export type ProgramMeal = {
+  waktu: string;
+  menu: string;
+  kalori: number;
+};
+
+export type KlienProgram = {
+  nama: string;
+  ringkasan: string;
+  workout: ProgramWorkoutDay[];
+  meal: ProgramMeal[];
+};
+
+// Data detail klien untuk halaman "View Full Profile & Program".
+export type KlienDetail = {
+  usia: number;
+  gender: KlienGender;
+  // Data yang diinput klien saat onboarding.
+  bbAwal: number;
+  tinggiBadan: number;
+  // BB terbaru (entry terakhir weight_logs).
+  bbSekarang: number;
+  // Target BB (progress_cycles.bb_tujuan).
+  bbTujuan: number;
+  program: KlienProgram;
+};
+
+export type KlienWithDetail = Klien & KlienDetail;
+
+// Meniru GET /pt/klien/:id -> { data: { ...Klien, ...detail } }
+export const mockKlienDetail: Record<number, KlienDetail> = {
+  101: {
+    usia: 29,
+    gender: "pria",
+    bbAwal: 78,
+    tinggiBadan: 180,
+    bbSekarang: 82,
+    bbTujuan: 88,
+    program: {
+      nama: "Muscle Gain & Strength",
+      ringkasan:
+        "Surplus kalori bersih dengan progressive overload untuk menambah massa otot.",
+      workout: [
+        {
+          hari: "Senin",
+          fokus: "Push",
+          latihan: ["Bench Press 4x8", "Incline DB Press 3x10", "Dips 3x12"],
+        },
+        {
+          hari: "Rabu",
+          fokus: "Pull",
+          latihan: ["Pull-up 4x8", "Barbell Row 4x10", "Face Pull 3x15"],
+        },
+        {
+          hari: "Jumat",
+          fokus: "Legs",
+          latihan: ["Squat 4x8", "Leg Curl 3x12", "Calf Raise 4x15"],
+        },
+      ],
+      meal: [
+        { waktu: "Sarapan", menu: "Telur 4 + roti gandum + susu", kalori: 700 },
+        { waktu: "Makan Siang", menu: "Nasi + daging sapi + sayur", kalori: 850 },
+        { waktu: "Makan Malam", menu: "Pasta + ayam + keju", kalori: 780 },
+      ],
+    },
+  },
+  102: {
+    usia: 32,
+    gender: "wanita",
+    bbAwal: 72,
+    tinggiBadan: 165,
+    bbSekarang: 66,
+    bbTujuan: 62,
+    program: {
+      nama: "Fat Loss & Conditioning",
+      ringkasan:
+        "Defisit kalori moderat dengan latihan beban untuk mempertahankan massa otot.",
+      workout: [
+        {
+          hari: "Selasa",
+          fokus: "Cardio Base",
+          latihan: ["Lari 5 km", "Core 3x15"],
+        },
+        {
+          hari: "Kamis",
+          fokus: "Strength Circuit",
+          latihan: ["Goblet Squat 4x12", "Push-up 4x15", "Plank 3x45s"],
+        },
+        {
+          hari: "Sabtu",
+          fokus: "Active Recovery",
+          latihan: ["Jalan cepat 40 min", "Mobility 15 min"],
+        },
+      ],
+      // Sesuai permintaan: program "Fat Loss & Conditioning" tanpa Meal Plan.
+      meal: [],
+    },
+  },
+  103: {
+    usia: 27,
+    gender: "wanita",
+    bbAwal: 58,
+    tinggiBadan: 168,
+    bbSekarang: 61,
+    bbTujuan: 66,
+    program: {
+      nama: "Lean Bulk",
+      ringkasan:
+        "Penambahan massa otot perlahan dengan komposisi tubuh tetap ramping.",
+      workout: [
+        {
+          hari: "Senin",
+          fokus: "Lower Body",
+          latihan: ["Hip Thrust 4x10", "Squat 3x10", "Lunges 3x12"],
+        },
+        {
+          hari: "Kamis",
+          fokus: "Upper Body",
+          latihan: ["Lat Pulldown 4x10", "Shoulder Press 3x12", "Curl 3x12"],
+        },
+      ],
+      meal: [
+        { waktu: "Sarapan", menu: "Smoothie pisang + oats + whey", kalori: 520 },
+        { waktu: "Makan Siang", menu: "Nasi + ikan + telur + sayur", kalori: 680 },
+        { waktu: "Makan Malam", menu: "Ayam + kentang + alpukat", kalori: 620 },
+      ],
+    },
+  },
+  104: {
+    usia: 35,
+    gender: "pria",
+    bbAwal: 80,
+    tinggiBadan: 178,
+    bbSekarang: 85,
+    bbTujuan: 90,
+    program: {
+      nama: "Mass Builder",
+      ringkasan:
+        "Fokus hipertrofi dengan volume tinggi dan progresi beban bertahap.",
+      workout: [
+        {
+          hari: "Selasa",
+          fokus: "Chest & Triceps",
+          latihan: ["Bench Press 5x6", "Cable Fly 3x12", "Skull Crusher 3x10"],
+        },
+        {
+          hari: "Kamis",
+          fokus: "Back & Biceps",
+          latihan: ["Deadlift 4x6", "Lat Pulldown 4x10", "Barbell Curl 3x12"],
+        },
+        {
+          hari: "Sabtu",
+          fokus: "Legs",
+          latihan: ["Front Squat 4x8", "Leg Press 4x12", "Hamstring Curl 3x12"],
+        },
+      ],
+      meal: [
+        { waktu: "Sarapan", menu: "Oatmeal + peanut butter + telur", kalori: 760 },
+        { waktu: "Makan Siang", menu: "Nasi + ayam + sayur + alpukat", kalori: 900 },
+        { waktu: "Makan Malam", menu: "Beef steak + kentang + brokoli", kalori: 820 },
+      ],
+    },
+  },
+  105: {
+    usia: 30,
+    gender: "wanita",
+    bbAwal: 70,
+    tinggiBadan: 163,
+    bbSekarang: 64,
+    bbTujuan: 60,
+    program: {
+      nama: "Tone & Sculpt",
+      ringkasan:
+        "Latihan fungsional dan kardio ringan untuk membentuk otot dan stamina.",
+      workout: [
+        {
+          hari: "Senin",
+          fokus: "Pilates & Core",
+          latihan: ["Plank 3x60s", "Bicycle Crunch 3x20", "Glute Bridge 3x15"],
+        },
+        {
+          hari: "Kamis",
+          fokus: "Full Body Circuit",
+          latihan: ["Squat 3x12", "Push-up 3x12", "Jump Rope 10 min"],
+        },
+      ],
+      meal: [
+        { waktu: "Sarapan", menu: "Chia pudding + buah beri", kalori: 350 },
+        { waktu: "Makan Siang", menu: "Salad ayam + kacang + minyak zaitun", kalori: 500 },
+        { waktu: "Makan Malam", menu: "Ikan tuna + ubi + brokoli", kalori: 430 },
+      ],
+    },
+  },
+  106: {
+    usia: 26,
+    gender: "pria",
+    bbAwal: 65,
+    tinggiBadan: 175,
+    bbSekarang: 69,
+    bbTujuan: 75,
+    program: {
+      nama: "Strength & Size",
+      ringkasan:
+        "Program kekuatan compound untuk menambah massa dan performa atletik.",
+      workout: [
+        {
+          hari: "Senin",
+          fokus: "Push",
+          latihan: ["Overhead Press 4x6", "Bench Press 4x8", "Triceps Pushdown 3x12"],
+        },
+        {
+          hari: "Rabu",
+          fokus: "Pull",
+          latihan: ["Pull-up 4x8", "Seated Row 4x10", "Hammer Curl 3x12"],
+        },
+        {
+          hari: "Jumat",
+          fokus: "Legs & Core",
+          latihan: ["Back Squat 4x6", "Romanian Deadlift 3x10", "Hanging Leg Raise 3x15"],
+        },
+      ],
+      meal: [
+        { waktu: "Sarapan", menu: "Nasi goreng + telur + susu", kalori: 720 },
+        { waktu: "Makan Siang", menu: "Ayam + nasi + sayur", kalori: 800 },
+        { waktu: "Makan Malam", menu: "Ikan + kentang + salad", kalori: 650 },
+      ],
+    },
+  },
+};
+
+export function getKlienById(id: number): Klien | undefined {
+  return mockKlienList.find((k) => k.id === id);
+}
+
+export function getKlienDetail(id: number): KlienDetail | undefined {
+  return mockKlienDetail[id];
+}
