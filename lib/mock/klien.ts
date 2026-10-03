@@ -95,17 +95,10 @@ export type ProgramWorkoutDay = {
   latihan: string[];
 };
 
-export type ProgramMeal = {
-  waktu: string;
-  menu: string;
-  kalori: number;
-};
-
 export type KlienProgram = {
   nama: string;
   ringkasan: string;
   workout: ProgramWorkoutDay[];
-  meal: ProgramMeal[];
 };
 
 // Data detail klien untuk halaman "View Full Profile & Program".
@@ -154,11 +147,6 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
           latihan: ["Squat 4x8", "Leg Curl 3x12", "Calf Raise 4x15"],
         },
       ],
-      meal: [
-        { waktu: "Sarapan", menu: "Telur 4 + roti gandum + susu", kalori: 700 },
-        { waktu: "Makan Siang", menu: "Nasi + daging sapi + sayur", kalori: 850 },
-        { waktu: "Makan Malam", menu: "Pasta + ayam + keju", kalori: 780 },
-      ],
     },
   },
   102: {
@@ -189,8 +177,6 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
           latihan: ["Jalan cepat 40 min", "Mobility 15 min"],
         },
       ],
-      // Sesuai permintaan: program "Fat Loss & Conditioning" tanpa Meal Plan.
-      meal: [],
     },
   },
   103: {
@@ -215,11 +201,6 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
           fokus: "Upper Body",
           latihan: ["Lat Pulldown 4x10", "Shoulder Press 3x12", "Curl 3x12"],
         },
-      ],
-      meal: [
-        { waktu: "Sarapan", menu: "Smoothie pisang + oats + whey", kalori: 520 },
-        { waktu: "Makan Siang", menu: "Nasi + ikan + telur + sayur", kalori: 680 },
-        { waktu: "Makan Malam", menu: "Ayam + kentang + alpukat", kalori: 620 },
       ],
     },
   },
@@ -251,11 +232,6 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
           latihan: ["Front Squat 4x8", "Leg Press 4x12", "Hamstring Curl 3x12"],
         },
       ],
-      meal: [
-        { waktu: "Sarapan", menu: "Oatmeal + peanut butter + telur", kalori: 760 },
-        { waktu: "Makan Siang", menu: "Nasi + ayam + sayur + alpukat", kalori: 900 },
-        { waktu: "Makan Malam", menu: "Beef steak + kentang + brokoli", kalori: 820 },
-      ],
     },
   },
   105: {
@@ -280,11 +256,6 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
           fokus: "Full Body Circuit",
           latihan: ["Squat 3x12", "Push-up 3x12", "Jump Rope 10 min"],
         },
-      ],
-      meal: [
-        { waktu: "Sarapan", menu: "Chia pudding + buah beri", kalori: 350 },
-        { waktu: "Makan Siang", menu: "Salad ayam + kacang + minyak zaitun", kalori: 500 },
-        { waktu: "Makan Malam", menu: "Ikan tuna + ubi + brokoli", kalori: 430 },
       ],
     },
   },
@@ -315,11 +286,6 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
           fokus: "Legs & Core",
           latihan: ["Back Squat 4x6", "Romanian Deadlift 3x10", "Hanging Leg Raise 3x15"],
         },
-      ],
-      meal: [
-        { waktu: "Sarapan", menu: "Nasi goreng + telur + susu", kalori: 720 },
-        { waktu: "Makan Siang", menu: "Ayam + nasi + sayur", kalori: 800 },
-        { waktu: "Makan Malam", menu: "Ikan + kentang + salad", kalori: 650 },
       ],
     },
   },

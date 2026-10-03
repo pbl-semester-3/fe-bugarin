@@ -8,7 +8,6 @@ import {
   Dumbbell,
   Sparkles,
   UserRound,
-  UtensilsCrossed,
 } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
 import { EmptyState } from "@/components/pt/empty-state";
@@ -110,13 +109,7 @@ export function KlienDetail({ id }: { id: number }) {
           {klien.program.ringkasan}
         </p>
 
-        <div
-          className={
-            klien.program.meal.length > 0
-              ? "mt-6 grid gap-6 lg:grid-cols-2"
-              : "mt-6"
-          }
-        >
+        <div className="mt-6">
           <div>
             <p className="flex items-center gap-2 text-sm font-semibold text-ink">
               <Dumbbell className="size-4 text-accent-indigo" />
@@ -138,30 +131,6 @@ export function KlienDetail({ id }: { id: number }) {
             </ul>
           </div>
 
-          {klien.program.meal.length > 0 && (
-            <div>
-              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-                <UtensilsCrossed className="size-4 text-accent-indigo" />
-                Meal Plan
-              </p>
-              <ul className="mt-3 space-y-3">
-                {klien.program.meal.map((meal) => (
-                  <li
-                    key={meal.waktu}
-                    className="flex items-center justify-between gap-3 rounded-card bg-surface-alt p-4"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-ink">
-                        {meal.waktu}
-                      </p>
-                      <p className="text-sm text-ink-soft">{meal.menu}</p>
-                    </div>
-                    <Badge variant="count">{meal.kalori} kkal</Badge>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </section>
     </div>
