@@ -7,6 +7,14 @@ import { WeekStrip } from "./week-strip";
 
 // Kartu "Daily Trajectory & Schedule" (design/DASHBOARD.md §4).
 export function ScheduleCard({ data }: { data: DashboardSummary }) {
+  // Urutan: sesi terdekat di atas, sesi "done" selalu di paling bawah.
+  const sesi = [...data.sesi].sort((a, b) => {
+    const aDone = a.status === "done" ? 1 : 0;
+    const bDone = b.status === "done" ? 1 : 0;
+    if (aDone !== bDone) return aDone - bDone;
+    return a.jam.localeCompare(b.jam);
+  });
+
   return (
     <section className="rounded-card bg-white p-6 shadow-card">
       <div className="flex items-start justify-between gap-4">
@@ -50,8 +58,8 @@ export function ScheduleCard({ data }: { data: DashboardSummary }) {
       </div>
 
       <div className="mt-6 flex flex-col gap-2">
-        {data.sesi.length > 0 ? (
-          data.sesi.map((sesi) => <SessionRow key={sesi.id} session={sesi} />)
+        {sesi.length > 0 ? (
+          sesi.map((item) => <SessionRow key={item.id} session={item} />)
         ) : (
           <EmptyState
             icon={<Hourglass />}
