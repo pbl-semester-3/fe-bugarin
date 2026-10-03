@@ -9,8 +9,6 @@ export type RiwayatRow = {
   id: number;
   nama: string;
   usia: number;
-  // Sub-info di bawah nama, mis. "Tier Elite".
-  tier: string;
   gender: RiwayatGender;
   goal: RiwayatGoal;
   bbAwal: number;
@@ -22,7 +20,6 @@ export const mockRiwayat: RiwayatRow[] = [
     id: 102,
     nama: "Sarah Jenkins",
     usia: 29,
-    tier: "Tier Elite",
     gender: "female",
     goal: "weight_loss",
     bbAwal: 78.5,
@@ -32,7 +29,6 @@ export const mockRiwayat: RiwayatRow[] = [
     id: 101,
     nama: "Marcus Sterling",
     usia: 34,
-    tier: "Pro Bulk",
     gender: "male",
     goal: "hypertrophy",
     bbAwal: 82.0,
@@ -42,7 +38,6 @@ export const mockRiwayat: RiwayatRow[] = [
     id: 103,
     nama: "Elena Rostova",
     usia: 26,
-    tier: "Marathoner",
     gender: "female",
     goal: "hypertrophy",
     // Diselaraskan agar delta +3.4 kg konsisten dengan goal Hypertrophy
@@ -54,7 +49,6 @@ export const mockRiwayat: RiwayatRow[] = [
     id: 104,
     nama: "David Kim",
     usia: 31,
-    tier: "Strength",
     gender: "male",
     goal: "weight_loss",
     bbAwal: 75.0,
@@ -64,7 +58,6 @@ export const mockRiwayat: RiwayatRow[] = [
     id: 105,
     nama: "Chloe Bennett",
     usia: 27,
-    tier: "Fat Loss",
     gender: "female",
     goal: "weight_loss",
     bbAwal: 69.0,
@@ -74,7 +67,6 @@ export const mockRiwayat: RiwayatRow[] = [
     id: 106,
     nama: "Jordan Hayes",
     usia: 30,
-    tier: "Lean Mass",
     gender: "male",
     goal: "hypertrophy",
     bbAwal: 77.4,

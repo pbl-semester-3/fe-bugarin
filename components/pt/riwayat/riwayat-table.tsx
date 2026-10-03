@@ -69,7 +69,7 @@ export function RiwayatTable({
                       <div className="min-w-0">
                         <p className="text-sm font-bold text-ink">{row.nama}</p>
                         <p className="text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
-                          Age {row.usia} • {row.tier}
+                          Age {row.usia}
                         </p>
                       </div>
                     </div>
