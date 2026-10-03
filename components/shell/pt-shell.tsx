@@ -31,7 +31,8 @@ export function PtShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-surface-tint">
-      <aside className="flex w-64 shrink-0 flex-col bg-sidebar p-4">
+      {/* Sidebar sticky: tetap di tempat walau konten halaman panjang (tidak ikut scroll). */}
+      <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col overflow-y-auto bg-sidebar p-4">
         <div className="px-3 pt-2 pb-6">
           <p className="text-lg font-bold text-white">Bugarin</p>
           <p className="text-[10px] font-semibold tracking-widest text-primary uppercase">
@@ -70,8 +71,8 @@ export function PtShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-16 items-center justify-end gap-4 border-b border-surface-4 bg-white px-6">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-end gap-4 border-b border-surface-4 bg-white px-6">
           <button
             type="button"
             onClick={toggleDark}
