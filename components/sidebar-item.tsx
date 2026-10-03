@@ -9,11 +9,18 @@ interface SidebarItemProps {
   href: string;
   label: string;
   icon?: LucideIcon;
+  badgeCount?: number;
 }
 
 // Item nav sidebar gelap desain PT (docs/DESIGN_PT.md §5.1).
 // Default: putih ~70%; aktif: background primary, teks putih.
-export function SidebarItem({ href, label, icon: Icon }: SidebarItemProps) {
+// badgeCount: notifikasi merah di kanan item (mis. jumlah pengajuan pending).
+export function SidebarItem({
+  href,
+  label,
+  icon: Icon,
+  badgeCount,
+}: SidebarItemProps) {
   const pathname = usePathname();
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
@@ -29,6 +36,11 @@ export function SidebarItem({ href, label, icon: Icon }: SidebarItemProps) {
     >
       {Icon && <Icon className="size-5 shrink-0" />}
       <span>{label}</span>
+      {badgeCount && badgeCount > 0 ? (
+        <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-danger px-1.5 text-[10px] font-semibold text-white">
+          {badgeCount}
+        </span>
+      ) : null}
     </Link>
   );
 }

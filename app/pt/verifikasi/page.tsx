@@ -1,16 +1,15 @@
-import { VerifikasiTable } from "@/components/pt/verifikasi-table";
+import { PageHeader } from "@/components/pt/page-header";
+import { VerifikasiList } from "@/components/pt/verifikasi-list";
 
-// Contoh halaman penuh (blueprint pola slicing): lihat components/pt/verifikasi-table.tsx.
+// Halaman Verifikasi (design/VERIFIKASI.md). Data lewat VerifikasiList (client).
 export default function VerifikasiPage() {
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold">Verifikasi Klien</h1>
-        <p className="text-sm text-muted-foreground">
-          Daftar permintaan pairing yang menunggu persetujuan.
-        </p>
-      </div>
-      <VerifikasiTable />
+    <div className="space-y-6">
+      <PageHeader
+        title="Pending Intake & Onboarding Queue"
+        description="Tinjau penilaian awal calon klien serta tujuan atletik yang menunggu persetujuan atau penolakan sebelum penyusunan jadwal periodisasi."
+      />
+      <VerifikasiList />
     </div>
   );
 }
