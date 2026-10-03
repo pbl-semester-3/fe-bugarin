@@ -19,6 +19,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-surface-4",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        // Decline (aksi kartu pengajuan, design/VERIFIKASI.md §4.5): bg merah muda, teks danger-strong.
+        decline:
+          "bg-danger-container text-danger-strong hover:bg-danger-container/80 focus-visible:ring-destructive/20",
+        // Accept Trainee (design/VERIFIKASI.md §4.5): bg hijau tua, teks putih.
+        success:
+          "bg-success text-white hover:bg-success/90 focus-visible:ring-success/30",
         outline:
           "border bg-card text-foreground hover:bg-accent hover:text-accent-foreground",
         ghost:

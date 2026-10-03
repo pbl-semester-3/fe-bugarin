@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
 import { SidebarItem } from "@/components/sidebar-item";
+import { usePairingRequests } from "@/hooks/usePairingRequests";
 
 const navItems = [
   { href: "/pt/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -25,6 +26,10 @@ const navItems = [
 
 // Mengikuti layout global docs/DESIGN_PT.md §5.
 export function PtShell({ children }: { children: React.ReactNode }) {
+  // Badge notifikasi menu Verifikasi = jumlah pengajuan pending (design/VERIFIKASI.md §1).
+  const { data: pairingRequests } = usePairingRequests();
+  const pendingCount = pairingRequests?.length ?? 0;
+
   function toggleDark() {
     document.documentElement.classList.toggle("dark");
   }
@@ -45,7 +50,13 @@ export function PtShell({ children }: { children: React.ReactNode }) {
         </p>
         <nav className="flex flex-col gap-1">
           {navItems.map((item) => (
-            <SidebarItem key={item.href} {...item} />
+            <SidebarItem
+              key={item.href}
+              {...item}
+              badgeCount={
+                item.href === "/pt/verifikasi" ? pendingCount : undefined
+              }
+            />
           ))}
         </nav>
 

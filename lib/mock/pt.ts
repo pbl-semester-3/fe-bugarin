@@ -6,15 +6,48 @@
 
 export type Tujuan = "turun_bb" | "naik_bb";
 
+export type Gender = "pria" | "wanita";
+
 export type PairingRequest = {
   id: number;
   createdAt: string;
+  // Overline di kotak "Athletic Target": "HYPERTROPHY" / "WEIGHT LOSS".
+  kategoriTarget: string;
+  // Info di modal Decline: "Selected Program: (…)"; badge "STANDARD NOTICE".
+  selectedProgram: string;
+  // Teks bold kotak target: "-6kg Fat / +3kg Muscle".
+  targetSummary: string;
+  // Caption kotak target: "16-Week Periodization".
+  periodization: string;
   klien: {
     id: number;
     nama: string;
+    usia: number;
+    gender: Gender;
+    email: string;
     tujuan: Tujuan | null;
   };
 };
+
+// Opsi "Rejection Classification" di modal Decline Intake Request (design/VERIFIKASI.md §5.4).
+export const REJECTION_CLASSIFICATIONS = [
+  "Roster At Capacity",
+  "Schedule Conflict",
+  "Out of Scope Goal",
+  "Medical Clearance Needed",
+] as const;
+
+export type RejectionClassification = (typeof REJECTION_CLASSIFICATIONS)[number];
+
+// Pesan default textarea modal Decline (design/VERIFIKASI.md §5.4).
+// Catatan: teks Figma menyebut "CyberPulse" (nama lama) — diganti ke "Bugarin".
+export const DEFAULT_DECLINE_MESSAGE =
+  "Thank you for applying to Bugarin. Alex Vance's roster is currently at full capacity for the upcoming training block. We'd love to revisit your intake in a future cycle.";
+
+// Mock dibuat relatif terhadap waktu sekarang supaya contoh "Submitted: Today, Xh ago" tampil wajar.
+function hoursAgo(hours: number): string {
+  return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+}
 
 export type WeekIndicator = "green" | "red" | "gray";
 
@@ -46,21 +79,55 @@ export type DashboardSummary = {
 };
 
 // Meniru GET /pt/pairing-requests -> { data: [...] }
+// Bentuk field mengikuti kartu pengajuan di design/VERIFIKASI.md §4.
 export const mockPairingRequests: PairingRequest[] = [
   {
     id: 1,
-    createdAt: "2026-09-28T08:30:00.000Z",
-    klien: { id: 101, nama: "Andi Saputra", tujuan: "turun_bb" },
+    createdAt: hoursAgo(2),
+    kategoriTarget: "Hypertrophy",
+    selectedProgram: "Fat Loss & Hypertrophy",
+    targetSummary: "-6kg Fat / +3kg Muscle",
+    periodization: "16-Week Periodization",
+    klien: {
+      id: 101,
+      nama: "Rachel Cooper",
+      usia: 28,
+      gender: "wanita",
+      email: "rachel.c@vertexpulse.io",
+      tujuan: "naik_bb",
+    },
   },
   {
     id: 2,
-    createdAt: "2026-09-29T10:15:00.000Z",
-    klien: { id: 102, nama: "Bella Kartika", tujuan: "naik_bb" },
+    createdAt: hoursAgo(6),
+    kategoriTarget: "Weight Loss",
+    selectedProgram: "Fat Loss & Conditioning",
+    targetSummary: "-9kg Fat / +1kg Muscle",
+    periodization: "12-Week Periodization",
+    klien: {
+      id: 102,
+      nama: "Andi Saputra",
+      usia: 31,
+      gender: "pria",
+      email: "andi.saputra@mail.com",
+      tujuan: "turun_bb",
+    },
   },
   {
     id: 3,
-    createdAt: "2026-09-30T03:45:00.000Z",
-    klien: { id: 103, nama: "Candra Wijaya", tujuan: "turun_bb" },
+    createdAt: hoursAgo(26),
+    kategoriTarget: "Hypertrophy",
+    selectedProgram: "Muscle Gain & Strength",
+    targetSummary: "+7kg Muscle / +0kg Fat",
+    periodization: "20-Week Periodization",
+    klien: {
+      id: 103,
+      nama: "Candra Wijaya",
+      usia: 24,
+      gender: "pria",
+      email: "candra.w@mail.com",
+      tujuan: "naik_bb",
+    },
   },
 ];
 
@@ -126,4 +193,20 @@ export function tujuanLabel(tujuan: Tujuan | null): string {
   if (tujuan === "turun_bb") return "Turun BB";
   if (tujuan === "naik_bb") return "Naik BB";
   return "-";
+}
+
+export function genderLabel(gender: Gender): string {
+  return gender === "wanita" ? "Female" : "Male";
+}
+
+// Format tanggal request jadi label ringkas ala desain: "Today, 2h ago" / "4d ago".
+export function formatSubmitted(iso: string): string {
+  const diffMinutes = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
+  );
+  if (diffMinutes < 60) return `Today, ${diffMinutes}m ago`;
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `Today, ${diffHours}h ago`;
+  return `${Math.floor(diffHours / 24)}d ago`;
 }
