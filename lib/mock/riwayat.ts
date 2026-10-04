@@ -2,8 +2,21 @@
 // Meniru GET /pt/riwayat -> { data: [...] } — acuan design/RIWAYAT.md §4.3.
 // TODO: hapus file ini setelah hook tersambung ke backend asli.
 
+import { genderLabel as klienGenderLabel } from "./klien";
+
 export type RiwayatGoal = "weight_loss" | "hypertrophy";
 export type RiwayatGender = "female" | "male";
+
+// Label target vector disamakan dengan halaman Klien: hanya 2 jenis.
+export const RIWAYAT_GOAL_LABELS: Record<RiwayatGoal, string> = {
+  hypertrophy: "Naik BB",
+  weight_loss: "Turun BB",
+};
+
+// Label gender mengikuti aturan yang sudah ada di lib/mock/klien (Perempuan/Laki-laki).
+export function riwayatGenderLabel(gender: RiwayatGender): string {
+  return klienGenderLabel(gender === "female" ? "wanita" : "pria");
+}
 
 export type RiwayatRow = {
   id: number;

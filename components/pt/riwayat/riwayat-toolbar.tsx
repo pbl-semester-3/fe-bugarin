@@ -1,7 +1,11 @@
 "use client";
 
 import { SegmentedControl } from "@/components/pt/segmented-control";
-import type { RiwayatGender, RiwayatGoal } from "@/lib/mock/riwayat";
+import {
+  riwayatGenderLabel,
+  type RiwayatGender,
+  type RiwayatGoal,
+} from "@/lib/mock/riwayat";
 
 export type GoalFilter = "all" | RiwayatGoal;
 export type GenderFilter = "all" | RiwayatGender;
@@ -28,9 +32,9 @@ export function RiwayatToolbar({
         value={goal}
         onChange={onGoalChange}
         options={[
-          { label: "All Goals", value: "all" },
-          { label: "Weight Loss", value: "weight_loss" },
-          { label: "Hypertrophy / Bulk", value: "hypertrophy" },
+          { label: "Semua", value: "all" },
+          { label: "Naik BB", value: "hypertrophy" },
+          { label: "Turun BB", value: "weight_loss" },
         ]}
       />
       <SegmentedControl
@@ -38,9 +42,9 @@ export function RiwayatToolbar({
         value={gender}
         onChange={onGenderChange}
         options={[
-          { label: "All", value: "all" },
-          { label: "Female", value: "female" },
-          { label: "Male", value: "male" },
+          { label: "Semua", value: "all" },
+          { label: riwayatGenderLabel("female"), value: "female" },
+          { label: riwayatGenderLabel("male"), value: "male" },
         ]}
       />
     </div>

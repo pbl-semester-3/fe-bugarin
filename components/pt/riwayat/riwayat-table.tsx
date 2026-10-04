@@ -10,7 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { netDelta, type RiwayatRow } from "@/lib/mock/riwayat";
+import {
+  netDelta,
+  RIWAYAT_GOAL_LABELS,
+  type RiwayatRow,
+} from "@/lib/mock/riwayat";
 
 // Kartu "Athletic Progress Matrix" (design/RIWAYAT.md §4).
 export function RiwayatTable({
@@ -23,7 +27,7 @@ export function RiwayatTable({
   return (
     <section className="rounded-card bg-white">
       <h2 className="p-4 text-lg font-semibold text-ink">
-        Athletic Progress Matrix
+        Matriks Progres Atletik
       </h2>
 
       {isLoading ? (
@@ -34,17 +38,17 @@ export function RiwayatTable({
         <EmptyState
           icon={<Hourglass />}
           title="Tidak ada data yang cocok"
-          description="Coba ubah filter goal atau gender."
+          description="Coba ubah filter tujuan atau gender."
         />
       ) : (
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                Client Profile
+                Profil Klien
               </TableHead>
               <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                Target Vector
+                Target
               </TableHead>
               <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                 BB Awal
@@ -53,7 +57,7 @@ export function RiwayatTable({
                 BB Sekarang
               </TableHead>
               <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                Net Delta
+                Selisih
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -69,7 +73,7 @@ export function RiwayatTable({
                       <div className="min-w-0">
                         <p className="text-sm font-bold text-ink">{row.nama}</p>
                         <p className="text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
-                          Age {row.usia}
+                          Usia {row.usia}
                         </p>
                       </div>
                     </div>
@@ -82,7 +86,7 @@ export function RiwayatTable({
                           : "hypertrophy"
                       }
                     >
-                      {row.goal === "weight_loss" ? "Weight Loss" : "Hypertrophy"}
+                      {RIWAYAT_GOAL_LABELS[row.goal]}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs font-semibold text-ink">

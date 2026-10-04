@@ -13,10 +13,10 @@ export default function RiwayatPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Client Progress & Biometrics"
+        title="Progres & Biometrik Klien"
         badge={
           <Badge variant="count">
-            {isLoading ? "-" : rows.length} Tracked
+            {isLoading ? "-" : rows.length} Terpantau
           </Badge>
         }
       />
