@@ -8,17 +8,17 @@
 export type KlienGoal = "hypertrophy" | "weight_loss";
 
 export const GOAL_LABELS: Record<KlienGoal, string> = {
-  hypertrophy: "Hypertrophy",
-  weight_loss: "Weight Loss",
+  hypertrophy: "Hipertrofi",
+  weight_loss: "Penurunan BB",
 };
 
 export type Klien = {
   id: number;
   nama: string;
   email: string;
-  // Badge "Started Aug 12" di kartu klien.
+  // Badge "Mulai 12 Agu" di kartu klien.
   mulaiProgram: string;
-  // Isi kotak SESSION SLOT, mis. "Today 9:30 AM".
+  // Isi kotak Slot Sesi, mis. "Hari ini 09.30".
   sessionSlot: string;
   goal: KlienGoal;
   status: "active";
@@ -31,8 +31,8 @@ export const mockKlienList: Klien[] = [
     id: 101,
     nama: "Marcus Sterling",
     email: "marcus.s@lumina.io",
-    mulaiProgram: "Started Aug 12",
-    sessionSlot: "Today 9:30 AM",
+    mulaiProgram: "Mulai 12 Agu",
+    sessionSlot: "Hari ini 09.30",
     goal: "hypertrophy",
     status: "active",
   },
@@ -40,8 +40,8 @@ export const mockKlienList: Klien[] = [
     id: 102,
     nama: "Sarah Jenkins",
     email: "sarah.j@vertex.net",
-    mulaiProgram: "Started Sep 01",
-    sessionSlot: "Tomorrow 8:00 AM",
+    mulaiProgram: "Mulai 1 Sep",
+    sessionSlot: "Besok 08.00",
     goal: "weight_loss",
     status: "active",
   },
@@ -49,8 +49,8 @@ export const mockKlienList: Klien[] = [
     id: 103,
     nama: "Elena Rostova",
     email: "elena.rostova@cyberpost.org",
-    mulaiProgram: "Started Jul 15",
-    sessionSlot: "Today 11:15 AM",
+    mulaiProgram: "Mulai 15 Jul",
+    sessionSlot: "Hari ini 11.15",
     goal: "hypertrophy",
     status: "active",
   },
@@ -58,8 +58,8 @@ export const mockKlienList: Klien[] = [
     id: 104,
     nama: "Steve Henderson",
     email: "steve.s@lumina.io",
-    mulaiProgram: "Started Aug 12",
-    sessionSlot: "Today 8:20 AM",
+    mulaiProgram: "Mulai 12 Agu",
+    sessionSlot: "Hari ini 08.20",
     goal: "hypertrophy",
     status: "active",
   },
@@ -67,8 +67,8 @@ export const mockKlienList: Klien[] = [
     id: 105,
     nama: "Chloe Bennett",
     email: "chloe.b@aurahealth.com",
-    mulaiProgram: "Started Jun 04",
-    sessionSlot: "Today 4:30 PM",
+    mulaiProgram: "Mulai 4 Jun",
+    sessionSlot: "Hari ini 16.30",
     goal: "weight_loss",
     status: "active",
   },
@@ -76,8 +76,8 @@ export const mockKlienList: Klien[] = [
     id: 106,
     nama: "Jordan Hayes",
     email: "jordan.h@kinetic.run",
-    mulaiProgram: "Started Sep 18",
-    sessionSlot: "Friday 10:00 AM",
+    mulaiProgram: "Mulai 18 Sep",
+    sessionSlot: "Jumat 10.00",
     goal: "hypertrophy",
     status: "active",
   },
@@ -101,7 +101,7 @@ export type KlienProgram = {
   workout: ProgramWorkoutDay[];
 };
 
-// Data detail klien untuk halaman "View Full Profile & Program".
+// Data detail klien untuk halaman "Lihat Profil & Program Lengkap".
 export type KlienDetail = {
   usia: number;
   gender: KlienGender;
@@ -127,23 +127,23 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
     bbSekarang: 82,
     bbTujuan: 88,
     program: {
-      nama: "Muscle Gain & Strength",
+      nama: "Penambahan Otot & Kekuatan",
       ringkasan:
-        "Surplus kalori bersih dengan progressive overload untuk menambah massa otot.",
+        "Surplus kalori bersih dengan beban progresif untuk menambah massa otot.",
       workout: [
         {
           hari: "Senin",
-          fokus: "Push",
+          fokus: "Dorong",
           latihan: ["Bench Press 4x8", "Incline DB Press 3x10", "Dips 3x12"],
         },
         {
           hari: "Rabu",
-          fokus: "Pull",
+          fokus: "Tarik",
           latihan: ["Pull-up 4x8", "Barbell Row 4x10", "Face Pull 3x15"],
         },
         {
           hari: "Jumat",
-          fokus: "Legs",
+          fokus: "Kaki",
           latihan: ["Squat 4x8", "Leg Curl 3x12", "Calf Raise 4x15"],
         },
       ],
@@ -157,24 +157,24 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
     bbSekarang: 66,
     bbTujuan: 62,
     program: {
-      nama: "Fat Loss & Conditioning",
+      nama: "Penurunan Lemak & Kondisioning",
       ringkasan:
         "Defisit kalori moderat dengan latihan beban untuk mempertahankan massa otot.",
       workout: [
         {
           hari: "Selasa",
-          fokus: "Cardio Base",
-          latihan: ["Lari 5 km", "Core 3x15"],
+          fokus: "Dasar Kardio",
+          latihan: ["Lari 5 km", "Inti 3x15"],
         },
         {
           hari: "Kamis",
-          fokus: "Strength Circuit",
+          fokus: "Sirkuit Kekuatan",
           latihan: ["Goblet Squat 4x12", "Push-up 4x15", "Plank 3x45s"],
         },
         {
           hari: "Sabtu",
-          fokus: "Active Recovery",
-          latihan: ["Jalan cepat 40 min", "Mobility 15 min"],
+          fokus: "Pemulihan Aktif",
+          latihan: ["Jalan cepat 40 menit", "Mobilitas 15 menit"],
         },
       ],
     },
@@ -187,18 +187,18 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
     bbSekarang: 61,
     bbTujuan: 66,
     program: {
-      nama: "Lean Bulk",
+      nama: "Penambahan Massa Bertahap",
       ringkasan:
         "Penambahan massa otot perlahan dengan komposisi tubuh tetap ramping.",
       workout: [
         {
           hari: "Senin",
-          fokus: "Lower Body",
+          fokus: "Tubuh Bagian Bawah",
           latihan: ["Hip Thrust 4x10", "Squat 3x10", "Lunges 3x12"],
         },
         {
           hari: "Kamis",
-          fokus: "Upper Body",
+          fokus: "Tubuh Bagian Atas",
           latihan: ["Lat Pulldown 4x10", "Shoulder Press 3x12", "Curl 3x12"],
         },
       ],
@@ -212,23 +212,23 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
     bbSekarang: 85,
     bbTujuan: 90,
     program: {
-      nama: "Mass Builder",
+      nama: "Pembentuk Massa Otot",
       ringkasan:
         "Fokus hipertrofi dengan volume tinggi dan progresi beban bertahap.",
       workout: [
         {
           hari: "Selasa",
-          fokus: "Chest & Triceps",
+          fokus: "Dada & Trisep",
           latihan: ["Bench Press 5x6", "Cable Fly 3x12", "Skull Crusher 3x10"],
         },
         {
           hari: "Kamis",
-          fokus: "Back & Biceps",
+          fokus: "Punggung & Bisep",
           latihan: ["Deadlift 4x6", "Lat Pulldown 4x10", "Barbell Curl 3x12"],
         },
         {
           hari: "Sabtu",
-          fokus: "Legs",
+          fokus: "Kaki",
           latihan: ["Front Squat 4x8", "Leg Press 4x12", "Hamstring Curl 3x12"],
         },
       ],
@@ -242,19 +242,19 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
     bbSekarang: 64,
     bbTujuan: 60,
     program: {
-      nama: "Tone & Sculpt",
+      nama: "Pembentukan & Pengencangan",
       ringkasan:
         "Latihan fungsional dan kardio ringan untuk membentuk otot dan stamina.",
       workout: [
         {
           hari: "Senin",
-          fokus: "Pilates & Core",
+          fokus: "Pilates & Inti",
           latihan: ["Plank 3x60s", "Bicycle Crunch 3x20", "Glute Bridge 3x15"],
         },
         {
           hari: "Kamis",
-          fokus: "Full Body Circuit",
-          latihan: ["Squat 3x12", "Push-up 3x12", "Jump Rope 10 min"],
+          fokus: "Sirkuit Seluruh Tubuh",
+          latihan: ["Squat 3x12", "Push-up 3x12", "Lompat Tali 10 menit"],
         },
       ],
     },
@@ -267,23 +267,23 @@ export const mockKlienDetail: Record<number, KlienDetail> = {
     bbSekarang: 69,
     bbTujuan: 75,
     program: {
-      nama: "Strength & Size",
+      nama: "Kekuatan & Massa",
       ringkasan:
-        "Program kekuatan compound untuk menambah massa dan performa atletik.",
+        "Program kekuatan gabungan untuk menambah massa dan performa atletik.",
       workout: [
         {
           hari: "Senin",
-          fokus: "Push",
+          fokus: "Dorong",
           latihan: ["Overhead Press 4x6", "Bench Press 4x8", "Triceps Pushdown 3x12"],
         },
         {
           hari: "Rabu",
-          fokus: "Pull",
+          fokus: "Tarik",
           latihan: ["Pull-up 4x8", "Seated Row 4x10", "Hammer Curl 3x12"],
         },
         {
           hari: "Jumat",
-          fokus: "Legs & Core",
+          fokus: "Kaki & Inti",
           latihan: ["Back Squat 4x6", "Romanian Deadlift 3x10", "Hanging Leg Raise 3x15"],
         },
       ],

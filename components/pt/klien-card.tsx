@@ -42,7 +42,7 @@ export function KlienCard({ klien }: { klien: Klien }) {
       {/* Telemetry & Compliance Gauge Box: session slot (§4.1 no.3) */}
       <div className="mt-4 rounded-card bg-surface-tint/70 p-4">
         <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-          Session Slot
+          Slot Sesi
         </p>
         <div className="mt-1 flex items-center gap-1">
           <Clock className="size-3.5 text-success" />
@@ -57,7 +57,7 @@ export function KlienCard({ klien }: { klien: Klien }) {
         href={`/pt/klien/${klien.id}`}
         className="mt-4 flex items-center justify-center gap-1 rounded-card bg-brand py-2.5 text-sm font-bold text-white transition-colors hover:bg-brand/90"
       >
-        View Full Profile &amp; Program
+        Lihat Profil &amp; Program Lengkap
         <ArrowRight className="size-3.5" />
       </Link>
     </article>
