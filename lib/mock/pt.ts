@@ -52,7 +52,7 @@ function hoursAgo(hours: number): string {
 export type WeekIndicator = "green" | "red" | "gray";
 
 export type WeekDay = {
-  label: string; // MON..SUN
+  label: string; // SEN..MIN
   date: number;
   isToday?: boolean;
   indicator: WeekIndicator;
@@ -137,13 +137,13 @@ export const mockDashboardSummary: DashboardSummary = {
   totalKlien: 24,
   pendingVerifikasi: 3,
   week: [
-    { label: "MON", date: 21, indicator: "green" },
-    { label: "TUE", date: 22, indicator: "gray" },
-    { label: "WED", date: 23, indicator: "red" },
-    { label: "THU", date: 24, isToday: true, indicator: "green" },
-    { label: "FRI", date: 25, indicator: "green" },
-    { label: "SAT", date: 26, indicator: "gray" },
-    { label: "SUN", date: 27, indicator: "gray" },
+    { label: "SEN", date: 21, indicator: "green" },
+    { label: "SEL", date: 22, indicator: "gray" },
+    { label: "RAB", date: 23, indicator: "red" },
+    { label: "KAM", date: 24, isToday: true, indicator: "green" },
+    { label: "JUM", date: 25, indicator: "green" },
+    { label: "SAB", date: 26, indicator: "gray" },
+    { label: "MIN", date: 27, indicator: "gray" },
   ],
   sesi: [
     {
@@ -151,7 +151,7 @@ export const mockDashboardSummary: DashboardSummary = {
       slotLabel: "NEXT UP",
       jam: "09:30",
       klienNama: "Marcus Sterling",
-      durasi: "45 min",
+      durasi: "45 menit",
       tujuan: "turun_bb",
       lokasi: "pusatgym",
       status: "queued",
@@ -161,7 +161,7 @@ export const mockDashboardSummary: DashboardSummary = {
       slotLabel: "TIME",
       jam: "11:00",
       klienNama: "Sarah Chen",
-      durasi: "60 min",
+      durasi: "60 menit",
       tujuan: "naik_bb",
       lokasi: "pusatgym",
       status: "queued",
@@ -171,7 +171,7 @@ export const mockDashboardSummary: DashboardSummary = {
       slotLabel: "DONE",
       jam: "14:00",
       klienNama: "David Kim",
-      durasi: "45 min",
+      durasi: "45 menit",
       tujuan: "turun_bb",
       lokasi: "pusatgym",
       status: "done",
@@ -181,7 +181,7 @@ export const mockDashboardSummary: DashboardSummary = {
       slotLabel: "TIME",
       jam: "17:30",
       klienNama: "Elena Rodriguez",
-      durasi: "30 min",
+      durasi: "30 menit",
       tujuan: "naik_bb",
       lokasi: "pusatgym",
       status: "queued",

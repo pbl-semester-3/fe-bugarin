@@ -10,12 +10,12 @@ const indicatorColor: Record<WeekIndicator, string> = {
 // Week strip desain PT (design/DASHBOARD.md §4.2): 7 kartu hari, hari ini highlight secondary.
 export function WeekStrip({ days }: { days: WeekDay[] }) {
   return (
-    <div className="flex gap-3">
+    <div className="flex flex-wrap gap-3">
       {days.map((day) => (
         <div
           key={`${day.label}-${day.date}`}
           className={cn(
-            "flex-1 rounded-control px-3 py-2 text-center",
+            "w-20 shrink-0 rounded-control px-3 py-2 text-center",
             day.isToday ? "bg-brand text-on-secondary shadow-card" : "bg-surface-tint"
           )}
         >
@@ -25,7 +25,7 @@ export function WeekStrip({ days }: { days: WeekDay[] }) {
               day.isToday ? "text-on-secondary/80" : "text-muted-foreground"
             )}
           >
-            {day.isToday ? "TODAY" : day.label}
+            {day.isToday ? "HARI INI" : day.label}
           </p>
           <p
             className={cn(

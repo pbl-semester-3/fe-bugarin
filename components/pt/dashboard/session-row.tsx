@@ -2,7 +2,18 @@ import { Check, MoreVertical } from "lucide-react";
 import { cn } from "cn";
 import { Avatar } from "@/components/pt/avatar";
 import { Badge } from "@/components/ui/badge";
-import { tujuanLabel, type TrainingSession } from "@/lib/mock/pt";
+import {
+  tujuanLabel,
+  type SessionSlot,
+  type TrainingSession,
+} from "@/lib/mock/pt";
+
+// Label slot waktu dalam Bahasa Indonesia.
+const SLOT_LABELS: Record<SessionSlot, string> = {
+  TIME: "WAKTU",
+  "NEXT UP": "BERIKUTNYA",
+  DONE: "SELESAI",
+};
 
 // Baris sesi desain PT (design/DASHBOARD.md §4.4).
 export function SessionRow({ session }: { session: TrainingSession }) {
@@ -27,7 +38,7 @@ export function SessionRow({ session }: { session: TrainingSession }) {
         ) : (
           <>
             <span className="text-[9px] font-semibold tracking-wide uppercase">
-              {session.slotLabel}
+              {SLOT_LABELS[session.slotLabel]}
             </span>
             <span className="text-sm font-bold">{session.jam}</span>
           </>
@@ -43,19 +54,19 @@ export function SessionRow({ session }: { session: TrainingSession }) {
         <p className="text-xs text-muted-foreground">{session.lokasi}</p>
       </div>
 
-      <Badge variant={isDone ? "done" : "queued"}>
-        {isDone ? "Done" : "Queued"}
-      </Badge>
-
-      {!isDone && (
+      {/* Status + menu titik-tiga di samping keterangan */}
+      <div className="flex shrink-0 items-center gap-2">
+        <Badge variant={isDone ? "done" : "queued"}>
+          {isDone ? "Selesai" : "Menunggu"}
+        </Badge>
         <button
           type="button"
           aria-label="Menu sesi"
-          className="shrink-0 text-muted-foreground transition-colors hover:text-ink"
+          className="text-muted-foreground transition-colors hover:text-ink"
         >
           <MoreVertical className="size-4" />
         </button>
-      )}
+      </div>
     </div>
   );
 }

@@ -26,12 +26,12 @@ export default function PtDashboardPage() {
       <div className="flex gap-5">
         <StatCard
           icon={<Users />}
-          label="Total Active Clients"
+          label="Total Klien Aktif"
           value={isLoading ? "-" : summary.totalKlien}
         />
         <StatCard
           icon={<ClipboardCheck />}
-          label="Pending Verifications"
+          label="Menunggu Verifikasi"
           value={isLoading ? "-" : summary.pendingVerifikasi}
         />
       </div>

@@ -7,10 +7,10 @@ export function GreetingBanner({ nama }: GreetingBannerProps) {
   return (
     <div className="rounded-card bg-primary p-6">
       <h1 className="text-[40px] leading-tight font-bold text-on-primary">
-        Good morning, Coach {nama}!
+        Selamat pagi, Coach {nama}!
       </h1>
       <p className="text-sm text-on-primary/90">
-        AI Generated Schedule is synchronized with client biometric streams.
+        Jadwal hasil AI disinkronkan otomatis dengan data biometrik klien.
       </p>
     </div>
   );
