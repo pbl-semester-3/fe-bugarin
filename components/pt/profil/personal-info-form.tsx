@@ -59,10 +59,10 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
 
   return (
     <section className="rounded-panel bg-white p-6 shadow-card">
-      <h2 className="text-lg font-extrabold text-ink">Personal Information</h2>
+      <h2 className="text-lg font-extrabold text-ink">Informasi Pribadi</h2>
       <p className="text-xs text-ink-soft">
-        Primary identification displayed in the athlete ecosystem and coaching
-        directories.
+        Identitas utama yang ditampilkan di ekosistem atlet dan direktori
+        bimbingan.
       </p>
 
       <Form {...form}>
@@ -73,7 +73,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="nama"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel>Professional Name</FieldLabel>
+                  <FieldLabel>Nama Profesional</FieldLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -90,7 +90,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel>Email Address</FieldLabel>
+                  <FieldLabel>Alamat Email</FieldLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -107,7 +107,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="tempatGym"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel>Gym Location</FieldLabel>
+                  <FieldLabel>Lokasi Gym</FieldLabel>
                   <FormControl>
                     <div className="relative">
                       <MapPin className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -124,19 +124,19 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel>Gender</FieldLabel>
+                  <FieldLabel>Jenis Kelamin</FieldLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full rounded-card">
-                        <SelectValue placeholder="Pilih gender" />
+                        <SelectValue placeholder="Pilih jenis kelamin" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="pria">Male</SelectItem>
-                      <SelectItem value="wanita">Female</SelectItem>
+                      <SelectItem value="pria">Laki-laki</SelectItem>
+                      <SelectItem value="wanita">Perempuan</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -149,7 +149,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="usia"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel>Age</FieldLabel>
+                  <FieldLabel>Usia</FieldLabel>
                   <FormControl>
                     <div className="relative">
                       <CalendarDays className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -170,7 +170,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               name="spesialisasi"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel>Specializations</FieldLabel>
+                  <FieldLabel>Spesialisasi</FieldLabel>
                   <div className="flex flex-wrap items-center gap-2">
                     {field.value.map((value) => (
                       <span
@@ -210,9 +210,9 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               <FormItem>
                 <FieldLabel
                   tone="muted"
-                  tag={`${bio.length} / ${BIO_MAX_LENGTH} chars`}
+                  tag={`${bio.length} / ${BIO_MAX_LENGTH} karakter`}
                 >
-                  Bio / Coaching Philosophy
+                  Bio / Filosofi Bimbingan
                 </FieldLabel>
                 <FormControl>
                   <Textarea
@@ -221,8 +221,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
                   />
                 </FormControl>
                 <p className="text-xs text-muted-foreground">
-                  This philosophy summary appears at the top of your athlete
-                  onboarding workflow.
+                  Ringkasan filosofi ini tampil di awal alur onboarding atletmu.
                 </p>
                 <FormMessage />
               </FormItem>
@@ -236,7 +235,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               className="rounded-pill bg-surface-2 hover:bg-surface-3"
               onClick={() => form.reset()}
             >
-              Discard
+              Batalkan
             </Button>
             <Button
               type="submit"
@@ -245,7 +244,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               disabled={mutation.isPending}
             >
               <Save className="size-4" />
-              Save Changes
+              Simpan Perubahan
             </Button>
           </div>
         </form>
@@ -299,7 +298,7 @@ function AddSpecialty({
         className="inline-flex items-center gap-1 rounded-pill bg-surface-3 px-3 py-1 text-[10px] font-semibold text-ink-soft transition-colors hover:bg-surface-4"
       >
         <Plus className="size-3" />
-        Add Specialty
+        Tambah Spesialisasi
       </button>
       {open && (
         <div className="absolute z-10 mt-1 w-52 rounded-card border border-outline/40 bg-white p-1 shadow-card">

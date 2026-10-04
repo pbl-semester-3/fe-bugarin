@@ -17,17 +17,17 @@ export type PtProfile = {
   spesialisasi: string[];
   bio: string;
   tema: PtTheme;
-  // Ditampilkan di baris "Last key rotation executed X days ago".
+  // Ditampilkan di baris "Rotasi kunci terakhir X hari lalu".
   lastPasswordRotationDays: number;
 };
 
 // Opsi spesialisasi untuk multi-select.
 export const SPECIALIZATION_OPTIONS = [
-  "Weight Loss",
-  "Weight Gain / Bulking",
-  "Hypertrophy",
-  "Endurance",
-  "Mobility",
+  "Penurunan BB",
+  "Penambahan BB / Bulking",
+  "Hipertrofi",
+  "Ketahanan",
+  "Mobilitas",
 ] as const;
 
 export const BIO_MAX_LENGTH = 600;
@@ -40,7 +40,7 @@ export const mockPtProfile: PtProfile = {
   gender: "pria",
   usia: 33,
   tempatGym: "Fithub Orlando",
-  spesialisasi: ["Weight Loss", "Weight Gain / Bulking"],
+  spesialisasi: ["Penurunan BB", "Penambahan BB / Bulking"],
   bio: "Saya percaya progres terbaik lahir dari kebiasaan kecil yang konsisten. Fokus coaching: teknik angkat yang aman, periodisasi bertahap, dan nutrisi yang realistis untuk gaya hidup klien.",
   tema: "siang",
   lastPasswordRotationDays: 74,

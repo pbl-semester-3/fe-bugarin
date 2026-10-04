@@ -40,7 +40,7 @@ export function ProfileIdentityCard({ profile }: { profile: PtProfile }) {
           className="mt-4 flex h-9 w-full items-center justify-center gap-2 rounded-pill bg-surface-2 text-xs font-bold text-ink transition-colors hover:bg-surface-3"
         >
           <Upload className="size-3.5 text-brand" />
-          Change Avatar
+          Ganti Foto
         </button>
       </div>
     </section>

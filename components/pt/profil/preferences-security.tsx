@@ -89,11 +89,10 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
     <section className="space-y-6 rounded-panel bg-white p-6 shadow-card">
       <div>
         <h2 className="text-lg font-extrabold text-ink">
-          Preferences &amp; Security Preview
+          Preferensi &amp; Keamanan
         </h2>
         <p className="text-xs text-ink-soft">
-          Control visual workspace rendering and maintain cryptographic account
-          access.
+          Kontrol tampilan ruang kerja dan jaga keamanan akses akunmu.
         </p>
       </div>
 
@@ -101,11 +100,10 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-panel bg-surface-tint p-4">
         <div>
           <p className="text-sm font-bold text-ink">
-            Interface Appearance Mode
+            Mode Tampilan Antarmuka
           </p>
           <p className="text-xs text-ink-soft">
-            Toggle between daylight high-contrast and midnight telemetry
-            viewports.
+            Pilih antara tampilan terang kontras tinggi dan mode gelap.
           </p>
         </div>
         <div className="inline-flex items-center gap-1 rounded-pill bg-surface-2 p-1">
@@ -120,7 +118,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
             )}
           >
             <Sun className="size-3.5 text-warning" />
-            Light
+            Terang
           </button>
           <button
             type="button"
@@ -133,7 +131,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
             )}
           >
             <Moon className="size-3.5" />
-            Dark
+            Gelap
           </button>
         </div>
       </div>
@@ -142,17 +140,17 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
       <div className="space-y-4">
         <div>
           <p className="text-sm font-bold text-ink">
-            Authentication Key Rotation
+            Rotasi Kunci Autentikasi
           </p>
           <p className="text-xs text-muted-foreground">
-            Ensure password contains 12+ characters including symbols, casing,
-            and numerics.
+            Pastikan password berisi 12+ karakter termasuk simbol, huruf
+            besar-kecil, dan angka.
           </p>
         </div>
 
         <div className="space-y-2">
           <label className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-            Current Password
+            Password Saat Ini
           </label>
           <PasswordInput
             value={currentPassword}
@@ -163,8 +161,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
             <RotateCw className="size-3.5" />
-            Last key rotation executed {profile.lastPasswordRotationDays} days
-            ago
+            Rotasi kunci terakhir {profile.lastPasswordRotationDays} hari lalu
           </span>
           <Button
             type="button"
@@ -172,7 +169,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
             className="rounded-pill"
             onClick={openChangePassword}
           >
-            Change Password
+            Ganti Password
           </Button>
         </div>
       </div>
@@ -181,7 +178,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="rounded-panel sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Change Password</DialogTitle>
+            <DialogTitle>Ganti Password</DialogTitle>
             <DialogDescription>
               Masukkan password saat ini, password baru, dan konfirmasinya.
             </DialogDescription>
@@ -195,17 +192,17 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
               <PasswordField
                 control={form.control}
                 name="currentPassword"
-                label="Current Password"
+                label="Password Saat Ini"
               />
               <PasswordField
                 control={form.control}
                 name="newPassword"
-                label="New Password"
+                label="Password Baru"
               />
               <PasswordField
                 control={form.control}
                 name="confirmPassword"
-                label="Confirm New Password"
+                label="Konfirmasi Password Baru"
               />
 
               <DialogFooter>
@@ -214,7 +211,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
                   variant="ghost"
                   onClick={() => setDialogOpen(false)}
                 >
-                  Cancel
+                  Batal
                 </Button>
                 <Button
                   type="submit"
@@ -222,7 +219,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
                   className="rounded-pill"
                   disabled={updatePassword.isPending}
                 >
-                  Update Password
+                  Perbarui Password
                 </Button>
               </DialogFooter>
             </form>
