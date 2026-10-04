@@ -13,10 +13,10 @@ export default function KlienPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Active Client"
+        title="Klien Aktif"
         badge={
           <Badge variant="count">
-            {isLoading ? "-" : clients.length} Tracked
+            {isLoading ? "-" : clients.length} Terpantau
           </Badge>
         }
       />

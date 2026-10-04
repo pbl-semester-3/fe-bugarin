@@ -101,7 +101,7 @@ export function KlienDetail({ id }: { id: number }) {
           </h2>
           <Badge variant="ai">
             <Sparkles className="size-3" />
-            AI Generated
+            Dibuat AI
           </Badge>
         </div>
         <p className="mt-1 text-sm text-ink-soft">
@@ -110,7 +110,7 @@ export function KlienDetail({ id }: { id: number }) {
 
         <div className="mt-6">
           <div>
-            <p className="text-sm font-semibold text-ink">Workout Plan</p>
+            <p className="text-sm font-semibold text-ink">Rencana Latihan</p>
             <ul className="mt-3 space-y-3">
               {klien.program.workout.map((day) => (
                 <li key={day.hari} className="rounded-card bg-surface-alt p-4">

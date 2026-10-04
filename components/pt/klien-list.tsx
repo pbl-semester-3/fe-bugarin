@@ -65,12 +65,12 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
         <SearchBar
           value={query}
           onChange={handleQuery}
-          placeholder="Search athlete by name, email, or protocol..."
+          placeholder="Cari klien berdasarkan nama atau email..."
           className="min-w-[260px] flex-1 sm:max-w-[576px]"
         />
         <div className="flex flex-wrap items-center gap-1">
           <FilterChip active={goal === "all"} onClick={() => handleGoal("all")}>
-            All ({clients.length})
+            Semua ({clients.length})
           </FilterChip>
           <FilterChip
             active={goal === "hypertrophy"}
@@ -91,7 +91,7 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
             className="inline-flex items-center gap-1 rounded-pill bg-surface-tint px-3 py-1.5 text-xs font-semibold text-ink-soft transition-colors hover:bg-surface-2"
           >
             <SlidersHorizontal className="size-3" />
-            Status: Active
+            Status: Aktif
             <ChevronDown className="size-3" />
           </button>
         </div>
