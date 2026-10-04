@@ -21,15 +21,16 @@ export function ScheduleCard({ data }: { data: DashboardSummary }) {
         <div>
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-semibold text-ink">
-              Daily Trajectory &amp; Schedule
+              Trajektori &amp; Jadwal Harian
             </h2>
             <Badge variant="ai">
               <Zap className="size-3" />
-              AI Planned
+              Direncanakan AI
             </Badge>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Real-time biometrics re-route sequence automatically based on HRV.
+            Urutan latihan disesuaikan otomatis berdasarkan data biometrik dan
+            HRV.
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -41,7 +42,7 @@ export function ScheduleCard({ data }: { data: DashboardSummary }) {
             <ChevronLeft className="size-4" />
           </button>
           <span className="rounded-pill bg-surface-tint px-4 py-1.5 text-xs font-medium text-ink">
-            Thursday, 24 Oct
+            Kamis, 24 Okt
           </span>
           <button
             type="button"
