@@ -18,7 +18,7 @@ export function AthleteCard({
           {klien.nama}
         </h2>
         <p className="text-xs font-medium text-muted-foreground">
-          Week {thread.week}/{thread.totalWeeks} • Macro Target:{" "}
+          Minggu {thread.week}/{thread.totalWeeks} • Target Makro:{" "}
           {thread.macroTarget}
         </p>
       </div>

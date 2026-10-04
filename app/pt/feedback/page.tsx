@@ -16,8 +16,8 @@ export default async function FeedbackPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Feedback Center"
-        description="Real-time biometrics evaluation, video analysis reviews, and coaching dispatch."
+        title="Pusat Feedback"
+        description="Evaluasi biometrik real-time, tinjauan analisis video, dan pengiriman arahan bimbingan."
       />
       <FeedbackView
         key={initialKlienId ?? "none"}

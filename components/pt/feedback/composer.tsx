@@ -10,11 +10,11 @@ import type { Klien } from "@/lib/mock/klien";
 // Toolbar format visual (design/FEEDBACK.md §4.2).
 // TODO: tombol belum berfungsi (tanpa library rich-text) — sambungkan saat butuh.
 const tools = [
-  { icon: Bold, label: "Bold" },
-  { icon: Italic, label: "Italic" },
-  { icon: List, label: "Bullet list" },
-  { icon: ListOrdered, label: "Numbered list" },
-  { icon: Code, label: "Code" },
+  { icon: Bold, label: "Tebal" },
+  { icon: Italic, label: "Miring" },
+  { icon: List, label: "Daftar butir" },
+  { icon: ListOrdered, label: "Daftar bernomor" },
+  { icon: Code, label: "Kode" },
   { icon: Smile, label: "Emoji" },
 ];
 
@@ -36,14 +36,14 @@ export function Composer({ klien }: { klien: Klien }) {
   return (
     <section className="rounded-panel bg-white p-6 shadow-card">
       <h2 className="text-lg font-semibold text-ink">
-        Coaching Protocol Dispatch
+        Pengiriman Protokol Bimbingan
       </h2>
       <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-        Formulate directive, technical cueing, and nutritional modifications.
+        Susun arahan, koreksi teknik, dan penyesuaian nutrisi.
       </p>
 
       <p className="mt-4 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-        Dispatch Taxonomy Tags
+        Tag Taksonomi Pengiriman
       </p>
 
       <div className="mt-2 rounded-card bg-surface-tint p-1.5">
@@ -81,7 +81,7 @@ export function Composer({ klien }: { klien: Klien }) {
             draft.mutate({ klienId: klien.id, message: message.trim() })
           }
         >
-          Save Draft
+          Simpan Draf
         </Button>
         <Button
           variant="accent"
@@ -89,7 +89,7 @@ export function Composer({ klien }: { klien: Klien }) {
           disabled={!canSend || send.isPending}
           onClick={kirim}
         >
-          Send Feedback
+          Kirim Feedback
         </Button>
       </div>
     </section>
