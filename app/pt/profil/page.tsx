@@ -6,8 +6,8 @@ export default function ProfilPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Trainer Profile Settings"
-        description="Manage public coaching profile telemetry, clinical credentials, and encrypted authentication parameters."
+        title="Pengaturan Profil Pelatih"
+        description="Kelola profil bimbingan publik, kredensial, dan parameter autentikasi terenkripsi."
       />
       <ProfilView />
     </div>
