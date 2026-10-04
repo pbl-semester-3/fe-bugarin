@@ -26,7 +26,7 @@ export function VerifikasiCard({ request }: { request: PairingRequest }) {
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-lg font-bold text-ink">{klien.nama}</p>
             <Badge variant="count">
-              Age {klien.usia} • {genderLabel(klien.gender)}
+              Usia {klien.usia} • {genderLabel(klien.gender)}
             </Badge>
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
@@ -37,7 +37,7 @@ export function VerifikasiCard({ request }: { request: PairingRequest }) {
             <span className="text-outline">•</span>
             <span className="inline-flex items-center gap-1">
               <Clock className="size-3.5" />
-              Submitted: {formatSubmitted(request.createdAt)}
+              Diajukan: {formatSubmitted(request.createdAt)}
             </span>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function VerifikasiCard({ request }: { request: PairingRequest }) {
           onClick={() => respond.mutate({ id: request.id })}
         >
           <Check className="size-4" />
-          Accept Trainee
+          Terima Klien
         </Button>
       </div>
     </article>

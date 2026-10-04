@@ -48,7 +48,7 @@ export function DeclineDialog({ request }: { request: PairingRequest }) {
       <DialogTrigger asChild>
         <Button variant="decline" className="rounded-pill px-4">
           <X className="size-4" />
-          Decline
+          Tolak
         </Button>
       </DialogTrigger>
 
@@ -59,7 +59,7 @@ export function DeclineDialog({ request }: { request: PairingRequest }) {
         {/* Header — tint surface-tint (design/VERIFIKASI.md §5.3) */}
         <div className="flex items-center justify-between gap-4 bg-surface-tint px-6 py-4">
           <DialogTitle className="text-lg font-bold text-ink">
-            Decline Intake Request — {request.klien.nama}
+            Tolak Permintaan Intake — {request.klien.nama}
           </DialogTitle>
           <DialogClose asChild>
             <button
@@ -80,16 +80,16 @@ export function DeclineDialog({ request }: { request: PairingRequest }) {
           <div className="flex items-center justify-between gap-3 rounded-control bg-surface-tint px-4 py-3">
             <span className="inline-flex items-center gap-2 text-sm text-ink">
               <Info className="size-4 shrink-0 text-muted-foreground" />
-              Selected Program: ({request.selectedProgram})
+              Program Terpilih: ({request.selectedProgram})
             </span>
             <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
-              Standard Notice
+              Pemberitahuan Standar
             </span>
           </div>
 
           <div className="space-y-2">
             <Label>
-              Rejection Classification
+              Klasifikasi Penolakan
               <span className="text-danger-strong">*</span>
             </Label>
             <div className="flex flex-wrap gap-1.5">
@@ -116,11 +116,11 @@ export function DeclineDialog({ request }: { request: PairingRequest }) {
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-3">
               <Label>
-                Mandatory Feedback Message
+                Pesan Wajib
                 <span className="text-danger-strong">*</span>
               </Label>
               <span className="text-xs text-muted-foreground">
-                Will be emailed to client
+                Akan dikirim ke email klien
               </span>
             </div>
             <Textarea
@@ -135,7 +135,7 @@ export function DeclineDialog({ request }: { request: PairingRequest }) {
         {/* Footer — tint surface-tint (design/VERIFIKASI.md §5.5) */}
         <div className="flex items-center justify-end gap-2 bg-surface-tint px-6 py-4">
           <Button variant="ghost" onClick={() => setOpen(false)}>
-            Cancel
+            Batal
           </Button>
           <Button
             variant="destructive"
@@ -144,7 +144,7 @@ export function DeclineDialog({ request }: { request: PairingRequest }) {
             onClick={kirim}
           >
             <Ban className="size-4" />
-            Confirm Decline
+            Konfirmasi Penolakan
           </Button>
         </div>
       </DialogContent>
