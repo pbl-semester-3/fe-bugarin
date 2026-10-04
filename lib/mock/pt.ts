@@ -11,13 +11,13 @@ export type Gender = "pria" | "wanita";
 export type PairingRequest = {
   id: number;
   createdAt: string;
-  // Overline di kotak "Athletic Target": "HYPERTROPHY" / "WEIGHT LOSS".
+  // Overline di kotak "Athletic Target": "Hipertrofi" / "Penurunan BB".
   kategoriTarget: string;
-  // Info di modal Decline: "Selected Program: (…)"; badge "STANDARD NOTICE".
+  // Info di modal Tolak: "Program Terpilih: (…)"; badge "Pemberitahuan Standar".
   selectedProgram: string;
-  // Teks bold kotak target: "-6kg Fat / +3kg Muscle".
+  // Teks bold kotak target: "-6kg Lemak / +3kg Otot".
   targetSummary: string;
-  // Caption kotak target: "16-Week Periodization".
+  // Caption kotak target: "Periodisasi 16 Minggu".
   periodization: string;
   klien: {
     id: number;
@@ -29,22 +29,22 @@ export type PairingRequest = {
   };
 };
 
-// Opsi "Rejection Classification" di modal Decline Intake Request (design/VERIFIKASI.md §5.4).
+// Opsi "Klasifikasi Penolakan" di modal Tolak Intake (design/VERIFIKASI.md §5.4).
 export const REJECTION_CLASSIFICATIONS = [
-  "Roster At Capacity",
-  "Schedule Conflict",
-  "Out of Scope Goal",
-  "Medical Clearance Needed",
+  "Kapasitas Penuh",
+  "Bentrok Jadwal",
+  "Di Luar Target",
+  "Perlu Izin Medis",
 ] as const;
 
 export type RejectionClassification = (typeof REJECTION_CLASSIFICATIONS)[number];
 
-// Pesan default textarea modal Decline (design/VERIFIKASI.md §5.4).
+// Pesan default textarea modal Tolak (design/VERIFIKASI.md §5.4).
 // Catatan: teks Figma menyebut "CyberPulse" (nama lama) — diganti ke "Bugarin".
 export const DEFAULT_DECLINE_MESSAGE =
-  "Thank you for applying to Bugarin. Alex Vance's roster is currently at full capacity for the upcoming training block. We'd love to revisit your intake in a future cycle.";
+  "Terima kasih telah mendaftar ke Bugarin. Daftar klien Alex Vance saat ini penuh untuk blok latihan mendatang. Kami senang meninjau kembali pengajuanmu di siklus berikutnya.";
 
-// Mock dibuat relatif terhadap waktu sekarang supaya contoh "Submitted: Today, Xh ago" tampil wajar.
+// Mock dibuat relatif terhadap waktu sekarang supaya contoh "Diajukan: Hari ini, X jam lalu" tampil wajar.
 function hoursAgo(hours: number): string {
   return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 }
@@ -84,10 +84,10 @@ export const mockPairingRequests: PairingRequest[] = [
   {
     id: 1,
     createdAt: hoursAgo(2),
-    kategoriTarget: "Hypertrophy",
-    selectedProgram: "Fat Loss & Hypertrophy",
-    targetSummary: "-6kg Fat / +3kg Muscle",
-    periodization: "16-Week Periodization",
+    kategoriTarget: "Hipertrofi",
+    selectedProgram: "Penurunan Lemak & Hipertrofi",
+    targetSummary: "-6kg Lemak / +3kg Otot",
+    periodization: "Periodisasi 16 Minggu",
     klien: {
       id: 101,
       nama: "Rachel Cooper",
@@ -100,10 +100,10 @@ export const mockPairingRequests: PairingRequest[] = [
   {
     id: 2,
     createdAt: hoursAgo(6),
-    kategoriTarget: "Weight Loss",
-    selectedProgram: "Fat Loss & Conditioning",
-    targetSummary: "-9kg Fat / +1kg Muscle",
-    periodization: "12-Week Periodization",
+    kategoriTarget: "Penurunan BB",
+    selectedProgram: "Penurunan Lemak & Kondisioning",
+    targetSummary: "-9kg Lemak / +1kg Otot",
+    periodization: "Periodisasi 12 Minggu",
     klien: {
       id: 102,
       nama: "Andi Saputra",
@@ -116,10 +116,10 @@ export const mockPairingRequests: PairingRequest[] = [
   {
     id: 3,
     createdAt: hoursAgo(26),
-    kategoriTarget: "Hypertrophy",
-    selectedProgram: "Muscle Gain & Strength",
-    targetSummary: "+7kg Muscle / +0kg Fat",
-    periodization: "20-Week Periodization",
+    kategoriTarget: "Hipertrofi",
+    selectedProgram: "Penambahan Otot & Kekuatan",
+    targetSummary: "+7kg Otot / +0kg Lemak",
+    periodization: "Periodisasi 20 Minggu",
     klien: {
       id: 103,
       nama: "Candra Wijaya",
@@ -196,17 +196,17 @@ export function tujuanLabel(tujuan: Tujuan | null): string {
 }
 
 export function genderLabel(gender: Gender): string {
-  return gender === "wanita" ? "Female" : "Male";
+  return gender === "wanita" ? "Wanita" : "Pria";
 }
 
-// Format tanggal request jadi label ringkas ala desain: "Today, 2h ago" / "4d ago".
+// Format tanggal request jadi label ringkas: "Hari ini, 2 jam lalu" / "4 hari lalu".
 export function formatSubmitted(iso: string): string {
   const diffMinutes = Math.max(
     0,
     Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
   );
-  if (diffMinutes < 60) return `Today, ${diffMinutes}m ago`;
+  if (diffMinutes < 60) return `Hari ini, ${diffMinutes} mnt lalu`;
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `Today, ${diffHours}h ago`;
-  return `${Math.floor(diffHours / 24)}d ago`;
+  if (diffHours < 24) return `Hari ini, ${diffHours} jam lalu`;
+  return `${Math.floor(diffHours / 24)} hari lalu`;
 }

@@ -48,10 +48,10 @@ export function VerifikasiList() {
         <SearchBar
           value={query}
           onChange={handleQuery}
-          placeholder="Search applicant by name or email..."
+          placeholder="Cari pendaftar berdasarkan nama atau email..."
           className="min-w-[260px] flex-1"
         />
-        <FilterChip active>All Pending ({requests.length})</FilterChip>
+        <FilterChip active>Semua Menunggu ({requests.length})</FilterChip>
       </div>
 
       {isLoading ? (
