@@ -8,8 +8,8 @@
 export type KlienGoal = "hypertrophy" | "weight_loss";
 
 export const GOAL_LABELS: Record<KlienGoal, string> = {
-  hypertrophy: "Hipertrofi",
-  weight_loss: "Penurunan BB",
+  hypertrophy: "Naik BB",
+  weight_loss: "Turun BB",
 };
 
 export type Klien = {
