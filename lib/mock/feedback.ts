@@ -7,7 +7,7 @@
 export type FeedbackThread = {
   id: number;
   klienId: number;
-  // Waktu relatif, mis. "14m ago" / "Yesterday".
+  // Waktu relatif, mis. "14 mnt lalu" / "Kemarin".
   waktu: string;
   // Cuplikan pesan terakhir (maks 2 baris di UI).
   preview: string;
@@ -22,58 +22,58 @@ export const mockFeedbackThreads: FeedbackThread[] = [
   {
     id: 1,
     klienId: 102,
-    waktu: "14m ago",
+    waktu: "14 mnt lalu",
     preview:
-      "Completed Wednesday intervals, RPE 9 on deadlifts, hunger spiked slightly...",
+      "Menyelesaikan interval Rabu, RPE 9 saat deadlift, rasa lapar sedikit meningkat...",
     week: 8,
     totalWeeks: 12,
-    macroTarget: "Hyper-Deficit",
+    macroTarget: "Defisit Tinggi",
     unread: true,
   },
   {
     id: 2,
     klienId: 101,
-    waktu: "1h ago",
-    preview: "Incline bench numbers hit progressive overload this week.",
+    waktu: "1 jam lalu",
+    preview: "Angka incline bench naik progresif minggu ini.",
     week: 6,
     totalWeeks: 12,
-    macroTarget: "Lean Bulk",
+    macroTarget: "Penambahan Massa Bertahap",
   },
   {
     id: 3,
     klienId: 103,
-    waktu: "2h ago",
-    preview: "Noticed catch phase feels slightly off on cleans.",
+    waktu: "2 jam lalu",
+    preview: "Fase catch terasa agak kurang pas saat clean.",
     week: 4,
     totalWeeks: 16,
-    macroTarget: "Hypertrophy",
+    macroTarget: "Hipertrofi",
   },
   {
     id: 4,
     klienId: 104,
-    waktu: "4h ago",
-    preview: "Knee soreness down to 2/10 after deload week.",
+    waktu: "4 jam lalu",
+    preview: "Nyeri lutut turun ke 2/10 setelah minggu deload.",
     week: 10,
     totalWeeks: 12,
-    macroTarget: "Maintenance",
+    macroTarget: "Pemeliharaan",
   },
   {
     id: 5,
     klienId: 105,
-    waktu: "Yesterday",
-    preview: "Re-tested passive thoracic rotation: +8 degrees.",
+    waktu: "Kemarin",
+    preview: "Tes ulang rotasi toraks pasif: +8 derajat.",
     week: 5,
     totalWeeks: 12,
-    macroTarget: "Fat Loss",
+    macroTarget: "Penurunan Lemak",
   },
   {
     id: 6,
     klienId: 106,
-    waktu: "2d ago",
-    preview: "Squat depth improving, bracing feels more stable.",
+    waktu: "2 hari lalu",
+    preview: "Kedalaman squat membaik, bracing terasa lebih stabil.",
     week: 3,
     totalWeeks: 16,
-    macroTarget: "Strength",
+    macroTarget: "Kekuatan",
   },
 ];
 
