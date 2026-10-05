@@ -2,7 +2,7 @@
 
 Plugin Figma untuk **membuat ulang tampilan web app `fe-bugarin`** ke Figma, di halaman **`UI Website PT`**.
 
-Plugin **tidak mengganti/menghapus** desain yang sudah ada. Ia hanya **menambah 8 frame baru** di sebelah kanan frame yang ada:
+Plugin **tidak mengganti/menghapus** desain yang sudah ada. Ia hanya **menambah 9 frame baru** di sebelah kanan frame yang ada:
 
 1. `Login (Web App)`
 2. `Dashboard (Web App)`
@@ -10,8 +10,9 @@ Plugin **tidak mengganti/menghapus** desain yang sudah ada. Ia hanya **menambah 
 4. `Klien (Web App)`
 5. `Riwayat (Web App)`
 6. `Feedback (Web App)`
-7. `Profil (Web App)`
-8. `Detail Klien (Web App)`
+7. `Feedback - Kosong (Web App)`
+8. `Profil (Web App)`
+9. `Detail Klien (Web App)`
 
 Foto profil / avatar diganti **kotak abu + inisial nama** (sesuai permintaan).
 
@@ -38,7 +39,7 @@ Foto profil / avatar diganti **kotak abu + inisial nama** (sesuai permintaan).
 - **Verifikasi**: "Antrian Pendaftaran Klien", toolbar search + chip "Semua Menunggu (3)", 3 kartu pengajuan (tombol "Tolak" / "Terima Klien").
 - **Klien**: "Klien Aktif" + badge "6 Terpantau", filter (chip Semua/Naik BB/Turun BB + "Status: Aktif"), grid 3 kolom, footer "Menampilkan 1 - 6 dari 6 Klien terdaftar".
 - **Riwayat**: "Progres & Biometrik Klien", segmented goal & gender, tabel "Matriks Progres Atletik".
-- **Feedback**: master-detail, daftar percakapan + kartu atlet + composer "Pengiriman Protokol Bimbingan".
+- **Feedback**: master-detail, daftar percakapan + kartu atlet + composer "Pengiriman Protokol Bimbingan". Ditambah frame `Feedback - Kosong (Web App)` untuk state **belum ada klien dipilih** (empty state "Pilih klien").
 - **Profil**: "Pengaturan Profil Pelatih", kartu identitas, form "Informasi Pribadi", "Preferensi & Keamanan".
 - **Detail Klien**: tombol kembali, kartu profil + metrik, program AI "Penambahan Otot & Kekuatan".
 
@@ -52,13 +53,27 @@ Foto profil / avatar diganti **kotak abu + inisial nama** (sesuai permintaan).
 
 ## Font
 
-Plugin memakai **Plus Jakarta Sans**. Kalau font itu belum tersedia di Figma Anda, plugin otomatis fallback ke **Inter** (hasil tetap rapi).
-Supaya persis 100%, pasang/aktifkan **Plus Jakarta Sans** di Figma (Google Fonts) lalu jalankan ulang plugin.
+Plugin memakai **Plus Jakarta Sans** (sesuai web app). Kalau font itu belum ada di Figma Anda, plugin otomatis **fallback ke Inter** dan akan memberitahu lewat pesan setelah selesai (`Font: Inter (fallback)...`).
 
-## Regenerasi ikon (opsional)
+Supaya hasil **100%** sesuai web app, aktifkan Plus Jakarta Sans dulu:
 
-Kalau ada ikon baru yang perlu ditambah, sunting daftar di `build-icons.mjs` lalu:
+1. Buka Figma Desktop → file apa saja.
+2. Tekan `T` (Text tool), di panel kanan klik pemilih font, ketik **Plus Jakarta Sans**.
+3. Kalau belum muncul, klik **"Plus Jakarta Sans"** pada link "Get more fonts" / Figma Fonts, lalu install dari Google Fonts (atau via Figma "Install font").
+4. Setelah muncul di daftar font Figma, jalankan plugin — pesan akhir akan berbunyi `Font: Plus Jakarta Sans`.
+
+## Struktur & regenerasi
+
+- `plugin.source.js` — logika plugin (yang diedit kalau mau ubah desain).
+- `icons.generated.js` — 49 ikon lucide (hasil generate).
+- `code.js` — **hasil bundle** (ikon di-inline; dipakai Figma). Figma sandbox tidak mendukung `require`, jadi jangan `require` apa pun di `code.js`.
+
+Setelah mengubah `plugin.source.js` atau daftar ikon di `build-icons.mjs`, jalankan:
 
 ```bash
-node design/figma-plugin/build-icons.mjs
+node design/figma-plugin/build-icons.mjs   # regenerate ikon + bundle otomatis
+# atau, bila hanya mengubah plugin.source.js:
+node design/figma-plugin/bundle.mjs
 ```
+
+`manifest.json` menunjuk ke `code.js`, jadi cukup jalankan ulang plugin di Figma.

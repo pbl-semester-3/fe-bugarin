@@ -103,3 +103,12 @@ for (const name of ICONS) {
 const target = path.join(__dirname, "icons.generated.js");
 fs.writeFileSync(target, `module.exports = ${JSON.stringify(out)};\n`, "utf8");
 console.log(`Wrote ${Object.keys(out).length} icons -> ${target}`);
+
+// Figma tidak mendukung `require`, jadi inline juga ke code.js.
+const sourcePath = path.join(__dirname, "plugin.source.js");
+if (fs.existsSync(sourcePath)) {
+  const source = fs.readFileSync(sourcePath, "utf8");
+  const bundled = "const ICONS = " + JSON.stringify(out) + ";\n\n" + source;
+  fs.writeFileSync(path.join(__dirname, "code.js"), bundled, "utf8");
+  console.log("Bundled code.js:", bundled.length, "bytes");
+}
