@@ -11,7 +11,7 @@ import { KlienCard } from "./klien-card";
 
 type GoalFilter = "all" | Tujuan;
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 9;
 
 interface KlienListProps {
   clients: KlienListItem[];
@@ -78,7 +78,7 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
 
       {isLoading ? (
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: PAGE_SIZE }).map((_, i) => (
             <KlienCardSkeleton key={i} />
           ))}
         </div>
@@ -102,7 +102,7 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
         </div>
       )}
 
-      {!isLoading && filtered.length > 0 && (
+      {!isLoading && filtered.length > PAGE_SIZE && (
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-card bg-surface-alt px-4 py-3">
           <p className="text-xs text-muted-foreground">
             Menampilkan {start + 1} - {start + visible.length} dari{" "}
