@@ -4,35 +4,36 @@ import { ClipboardCheck, Users } from "lucide-react";
 import { GreetingBanner } from "@/components/pt/dashboard/greeting-banner";
 import { ScheduleCard } from "@/components/pt/dashboard/schedule-card";
 import { StatCard } from "@/components/pt/dashboard/stat-card";
+import { usePairingRequests } from "@/hooks/usePairingRequests";
 import { usePtDashboard } from "@/hooks/usePtDashboard";
-import type { DashboardSummary } from "@/lib/mock/pt";
+import { usePtProfile } from "@/hooks/usePtProfile";
+import type { DashboardSummary } from "@/lib/types/pt";
 
-const EMPTY: DashboardSummary = {
-  totalKlien: 0,
-  pendingVerifikasi: 0,
-  week: [],
-  sesi: [],
-};
+const EMPTY: DashboardSummary = { jumlahKlienAktif: 0, jadwalLatihan: [] };
 
-// Halaman Dashboard PT sesuai design/DASHBOARD.md.
+// Halaman Dashboard PT (design/DASHBOARD.md, disederhanakan sesuai backend).
 export default function PtDashboardPage() {
   const { data, isLoading } = usePtDashboard();
+  const { data: profile } = usePtProfile();
+  // "Menunggu Verifikasi" = jumlah pairing request pending (sumber sama dgn badge sidebar).
+  const { data: pairingRequests, isLoading: pairingLoading } = usePairingRequests();
   const summary = data ?? EMPTY;
+  const pendingCount = pairingRequests?.length ?? 0;
 
   return (
     <div className="space-y-6">
-      <GreetingBanner nama="Alex" />
+      <GreetingBanner nama={profile?.profile.nama ?? "Coach"} />
 
-      <div className="flex gap-5">
+      <div className="grid gap-5 sm:grid-cols-2">
         <StatCard
           icon={<Users />}
           label="Total Klien Aktif"
-          value={isLoading ? "-" : summary.totalKlien}
+          value={isLoading ? "-" : summary.jumlahKlienAktif}
         />
         <StatCard
           icon={<ClipboardCheck />}
           label="Menunggu Verifikasi"
-          value={isLoading ? "-" : summary.pendingVerifikasi}
+          value={pairingLoading ? "-" : pendingCount}
         />
       </div>
 

@@ -11,13 +11,12 @@ import { VerifikasiCard } from "./verifikasi-card";
 
 const PAGE_SIZE = 3;
 
-// Toolbar + daftar kartu / empty state (design/VERIFIKASI.md §1, §3, §4.1, §6).
+// Toolbar + daftar kartu / empty state (design/VERIFIKASI.md).
 export function VerifikasiList() {
   const { data, isLoading } = usePairingRequests();
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
 
-  // Reset ke halaman 1 tiap kata kunci berubah.
   function handleQuery(value: string) {
     setQuery(value);
     setPage(1);
@@ -27,11 +26,7 @@ export function VerifikasiList() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return requests;
-    return requests.filter(
-      (r) =>
-        r.klien.nama.toLowerCase().includes(q) ||
-        r.klien.email.toLowerCase().includes(q)
-    );
+    return requests.filter((r) => r.klien.nama.toLowerCase().includes(q));
   }, [requests, query]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -43,12 +38,11 @@ export function VerifikasiList() {
 
   return (
     <div className="space-y-6">
-      {/* Toolbar (§3) */}
       <div className="flex flex-wrap items-center gap-3">
         <SearchBar
           value={query}
           onChange={handleQuery}
-          placeholder="Cari pendaftar berdasarkan nama atau email..."
+          placeholder="Cari pendaftar berdasarkan nama..."
           className="min-w-[260px] flex-1"
         />
         <FilterChip active>Semua Menunggu ({requests.length})</FilterChip>
@@ -59,7 +53,6 @@ export function VerifikasiList() {
           Memuat pengajuan...
         </p>
       ) : requests.length === 0 ? (
-        /* Empty state (§6) */
         <EmptyState
           icon={<Hourglass />}
           title="Semua pengajuan sudah diproses"
@@ -72,8 +65,6 @@ export function VerifikasiList() {
           description="Coba ubah kata kunci pencarian."
         />
       ) : (
-        /* List wrapper (§4.1): gap 0 sesuai spec Figma — mudah diubah bila hasil
-           konfirmasi desain ternyata perlu jarak antar kartu. */
         <div className="flex flex-col">
           {pageItems.map((request) => (
             <VerifikasiCard key={request.id} request={request} />
@@ -81,7 +72,6 @@ export function VerifikasiList() {
         </div>
       )}
 
-      {/* Pagination: maksimal 3 pengajuan per halaman */}
       {!isLoading && filtered.length > PAGE_SIZE && (
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground">

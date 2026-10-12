@@ -1,23 +1,21 @@
 import { Camera, Upload } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
-import type { PtProfile } from "@/lib/mock/pt-profile";
+import type { PtProfile } from "@/lib/types/pt";
 
-// Profile Identity Hologram Card (design/PROFIL.md §3).
+// Profile Identity Card (design/PROFIL.md §3).
 export function ProfileIdentityCard({ profile }: { profile: PtProfile }) {
   return (
     <section className="overflow-hidden rounded-panel bg-white shadow-card">
-      {/* Cover satu warna: primary (tanpa gradient) */}
       <div className="h-28 bg-primary" />
 
       <div className="px-6 pb-6">
         <div className="relative -mt-14 ml-2 w-fit">
-          {/* Pulse ring */}
           <span
             aria-hidden
             className="absolute -inset-2 rounded-full bg-accent-indigo/30"
           />
           <span className="relative block rounded-full bg-white p-1">
-            <Avatar name={profile.nama} size={104} />
+            <Avatar name={profile.profile.nama} size={104} />
           </span>
           <button
             type="button"
@@ -29,10 +27,10 @@ export function ProfileIdentityCard({ profile }: { profile: PtProfile }) {
         </div>
 
         <h2 className="mt-4 text-lg font-extrabold text-ink">
-          Coach {profile.nama}, CSCS
+          Coach {profile.profile.nama}
         </h2>
         <p className="text-xs font-bold tracking-wide text-ink">
-          @{profile.username}
+          @{profile.user.username}
         </p>
 
         <button

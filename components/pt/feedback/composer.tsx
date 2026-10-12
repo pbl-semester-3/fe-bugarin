@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Bold, Code, Italic, List, ListOrdered, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useSaveDraft, useSendFeedback } from "@/hooks/useFeedback";
-import type { Klien } from "@/lib/mock/klien";
+import { useSendFeedback } from "@/hooks/useFeedback";
+import { apiErrorMessage } from "@/lib/api";
+import type { KlienListItem } from "@/lib/types/pt";
 
-// Toolbar format visual (design/FEEDBACK.md §4.2).
-// TODO: tombol belum berfungsi (tanpa library rich-text) — sambungkan saat butuh.
+// Toolbar format visual (design/FEEDBACK.md §4.2). Editor rich-text menyusul.
 const tools = [
   { icon: Bold, label: "Tebal" },
   { icon: Italic, label: "Miring" },
@@ -18,18 +18,22 @@ const tools = [
   { icon: Smile, label: "Emoji" },
 ];
 
-// Rich Feedback Composer (design/FEEDBACK.md §4.2).
-export function Composer({ klien }: { klien: Klien }) {
+// Pengiriman Protokol Bimbingan: POST /pt/klien/:id/feedbacks { pesan }.
+export function Composer({ klien }: { klien: KlienListItem }) {
   const [message, setMessage] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const send = useSendFeedback();
-  const draft = useSaveDraft();
-  const canSend = message.trim().length > 0;
+  const canSend = message.trim().length >= 5;
 
   function kirim() {
     if (!canSend) return;
+    setError(null);
     send.mutate(
-      { klienId: klien.id, message: message.trim() },
-      { onSuccess: () => setMessage("") }
+      { klienId: klien.id, pesan: message.trim() },
+      {
+        onSuccess: () => setMessage(""),
+        onError: (e) => setError(apiErrorMessage(e)),
+      }
     );
   }
 
@@ -42,11 +46,7 @@ export function Composer({ klien }: { klien: Klien }) {
         Susun arahan, koreksi teknik, dan penyesuaian nutrisi.
       </p>
 
-      <p className="mt-4 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-        Tag Taksonomi Pengiriman
-      </p>
-
-      <div className="mt-2 rounded-card bg-surface-tint p-1.5">
+      <div className="mt-4 rounded-card bg-surface-tint p-1.5">
         <div className="flex items-center gap-1 rounded-control bg-white px-2 py-1">
           {tools.map((tool, index) => (
             <span key={tool.label} className="flex items-center">
@@ -67,21 +67,21 @@ export function Composer({ klien }: { klien: Klien }) {
         <Textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Tulis feedback untuk klien..."
+          placeholder="Tulis feedback untuk klien... (min. 5 karakter)"
           className="mt-1 min-h-[160px] bg-white"
         />
       </div>
+
+      {error && <p className="mt-2 text-sm text-danger-strong">{error}</p>}
 
       <div className="mt-4 flex items-center justify-end gap-2">
         <Button
           variant="secondary"
           className="rounded-[10px] bg-surface-2 hover:bg-surface-3"
-          disabled={!canSend || draft.isPending}
-          onClick={() =>
-            draft.mutate({ klienId: klien.id, message: message.trim() })
-          }
+          disabled={!message}
+          onClick={() => setMessage("")}
         >
-          Simpan Draf
+          Batalkan
         </Button>
         <Button
           variant="accent"
@@ -89,7 +89,7 @@ export function Composer({ klien }: { klien: Klien }) {
           disabled={!canSend || send.isPending}
           onClick={kirim}
         >
-          Kirim Feedback
+          {send.isPending ? "Mengirim..." : "Kirim Feedback"}
         </Button>
       </div>
     </section>

@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
-import { mockDashboardSummary, type DashboardSummary } from "@/lib/mock/pt";
+import type { DashboardSummary } from "@/lib/types/pt";
 
-// Sumber data sementara: dummy di lib/mock.
-// TODO: ganti queryFn ke endpoint backend saat siap:
-//   queryFn: () => api.get<{ data: DashboardSummary }>("/pt/dashboard-summary").then((r) => r.data.data)
+// GET /pt/dashboard-summary
 export function usePtDashboard() {
   return useQuery({
     queryKey: queryKeys.pt.dashboard,
     queryFn: () =>
-      Promise.resolve(mockDashboardSummary) as Promise<DashboardSummary>,
+      api
+        .get<{ data: DashboardSummary }>("/pt/dashboard-summary")
+        .then((r) => r.data.data),
   });
 }

@@ -1,36 +1,29 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Hourglass,
-  SlidersHorizontal,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Hourglass } from "lucide-react";
 import { cn } from "cn";
 import { EmptyState } from "@/components/pt/empty-state";
 import { FilterChip } from "@/components/pt/filter-chip";
 import { SearchBar } from "@/components/pt/search-bar";
-import { GOAL_LABELS, type Klien, type KlienGoal } from "@/lib/mock/klien";
+import { tujuanLabel, type KlienListItem, type Tujuan } from "@/lib/types/pt";
 import { KlienCard } from "./klien-card";
 
-type GoalFilter = "all" | KlienGoal;
+type GoalFilter = "all" | Tujuan;
 
 const PAGE_SIZE = 6;
 
 interface KlienListProps {
-  clients: Klien[];
+  clients: KlienListItem[];
   isLoading: boolean;
 }
 
-// Toolbar + grid kartu / empty state + pagination (design/KLIEN.md §3–§5).
+// Toolbar + grid kartu / empty state + pagination (design/KLIEN.md, disederhanakan).
 export function KlienList({ clients, isLoading }: KlienListProps) {
   const [query, setQuery] = useState("");
   const [goal, setGoal] = useState<GoalFilter>("all");
   const [page, setPage] = useState(1);
 
-  // Reset ke halaman 1 setiap filter/pencarian berubah.
   function handleQuery(value: string) {
     setQuery(value);
     setPage(1);
@@ -44,11 +37,8 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return clients.filter((klien) => {
-      const matchGoal = goal === "all" || klien.goal === goal;
-      const matchQuery =
-        !q ||
-        klien.nama.toLowerCase().includes(q) ||
-        klien.email.toLowerCase().includes(q);
+      const matchGoal = goal === "all" || klien.tujuan === goal;
+      const matchQuery = !q || klien.nama.toLowerCase().includes(q);
       return matchGoal && matchQuery;
     });
   }, [clients, goal, query]);
@@ -60,12 +50,11 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
 
   return (
     <div className="space-y-6">
-      {/* Filter & Telemetry Bar (§3) */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-panel bg-white p-4 shadow-card">
         <SearchBar
           value={query}
           onChange={handleQuery}
-          placeholder="Cari klien berdasarkan nama atau email..."
+          placeholder="Cari klien berdasarkan nama..."
           className="min-w-[260px] flex-1 sm:max-w-[576px]"
         />
         <div className="flex flex-wrap items-center gap-1">
@@ -73,27 +62,17 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
             Semua ({clients.length})
           </FilterChip>
           <FilterChip
-            active={goal === "hypertrophy"}
-            onClick={() => handleGoal("hypertrophy")}
+            active={goal === "naik_bb"}
+            onClick={() => handleGoal("naik_bb")}
           >
-            {GOAL_LABELS.hypertrophy}
+            {tujuanLabel("naik_bb")}
           </FilterChip>
           <FilterChip
-            active={goal === "weight_loss"}
-            onClick={() => handleGoal("weight_loss")}
+            active={goal === "turun_bb"}
+            onClick={() => handleGoal("turun_bb")}
           >
-            {GOAL_LABELS.weight_loss}
+            {tujuanLabel("turun_bb")}
           </FilterChip>
-          <span className="mx-1 h-6 w-px bg-surface-3" />
-          {/* Dropdown status (§3) — visual; perilaku filter menyusul saat backend siap. */}
-          <button
-            type="button"
-            className="inline-flex items-center gap-1 rounded-pill bg-surface-tint px-3 py-1.5 text-xs font-semibold text-ink-soft transition-colors hover:bg-surface-2"
-          >
-            <SlidersHorizontal className="size-3" />
-            Status: Aktif
-            <ChevronDown className="size-3" />
-          </button>
         </div>
       </div>
 
@@ -104,14 +83,12 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
           ))}
         </div>
       ) : clients.length === 0 ? (
-        /* Tidak ada klien sama sekali (§4.3) */
         <EmptyState
           icon={<Hourglass />}
           title="Belum ada klien terdaftar"
           description="Klien yang kamu tangani akan muncul di sini setelah mereka terhubung."
         />
       ) : filtered.length === 0 ? (
-        /* Hasil filter/pencarian kosong (§4.3) */
         <EmptyState
           icon={<Hourglass />}
           title="Tidak ada klien yang cocok"
@@ -125,7 +102,6 @@ export function KlienList({ clients, isLoading }: KlienListProps) {
         </div>
       )}
 
-      {/* Table Footer / Pagination Deck (§5) */}
       {!isLoading && filtered.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-card bg-surface-alt px-4 py-3">
           <p className="text-xs text-muted-foreground">
@@ -193,7 +169,6 @@ function PaginationButton({
   );
 }
 
-// Skeleton dengan dimensi tetap supaya layout tidak bergeser saat data datang.
 function KlienCardSkeleton() {
   return (
     <div className="flex animate-pulse flex-col rounded-panel bg-white p-6 shadow-card">
@@ -205,7 +180,6 @@ function KlienCardSkeleton() {
         </div>
       </div>
       <div className="mt-4 h-6 w-28 rounded-pill bg-surface-2" />
-      <div className="mt-4 h-[70px] rounded-card bg-surface-2" />
       <div className="mt-4 h-10 rounded-card bg-surface-2" />
     </div>
   );
