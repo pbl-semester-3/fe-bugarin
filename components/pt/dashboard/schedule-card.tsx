@@ -1,71 +1,41 @@
-import { ChevronLeft, ChevronRight, Hourglass, Zap } from "lucide-react";
+import { Hourglass, Zap } from "lucide-react";
 import { EmptyState } from "@/components/pt/empty-state";
 import { Badge } from "@/components/ui/badge";
-import type { DashboardSummary } from "@/lib/mock/pt";
+import type { DashboardSummary } from "@/lib/types/pt";
 import { SessionRow } from "./session-row";
-import { WeekStrip } from "./week-strip";
 
-// Kartu "Daily Trajectory & Schedule" (design/DASHBOARD.md §4).
+// Kartu "Jadwal Latihan Minggu Ini" (design/DASHBOARD.md, disederhanakan).
 export function ScheduleCard({ data }: { data: DashboardSummary }) {
-  // Urutan: sesi terdekat di atas, sesi "done" selalu di paling bawah.
-  const sesi = [...data.sesi].sort((a, b) => {
-    const aDone = a.status === "done" ? 1 : 0;
-    const bDone = b.status === "done" ? 1 : 0;
-    if (aDone !== bDone) return aDone - bDone;
-    return a.jam.localeCompare(b.jam);
-  });
+  const jadwal = data.jadwalLatihan;
 
   return (
     <section className="rounded-card bg-white p-6 shadow-card">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold text-ink">
-              Trajektori &amp; Jadwal Harian
-            </h2>
-            <Badge variant="ai">
-              <Zap className="size-3" />
-              Direncanakan AI
-            </Badge>
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Urutan latihan disesuaikan otomatis berdasarkan data biometrik dan
-            HRV.
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            aria-label="Hari sebelumnya"
-            className="text-muted-foreground transition-colors hover:text-ink"
-          >
-            <ChevronLeft className="size-4" />
-          </button>
-          <span className="rounded-pill bg-surface-tint px-4 py-1.5 text-xs font-medium text-ink">
-            Kamis, 24 Okt
-          </span>
-          <button
-            type="button"
-            aria-label="Hari berikutnya"
-            className="text-muted-foreground transition-colors hover:text-ink"
-          >
-            <ChevronRight className="size-4" />
-          </button>
-        </div>
+      <div className="flex items-center gap-3">
+        <h2 className="text-xl font-semibold text-ink">
+          Jadwal Latihan Minggu Ini
+        </h2>
+        <Badge variant="ai">
+          <Zap className="size-3" />
+          Direncanakan AI
+        </Badge>
       </div>
-
-      <div className="mt-6">
-        <WeekStrip days={data.week} />
-      </div>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Gabungan jadwal seluruh klien dari weekly plan yang telah disetujui.
+      </p>
 
       <div className="mt-6 flex flex-col gap-2">
-        {sesi.length > 0 ? (
-          sesi.map((item) => <SessionRow key={item.id} session={item} />)
+        {jadwal.length > 0 ? (
+          jadwal.map((item, index) => (
+            <SessionRow
+              key={`${item.klienId}-${item.hari}-${item.jam}-${index}`}
+              jadwal={item}
+            />
+          ))
         ) : (
           <EmptyState
             icon={<Hourglass />}
-            title="Belum ada sesi hari ini"
-            description="Jadwal latihan akan muncul di sini setelah klien terhubung."
+            title="Belum ada jadwal"
+            description="Jadwal akan muncul setelah weekly plan klien disetujui."
           />
         )}
       </div>

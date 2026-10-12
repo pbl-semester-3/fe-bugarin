@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Mail, MapPin, Plus, Save, User, X } from "lucide-react";
-import { useForm, useWatch } from "react-hook-form";
+import { CalendarDays, Lock, Mail, MapPin, Save, User } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,40 +20,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useUpdatePtProfile } from "@/hooks/usePtProfile";
-import {
-  BIO_MAX_LENGTH,
-  SPECIALIZATION_OPTIONS,
-  type PtProfile,
-} from "@/lib/mock/pt-profile";
+import type { PtProfile } from "@/lib/types/pt";
 import {
   ptProfileSchema,
   type PtProfileForm,
 } from "@/lib/schemas/pt-profile.schema";
 
 // Section 1 — Personal Information (design/PROFIL.md §4.1).
+// email & username read-only (backend hanya izinkan Admin mengubahnya).
 export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
   const mutation = useUpdatePtProfile();
 
   const form = useForm<PtProfileForm>({
     resolver: zodResolver(ptProfileSchema),
     defaultValues: {
-      nama: profile.nama,
-      email: profile.email,
-      tempatGym: profile.tempatGym,
-      gender: profile.gender,
-      usia: profile.usia,
-      spesialisasi: profile.spesialisasi,
-      bio: profile.bio,
+      nama: profile.profile.nama,
+      tempatGym: profile.profile.tempatGym ?? "",
+      gender: profile.profile.jenisKelamin ?? "pria",
+      usia: profile.profile.usia ?? 17,
+      spesialisasi: profile.profile.spesialisasi ?? "turun_bb",
     },
   });
 
-  const bio =
-    useWatch({ control: form.control, name: "bio" }) ?? "";
-
   function onSubmit(values: PtProfileForm) {
-    mutation.mutate(values);
+    mutation.mutate(
+      {
+        nama: values.nama,
+        tempatGym: values.tempatGym,
+        jenisKelamin: values.gender,
+        usia: values.usia,
+        spesialisasi: values.spesialisasi,
+      },
+      { onSuccess: () => form.reset(values) }
+    );
   }
 
   return (
@@ -85,22 +84,31 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FieldLabel>Alamat Email</FieldLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input className="rounded-card pl-10" {...field} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormItem>
+              <FieldLabel>Alamat Email (read-only)</FieldLabel>
+              <div className="relative">
+                <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  className="rounded-card bg-surface-2 pl-10"
+                  value={profile.user.email}
+                  disabled
+                  readOnly
+                />
+              </div>
+            </FormItem>
+
+            <FormItem>
+              <FieldLabel>Username (read-only)</FieldLabel>
+              <div className="relative">
+                <Lock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  className="rounded-card bg-surface-2 pl-10"
+                  value={`@${profile.user.username}`}
+                  disabled
+                  readOnly
+                />
+              </div>
+            </FormItem>
 
             <FormField
               control={form.control}
@@ -125,10 +133,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               render={({ field }) => (
                 <FormItem>
                   <FieldLabel>Jenis Kelamin</FieldLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="w-full rounded-card">
                         <SelectValue placeholder="Pilih jenis kelamin" />
@@ -171,62 +176,22 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               render={({ field }) => (
                 <FormItem>
                   <FieldLabel>Spesialisasi</FieldLabel>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {field.value.map((value) => (
-                      <span
-                        key={value}
-                        className="inline-flex items-center gap-1.5 rounded-pill bg-accent-indigo/10 px-3 py-1 text-[10px] font-bold text-ink-soft"
-                      >
-                        {value}
-                        <button
-                          type="button"
-                          aria-label={`Hapus ${value}`}
-                          onClick={() =>
-                            field.onChange(
-                              field.value.filter((item) => item !== value)
-                            )
-                          }
-                        >
-                          <X className="size-3" />
-                        </button>
-                      </span>
-                    ))}
-                    <AddSpecialty
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  </div>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full rounded-card">
+                        <SelectValue placeholder="Pilih spesialisasi" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="turun_bb">Turun BB</SelectItem>
+                      <SelectItem value="naik_bb">Naik BB</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-
-          {/* Bio / Coaching Philosophy */}
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FieldLabel
-                  tone="muted"
-                  tag={`${bio.length} / ${BIO_MAX_LENGTH} karakter`}
-                >
-                  Bio / Filosofi Bimbingan
-                </FieldLabel>
-                <FormControl>
-                  <Textarea
-                    className="min-h-[119px] rounded-card"
-                    {...field}
-                  />
-                </FormControl>
-                <p className="text-xs text-muted-foreground">
-                  Ringkasan filosofi ini tampil di awal alur onboarding atletmu.
-                </p>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <div className="flex items-center justify-end gap-3">
             <Button
@@ -253,70 +218,10 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
   );
 }
 
-const TAG_TONES = {
-  indigo: "text-accent-indigo",
-  success: "text-success",
-  muted: "text-muted-foreground",
-} as const;
-
-function FieldLabel({
-  children,
-  tag,
-  tone = "indigo",
-}: {
-  children: React.ReactNode;
-  tag?: string;
-  tone?: keyof typeof TAG_TONES;
-}) {
+function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <FormLabel className="flex items-center justify-between text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-      <span>{children}</span>
-      {tag && <span className={TAG_TONES[tone]}>{tag}</span>}
+    <FormLabel className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+      {children}
     </FormLabel>
-  );
-}
-
-function AddSpecialty({
-  value,
-  onChange,
-}: {
-  value: string[];
-  onChange: (next: string[]) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const remaining = SPECIALIZATION_OPTIONS.filter(
-    (option) => !value.includes(option)
-  );
-
-  if (remaining.length === 0) return null;
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1 rounded-pill bg-surface-3 px-3 py-1 text-[10px] font-semibold text-ink-soft transition-colors hover:bg-surface-4"
-      >
-        <Plus className="size-3" />
-        Tambah Spesialisasi
-      </button>
-      {open && (
-        <div className="absolute z-10 mt-1 w-52 rounded-card border border-outline/40 bg-white p-1 shadow-card">
-          {remaining.map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => {
-                onChange([...value, option]);
-                setOpen(false);
-              }}
-              className="block w-full rounded px-2 py-1.5 text-left text-xs text-ink transition-colors hover:bg-surface-tint"
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
   );
 }

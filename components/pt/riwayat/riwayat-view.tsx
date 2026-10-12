@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { RiwayatRow } from "@/lib/mock/riwayat";
+import type { RiwayatRow } from "@/lib/types/pt";
 import { RiwayatTable } from "./riwayat-table";
 import {
   RiwayatToolbar,
@@ -24,8 +24,8 @@ export function RiwayatView({
     () =>
       rows.filter(
         (row) =>
-          (goal === "all" || row.goal === goal) &&
-          (gender === "all" || row.gender === gender)
+          (goal === "all" || row.tujuan === goal) &&
+          (gender === "all" || row.jenisKelamin === gender)
       ),
     [rows, goal, gender]
   );

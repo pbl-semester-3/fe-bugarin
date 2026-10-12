@@ -1,72 +1,29 @@
-import { Check, MoreVertical } from "lucide-react";
-import { cn } from "cn";
+import { MapPin } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
-import { Badge } from "@/components/ui/badge";
-import {
-  tujuanLabel,
-  type SessionSlot,
-  type TrainingSession,
-} from "@/lib/mock/pt";
+import type { JadwalLatihan } from "@/lib/types/pt";
 
-// Label slot waktu dalam Bahasa Indonesia.
-const SLOT_LABELS: Record<SessionSlot, string> = {
-  TIME: "WAKTU",
-  "NEXT UP": "BERIKUTNYA",
-  DONE: "SELESAI",
-};
-
-// Baris sesi desain PT (design/DASHBOARD.md §4.4).
-export function SessionRow({ session }: { session: TrainingSession }) {
-  const isDone = session.status === "done";
-  const isNextUp = session.slotLabel === "NEXT UP";
-
+// Baris jadwal latihan klien (dari GET /pt/dashboard-summary).
+export function SessionRow({ jadwal }: { jadwal: JadwalLatihan }) {
   return (
-    <div
-      className={cn(
-        "flex items-center gap-4 rounded-card bg-surface-tint p-4",
-        isDone && "opacity-60"
-      )}
-    >
-      <div
-        className={cn(
-          "flex h-12 w-16 shrink-0 flex-col items-center justify-center gap-0.5 rounded-control",
-          isNextUp ? "bg-brand text-on-secondary" : "bg-surface-3 text-ink"
-        )}
-      >
-        {isDone ? (
-          <Check className="size-4 text-success" />
-        ) : (
-          <>
-            <span className="text-[9px] font-semibold tracking-wide uppercase">
-              {SLOT_LABELS[session.slotLabel]}
-            </span>
-            <span className="text-sm font-bold">{session.jam}</span>
-          </>
-        )}
+    <div className="flex items-center gap-4 rounded-card bg-surface-tint p-4">
+      <div className="flex h-12 w-20 shrink-0 flex-col items-center justify-center gap-0.5 rounded-control bg-surface-3 text-ink">
+        <span className="text-[9px] font-semibold tracking-wide uppercase">
+          {jadwal.hari}
+        </span>
+        <span className="text-sm font-bold">{jadwal.jam}</span>
       </div>
 
-      <Avatar name={session.klienNama} size={40} />
+      <Avatar name={jadwal.namaKlien} size={40} />
 
       <div className="min-w-0 flex-1">
-        <p className="text-base font-semibold text-ink">{session.klienNama}</p>
-        <p className="text-xs text-muted-foreground">{session.durasi}</p>
-        <p className="text-xs text-muted-foreground">{tujuanLabel(session.tujuan)}</p>
-        <p className="text-xs text-muted-foreground">{session.lokasi}</p>
+        <p className="text-base font-semibold text-ink">{jadwal.namaKlien}</p>
+        <p className="text-xs text-muted-foreground">{jadwal.jenis}</p>
       </div>
 
-      {/* Status + menu titik-tiga di samping keterangan */}
-      <div className="flex shrink-0 items-center gap-2">
-        <Badge variant={isDone ? "done" : "queued"}>
-          {isDone ? "Selesai" : "Menunggu"}
-        </Badge>
-        <button
-          type="button"
-          aria-label="Menu sesi"
-          className="text-muted-foreground transition-colors hover:text-ink"
-        >
-          <MoreVertical className="size-4" />
-        </button>
-      </div>
+      <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+        <MapPin className="size-3.5" />
+        {jadwal.lokasi}
+      </span>
     </div>
   );
 }

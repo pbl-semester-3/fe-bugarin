@@ -1,14 +1,10 @@
 "use client";
 
 import { SegmentedControl } from "@/components/pt/segmented-control";
-import {
-  riwayatGenderLabel,
-  type RiwayatGender,
-  type RiwayatGoal,
-} from "@/lib/mock/riwayat";
+import { genderLabel, type JenisKelamin, type Tujuan } from "@/lib/types/pt";
 
-export type GoalFilter = "all" | RiwayatGoal;
-export type GenderFilter = "all" | RiwayatGender;
+export type GoalFilter = "all" | Tujuan;
+export type GenderFilter = "all" | JenisKelamin;
 
 interface RiwayatToolbarProps {
   goal: GoalFilter;
@@ -18,7 +14,7 @@ interface RiwayatToolbarProps {
 }
 
 // Filter & Command Toolbar (design/RIWAYAT.md §3):
-// segmented goal aktif oranye (brand), segmented gender aktif putih.
+// segmented tujuan aktif oranye (brand), segmented gender aktif putih.
 export function RiwayatToolbar({
   goal,
   gender,
@@ -33,8 +29,8 @@ export function RiwayatToolbar({
         onChange={onGoalChange}
         options={[
           { label: "Semua", value: "all" },
-          { label: "Naik BB", value: "hypertrophy" },
-          { label: "Turun BB", value: "weight_loss" },
+          { label: "Naik BB", value: "naik_bb" },
+          { label: "Turun BB", value: "turun_bb" },
         ]}
       />
       <SegmentedControl
@@ -43,8 +39,8 @@ export function RiwayatToolbar({
         onChange={onGenderChange}
         options={[
           { label: "Semua", value: "all" },
-          { label: riwayatGenderLabel("female"), value: "female" },
-          { label: riwayatGenderLabel("male"), value: "male" },
+          { label: genderLabel("wanita"), value: "wanita" },
+          { label: genderLabel("pria"), value: "pria" },
         ]}
       />
     </div>

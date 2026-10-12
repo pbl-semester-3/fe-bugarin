@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
-import { mockKlienList, type Klien } from "@/lib/mock/klien";
+import type { KlienListItem } from "@/lib/types/pt";
 
-// Sumber data sementara: dummy di lib/mock/klien.
-// TODO: ganti queryFn ke endpoint backend saat siap:
-//   queryFn: () => api.get<{ data: Klien[] }>("/pt/klien").then((r) => r.data.data)
+// GET /pt/klien -> { data, meta }
 export function useKlienList() {
   return useQuery({
     queryKey: queryKeys.pt.klienList,
-    queryFn: () => Promise.resolve(mockKlienList) as Promise<Klien[]>,
+    queryFn: () =>
+      api
+        .get<{ data: KlienListItem[] }>("/pt/klien")
+        .then((r) => r.data.data),
   });
 }

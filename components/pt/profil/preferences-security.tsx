@@ -2,13 +2,9 @@
 
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, KeyRound, Moon, RotateCw, Sun } from "lucide-react";
+import { Eye, EyeOff, KeyRound, Moon, Sun } from "lucide-react";
 import { cn } from "cn";
-import {
-  useForm,
-  type Control,
-  type FieldPath,
-} from "react-hook-form";
+import { useForm, type Control, type FieldPath } from "react-hook-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,15 +33,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useUpdatePtPassword, useUpdatePtTheme } from "@/hooks/usePtProfile";
-import type { PtProfile, PtTheme } from "@/lib/mock/pt-profile";
+import type { PtProfile, Tema } from "@/lib/types/pt";
 import {
   ptPasswordSchema,
   type PtPasswordForm,
 } from "@/lib/schemas/pt-profile.schema";
 
-// Section 2 — Preferences & Security Preview (design/PROFIL.md §4.2).
+// Section 2 — Preferences & Security (design/PROFIL.md §4.2).
 export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
-  const [theme, setTheme] = useState<PtTheme>(profile.tema);
+  const [theme, setTheme] = useState<Tema>(profile.user.tema);
   const [currentPassword, setCurrentPassword] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
@@ -62,27 +58,32 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
     },
   });
 
-  function applyTheme(next: PtTheme) {
+  function applyTheme(next: Tema) {
     setTheme(next);
     document.documentElement.classList.toggle("dark", next === "malam");
     updateTheme.mutate(next);
   }
 
   function openChangePassword() {
-    // Prefill dari field Current Password di tampilan utama.
     form.setValue("currentPassword", currentPassword);
     setDialogOpen(true);
   }
 
   function onSubmit(values: PtPasswordForm) {
-    updatePassword.mutate(values, {
-      onSuccess: () => {
-        form.reset();
-        setCurrentPassword("");
-        setDialogOpen(false);
-        setSuccessOpen(true);
+    updatePassword.mutate(
+      {
+        passwordSaatIni: values.currentPassword,
+        passwordBaru: values.newPassword,
       },
-    });
+      {
+        onSuccess: () => {
+          form.reset();
+          setCurrentPassword("");
+          setDialogOpen(false);
+          setSuccessOpen(true);
+        },
+      }
+    );
   }
 
   return (
@@ -136,15 +137,14 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
         </div>
       </div>
 
-      {/* Authentication Key Rotation — hanya Current Password di tampilan utama */}
+      {/* Authentication Key Rotation */}
       <div className="space-y-4">
         <div>
           <p className="text-sm font-bold text-ink">
             Rotasi Kunci Autentikasi
           </p>
           <p className="text-xs text-muted-foreground">
-            Pastikan password berisi 12+ karakter termasuk simbol, huruf
-            besar-kecil, dan angka.
+            Pastikan password berisi 8+ karakter.
           </p>
         </div>
 
@@ -158,11 +158,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
           />
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-            <RotateCw className="size-3.5" />
-            Rotasi kunci terakhir {profile.lastPasswordRotationDays} hari lalu
-          </span>
+        <div className="flex justify-end">
           <Button
             type="button"
             variant="accent"
@@ -174,7 +170,6 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
         </div>
       </div>
 
-      {/* Jendela mengambang ganti password */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="rounded-panel sm:max-w-md">
           <DialogHeader>
@@ -227,7 +222,6 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
         </DialogContent>
       </Dialog>
 
-      {/* Alert sukses */}
       <AlertDialog open={successOpen} onOpenChange={setSuccessOpen}>
         <AlertDialogContent className="rounded-panel" size="sm">
           <AlertDialogHeader>
@@ -247,7 +241,6 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
   );
 }
 
-// Input password berdiri sendiri (di luar Form), untuk tampilan utama.
 function PasswordInput({
   value,
   onChange,

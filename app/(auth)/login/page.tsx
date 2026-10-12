@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { api, apiErrorMessage } from "@/lib/api";
 
 // Field mengikuti kontrak backend (auth.schema.ts): { emailOrUsername, password }.
 const loginSchema = z.object({
@@ -24,9 +26,10 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>;
 
-// Split screen desain PT (docs/DESIGN_PT.md §7.1). Tanpa app shell.
+// Split screen desain PT (design/LOGIN.md). Tanpa app shell.
 export default function LoginPage() {
-  const [info, setInfo] = useState<string | null>(null);
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginValues>({
@@ -34,10 +37,27 @@ export default function LoginPage() {
     defaultValues: { emailOrUsername: "", password: "" },
   });
 
-  function onSubmit() {
-    // TODO: sambungkan ke POST /auth/login (response web: { data: { role } }).
-    setInfo("Login belum tersambung ke backend (TODO integrasi).");
+  async function onSubmit(values: LoginValues) {
+    setError(null);
+    try {
+      const res = await api.post<{ data: { role: string } }>(
+        "/auth/login",
+        values
+      );
+      const role = res.data.data.role;
+      if (role === "pt") {
+        router.push("/pt/dashboard");
+      } else {
+        setError(
+          "Halaman ini untuk Personal Trainer. Akun Admin silakan gunakan dashboard Admin."
+        );
+      }
+    } catch (err) {
+      setError(apiErrorMessage(err, "Email/username atau password salah."));
+    }
   }
+
+  const submitting = form.formState.isSubmitting;
 
   return (
     <main className="flex min-h-screen">
@@ -54,7 +74,10 @@ export default function LoginPage() {
           </h1>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="mt-8 space-y-5"
+            >
               <FormField
                 control={form.control}
                 name="emailOrUsername"
@@ -122,14 +145,12 @@ export default function LoginPage() {
                 )}
               />
 
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? "Memproses..." : "Sign In"}
               </Button>
 
-              {info && (
-                <p className="text-center text-sm text-muted-foreground">
-                  {info}
-                </p>
+              {error && (
+                <p className="text-center text-sm text-danger-strong">{error}</p>
               )}
             </form>
           </Form>

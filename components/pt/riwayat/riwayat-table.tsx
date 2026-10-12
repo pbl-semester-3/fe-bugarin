@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/table";
 import {
   netDelta,
-  RIWAYAT_GOAL_LABELS,
+  tujuanLabel,
   type RiwayatRow,
-} from "@/lib/mock/riwayat";
+} from "@/lib/types/pt";
 
-// Kartu "Athletic Progress Matrix" (design/RIWAYAT.md §4).
+// Kartu "Matriks Progres Atletik" (design/RIWAYAT.md §4).
 export function RiwayatTable({
   rows,
   isLoading,
@@ -64,7 +64,7 @@ export function RiwayatTable({
           <TableBody>
             {rows.map((row) => {
               const delta = netDelta(row);
-              const isDown = delta < 0;
+              const isDown = delta !== null && delta < 0;
               return (
                 <TableRow key={row.id}>
                   <TableCell>
@@ -73,7 +73,7 @@ export function RiwayatTable({
                       <div className="min-w-0">
                         <p className="text-sm font-bold text-ink">{row.nama}</p>
                         <p className="text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
-                          Usia {row.usia}
+                          {row.usia !== null ? `Usia ${row.usia}` : "-"}
                         </p>
                       </div>
                     </div>
@@ -81,30 +81,36 @@ export function RiwayatTable({
                   <TableCell>
                     <Badge
                       variant={
-                        row.goal === "weight_loss"
+                        row.tujuan === "turun_bb"
                           ? "weight-loss"
-                          : "hypertrophy"
+                          : row.tujuan === "naik_bb"
+                            ? "hypertrophy"
+                            : "queued"
                       }
                     >
-                      {RIWAYAT_GOAL_LABELS[row.goal]}
+                      {tujuanLabel(row.tujuan)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs font-semibold text-ink">
-                    {row.bbAwal.toFixed(1)} kg
+                    {row.bbAwalKg !== null ? `${row.bbAwalKg} kg` : "-"}
                   </TableCell>
                   <TableCell className="text-xs font-bold text-ink">
-                    {row.bbSekarang.toFixed(1)} kg
+                    {row.bbSekarangKg !== null ? `${row.bbSekarangKg} kg` : "-"}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={isDown ? "delta-down" : "delta-up"}>
-                      {isDown ? (
-                        <ArrowDown className="size-3" />
-                      ) : (
-                        <ArrowUp className="size-3" />
-                      )}
-                      {delta > 0 ? "+" : ""}
-                      {delta.toFixed(1)} kg
-                    </Badge>
+                    {delta === null ? (
+                      <span className="text-xs text-muted-foreground">-</span>
+                    ) : (
+                      <Badge variant={isDown ? "delta-down" : "delta-up"}>
+                        {isDown ? (
+                          <ArrowDown className="size-3" />
+                        ) : (
+                          <ArrowUp className="size-3" />
+                        )}
+                        {delta > 0 ? "+" : ""}
+                        {delta.toFixed(1)} kg
+                      </Badge>
+                    )}
                   </TableCell>
                 </TableRow>
               );

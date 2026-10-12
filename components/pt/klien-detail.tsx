@@ -3,21 +3,44 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  CalendarDays,
-  Clock,
-  Sparkles,
+  Check,
+  Dumbbell,
+  LineChart as LineChartIcon,
+  Salad,
   UserRound,
 } from "lucide-react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Avatar } from "@/components/pt/avatar";
 import { EmptyState } from "@/components/pt/empty-state";
+import { OverridePlanDialog } from "@/components/pt/override-plan-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useKlienDetail } from "@/hooks/useKlienDetail";
-import { GOAL_LABELS, genderLabel } from "@/lib/mock/klien";
+import { useApproveWeeklyPlan, useKlienDetail } from "@/hooks/useKlienDetail";
+import {
+  genderLabel,
+  planStatusLabel,
+  tujuanLabel,
+  type PlanStatus,
+} from "@/lib/types/pt";
 
-// Halaman "View Full Profile & Program" — profil klien + program hasil generate AI.
+function planBadgeVariant(status: PlanStatus) {
+  if (status === "disetujui") return "done" as const;
+  if (status === "override") return "ai" as const;
+  return "queued" as const;
+}
+
+// "View Full Profile & Program" — profil klien + grafik BB + review weekly plan.
 export function KlienDetail({ id }: { id: number }) {
-  const { data: klien, isLoading } = useKlienDetail(id);
+  const { data: klien, plan, isLoading } = useKlienDetail(id);
+  const approve = useApproveWeeklyPlan(id);
 
   if (isLoading) {
     return (
@@ -45,6 +68,8 @@ export function KlienDetail({ id }: { id: number }) {
     );
   }
 
+  const { profil, grafikBb } = klien;
+
   return (
     <div className="space-y-6">
       <Button asChild variant="ghost" size="sm" className="px-0">
@@ -57,77 +82,170 @@ export function KlienDetail({ id }: { id: number }) {
       {/* Kartu profil klien */}
       <section className="rounded-panel bg-white p-6 shadow-card">
         <div className="flex flex-wrap items-center gap-5">
-          <Avatar name={klien.nama} size={80} shape="square" />
+          <Avatar name={profil.nama} size={80} shape="square" />
           <div className="min-w-0">
             <h1 className="text-[40px] leading-tight font-extrabold tracking-[-0.7px] text-ink">
-              {klien.nama}
+              {profil.nama}
             </h1>
-            <p className="text-ink-soft">{klien.email}</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <Badge variant="started">
-                <CalendarDays className="size-3" />
-                {klien.mulaiProgram}
-              </Badge>
               <Badge
                 variant={
-                  klien.goal === "weight_loss" ? "weight-loss" : "hypertrophy"
+                  profil.tujuan === "turun_bb"
+                    ? "weight-loss"
+                    : profil.tujuan === "naik_bb"
+                      ? "hypertrophy"
+                      : "queued"
                 }
               >
-                {GOAL_LABELS[klien.goal]}
+                {tujuanLabel(profil.tujuan)}
               </Badge>
-              <Badge variant="count">
-                <Clock className="size-3" />
-                {klien.sessionSlot}
-              </Badge>
+              {profil.durasiHari !== null && (
+                <Badge variant="count">{profil.durasiHari} Hari</Badge>
+              )}
             </div>
           </div>
         </div>
 
         <dl className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
-          <InfoItem label="Umur" value={`${klien.usia} tahun`} />
-          <InfoItem label="Jenis Kelamin" value={genderLabel(klien.gender)} />
-          <InfoItem label="BB Awal" value={`${klien.bbAwal} kg`} />
-          <InfoItem label="BB Sekarang" value={`${klien.bbSekarang} kg`} />
-          <InfoItem label="BB Tujuan" value={`${klien.bbTujuan} kg`} />
-          <InfoItem label="Tinggi Badan" value={`${klien.tinggiBadan} cm`} />
+          <InfoItem label="Umur" value={profil.usia ? `${profil.usia} tahun` : "-"} />
+          <InfoItem label="Jenis Kelamin" value={genderLabel(profil.jenisKelamin)} />
+          <InfoItem
+            label="Tinggi Badan"
+            value={profil.tinggiBadanCm ? `${profil.tinggiBadanCm} cm` : "-"}
+          />
+          <InfoItem
+            label="BB Awal"
+            value={profil.bbAwalKg !== null ? `${profil.bbAwalKg} kg` : "-"}
+          />
+          <InfoItem
+            label="BB Tujuan"
+            value={profil.bbTujuanKg !== null ? `${profil.bbTujuanKg} kg` : "-"}
+          />
+          <InfoItem
+            label="BB Sekarang"
+            value={
+              grafikBb.length > 0
+                ? `${grafikBb[grafikBb.length - 1].beratKg} kg`
+                : "-"
+            }
+          />
         </dl>
       </section>
 
-      {/* Program hasil generate AI */}
+      {/* Grafik BB */}
+      <section className="rounded-panel bg-white p-6 shadow-card">
+        <h2 className="text-xl font-semibold text-ink">Grafik Berat Badan</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Riwayat penimbangan klien.
+        </p>
+        <div className="mt-4">
+          {grafikBb.length > 0 ? (
+            <div className="h-[280px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={grafikBb} margin={{ left: 8, right: 16, top: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EBEDFB" />
+                  <XAxis dataKey="tanggal" tick={{ fontSize: 11 }} />
+                  <YAxis unit=" kg" tick={{ fontSize: 11 }} domain={["auto", "auto"]} />
+                  <Tooltip formatter={(value) => [`${value} kg`, "Berat"]} />
+                  <Line
+                    type="monotone"
+                    dataKey="beratKg"
+                    stroke="#7DC04E"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <EmptyState
+              icon={<LineChartIcon />}
+              title="Belum ada data berat badan"
+              description="Grafik akan muncul setelah klien mencatat berat badannya."
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Review Weekly Plan */}
       <section className="rounded-panel bg-white p-6 shadow-card">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="text-xl font-semibold text-ink">
-            {klien.program.nama}
-          </h2>
-          <Badge variant="ai">
-            <Sparkles className="size-3" />
-            Dibuat AI
-          </Badge>
+          <h2 className="text-xl font-semibold text-ink">Weekly Plan</h2>
+          {plan && (
+            <Badge variant={planBadgeVariant(plan.status)}>
+              {planStatusLabel(plan.status)}
+            </Badge>
+          )}
         </div>
-        <p className="mt-1 text-sm text-ink-soft">
-          {klien.program.ringkasan}
-        </p>
 
-        <div className="mt-6">
-          <div>
-            <p className="text-sm font-semibold text-ink">Rencana Latihan</p>
-            <ul className="mt-3 space-y-3">
-              {klien.program.workout.map((day) => (
-                <li key={day.hari} className="rounded-card bg-surface-alt p-4">
-                  <p className="text-sm font-semibold text-ink">
-                    {day.hari} · {day.fokus}
-                  </p>
-                  <ul className="mt-1 list-disc pl-5 text-sm text-ink-soft">
-                    {day.latihan.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </div>
+        {!plan ? (
+          <EmptyState
+            icon={<Dumbbell />}
+            title="Belum ada weekly plan"
+            description="Plan belum dibuat untuk klien ini pada minggu berjalan."
+          />
+        ) : (
+          <>
+            <div className="mt-6 grid gap-6 md:grid-cols-2">
+              <div>
+                <p className="inline-flex items-center gap-2 text-sm font-semibold text-ink">
+                  <Dumbbell className="size-4 text-brand" />
+                  Rencana Latihan
+                </p>
+                <ul className="mt-3 space-y-2">
+                  {plan.workoutPlan.map((w, i) => (
+                    <li
+                      key={i}
+                      className="rounded-card bg-surface-alt px-4 py-3 text-sm"
+                    >
+                      <span className="font-semibold text-ink">
+                        {w.hari} · {w.jam}
+                      </span>
+                      <span className="block text-ink-soft">
+                        {w.jenis}
+                        {w.lokasi ? ` · ${w.lokasi}` : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-        </div>
+              <div>
+                <p className="inline-flex items-center gap-2 text-sm font-semibold text-ink">
+                  <Salad className="size-4 text-success" />
+                  Rencana Menu
+                </p>
+                <ul className="mt-3 space-y-2">
+                  {plan.mealPlan.map((m, i) => (
+                    <li
+                      key={i}
+                      className="rounded-card bg-surface-alt px-4 py-3 text-sm"
+                    >
+                      <span className="font-semibold text-ink">{m.waktu}</span>
+                      <span className="block text-ink-soft">
+                        {m.menu} · {m.estimasiKalori} kkal
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {plan.status === "pending_review" && (
+              <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
+                <OverridePlanDialog klienId={id} plan={plan} />
+                <Button
+                  className="rounded-pill px-4"
+                  disabled={approve.isPending}
+                  onClick={() => approve.mutate(plan.id)}
+                >
+                  <Check className="size-4" />
+                  Setujui
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </section>
     </div>
   );
