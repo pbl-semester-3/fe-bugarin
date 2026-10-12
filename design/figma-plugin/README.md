@@ -31,17 +31,17 @@ Foto profil / avatar diganti **kotak abu + inisial nama** (sesuai permintaan).
 
 ---
 
-## Yang dibangun (sesuai web app versi `dev`)
+## Yang dibangun (sesuai web app versi `dev` terbaru)
 
 - **Shell PT**: sidebar `#2C303A` (brand "Bugarin" / "PT Platform", menu, badge notifikasi "3" di Verifikasi, user card, Exit) + header putih (ikon bulan, lonceng + titik merah, avatar). Tanpa label "Main Command".
 - **Login**: split screen (panel kiri gradient, panel kanan form "Welcome Back, Coach").
-- **Dashboard**: banner "Selamat pagi, Coach Alex!", stat card "Total Klien Aktif" (24) & "Menunggu Verifikasi" (3), kartu "Trajektori & Jadwal Harian" (badge "Direncanakan AI", navigator "Kamis, 24 Okt", week strip SEN–MIN, 4 baris sesi).
-- **Verifikasi**: "Antrian Pendaftaran Klien", toolbar search + chip "Semua Menunggu (3)", 3 kartu pengajuan (tombol "Tolak" / "Terima Klien").
-- **Klien**: "Klien Aktif" + badge "6 Terpantau", filter (chip Semua/Naik BB/Turun BB + "Status: Aktif"), grid 3 kolom, footer "Menampilkan 1 - 6 dari 6 Klien terdaftar".
-- **Riwayat**: "Progres & Biometrik Klien", segmented goal & gender, tabel "Matriks Progres Atletik".
-- **Feedback**: master-detail, daftar percakapan + kartu atlet + composer "Pengiriman Protokol Bimbingan". Ditambah frame `Feedback - Kosong (Web App)` untuk state **belum ada klien dipilih** (empty state "Pilih klien").
-- **Profil**: "Pengaturan Profil Pelatih", kartu identitas, form "Informasi Pribadi", "Preferensi & Keamanan".
-- **Detail Klien**: tombol kembali, kartu profil + metrik, program AI "Penambahan Otot & Kekuatan".
+- **Dashboard**: banner "Selamat pagi, Coach Alex!", stat card "Total Klien Aktif" (24) & "Menunggu Verifikasi" (3), kartu "Jadwal Latihan Minggu Ini" (badge "Direncanakan AI") berisi baris jadwal (hari + jam, nama klien, jenis, lokasi). Tanpa week strip/date navigator.
+- **Verifikasi**: "Antrian Pendaftaran Klien", toolbar search + chip "Semua Menunggu (3)", kartu ringkas (nama + "Diajukan: …" + badge tujuan di kanan, tombol "Tolak" / "Terima Klien").
+- **Klien**: "Klien Aktif" + badge "6 Terpantau", filter (chip Semua/Naik BB/Turun BB), grid 3 kolom. Kartu: nama + "X Hari" + badge tujuan + tombol "Lihat Profil & Program Lengkap".
+- **Riwayat**: **tidak diubah** (sesuai permintaan) — "Progres & Biometrik Klien", segmented goal & gender, tabel "Matriks Progres Atletik".
+- **Feedback**: panel kiri daftar klien (avatar + nama), kanan kartu atlet (nama + "X Hari • Target: <badge>") + composer "Pengiriman Protokol Bimbingan" (tombol Batalkan / Kirim Feedback). Frame `Feedback - Kosong (Web App)` = state belum pilih klien (empty state "Pilih klien").
+- **Profil**: "Pengaturan Profil Pelatih", kartu identitas (cover + avatar + "Coach Alex Vance" + "@coach_alex" + "Ganti Foto"), form "Informasi Pribadi" (Nama, Email read-only, Username read-only, Lokasi Gym, Jenis Kelamin, Usia, Spesialisasi), "Preferensi & Keamanan" (mode Terang/Gelap + ganti password).
+- **Detail Klien**: tombol kembali, kartu profil + metrik (Umur, Jenis Kelamin, Tinggi Badan, BB Awal, BB Tujuan, BB Sekarang), kartu **Grafik Berat Badan** (line chart), kartu **Weekly Plan** (Rencana Latihan + Rencana Menu, tombol Override/Setujui).
 
 ---
 

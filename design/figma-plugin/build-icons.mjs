@@ -63,6 +63,9 @@ const ICONS = [
   "list-ordered",
   "code",
   "smile",
+  "dumbbell",
+  "salad",
+  "chart-line",
 ];
 
 function attrsToString(attrs) {
