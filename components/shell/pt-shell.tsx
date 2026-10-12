@@ -14,6 +14,7 @@ import {
 import { Avatar } from "@/components/pt/avatar";
 import { SidebarItem } from "@/components/sidebar-item";
 import { usePairingRequests } from "@/hooks/usePairingRequests";
+import { usePtProfile } from "@/hooks/usePtProfile";
 
 const navItems = [
   { href: "/pt/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -29,6 +30,9 @@ export function PtShell({ children }: { children: React.ReactNode }) {
   // Badge notifikasi menu Verifikasi = jumlah pengajuan pending (design/VERIFIKASI.md §1).
   const { data: pairingRequests } = usePairingRequests();
   const pendingCount = pairingRequests?.length ?? 0;
+  // Nama PT yang login (dari GET /pt/profile).
+  const { data: profile } = usePtProfile();
+  const namaPt = profile?.profile.nama ?? "Coach";
 
   function toggleDark() {
     document.documentElement.classList.toggle("dark");
@@ -59,10 +63,10 @@ export function PtShell({ children }: { children: React.ReactNode }) {
 
         <div className="mt-auto space-y-3 pt-6">
           <div className="flex items-center gap-3 rounded-card bg-white/10 p-3">
-            <Avatar name="Alex Vance" size={40} />
+            <Avatar name={namaPt} size={40} />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-white">
-                Alex Vance
+                {namaPt}
               </p>
               <p className="truncate text-xs text-white/50">
                 Performance Coach
@@ -97,7 +101,7 @@ export function PtShell({ children }: { children: React.ReactNode }) {
             <Bell className="size-5" />
             <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-danger" />
           </button>
-          <Avatar name="Alex Vance" size={32} />
+          <Avatar name={namaPt} size={32} />
         </header>
 
         <main className="flex-1 p-6">{children}</main>
