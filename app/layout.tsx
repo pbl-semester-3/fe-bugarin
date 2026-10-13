@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+// Font di-host sendiri (bukan next/font/google) untuk menghindari bug Next.js 16 +
+// Turbopack: Google Fonts kadang mengembalikan URL tanpa ekstensi sehingga build gagal
+// ("next/font/google queries have exactly one entry"). Lihat vercel/next.js#99114.
+// File: Plus Jakarta Sans (variable, latin) — lisensi OFL.
+const jakarta = localFont({
+  src: "./fonts/PlusJakartaSans-latin.woff2",
+  weight: "200 800",
+  style: "normal",
   variable: "--font-jakarta",
   display: "swap",
 });
