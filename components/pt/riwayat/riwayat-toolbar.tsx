@@ -38,7 +38,7 @@ export function RiwayatToolbar({
         ]}
       />
       <SegmentedControl
-        activeVariant="white"
+        activeVariant="brand"
         value={gender}
         onChange={onGenderChange}
         options={[
