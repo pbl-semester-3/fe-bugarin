@@ -38,12 +38,12 @@ export function VerifikasiList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-panel bg-white p-4 shadow-card">
         <SearchBar
           value={query}
           onChange={handleQuery}
-          placeholder="Cari pendaftar berdasarkan nama..."
-          className="min-w-[260px] flex-1"
+          placeholder="Cari klien berdasarkan nama atau email..."
+          className="min-w-[260px] flex-1 sm:max-w-[576px]"
         />
         <FilterChip active>Semua Menunggu ({requests.length})</FilterChip>
       </div>
