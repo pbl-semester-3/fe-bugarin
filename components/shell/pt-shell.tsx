@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Bell,
   ClipboardCheck,
@@ -13,8 +14,10 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
 import { SidebarItem } from "@/components/sidebar-item";
+import { useLogout } from "@/hooks/useAuth";
 import { usePairingRequests } from "@/hooks/usePairingRequests";
 import { usePtProfile } from "@/hooks/usePtProfile";
+import { apiErrorMessage } from "@/lib/api";
 
 const navItems = [
   { href: "/pt/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -34,6 +37,16 @@ export function PtShell({ children }: { children: React.ReactNode }) {
   const { data: profile } = usePtProfile();
   const namaPt = profile?.profile.nama ?? "Coach";
   const fotoUrl = profile?.profile.fotoUrl ?? null;
+
+  const logout = useLogout();
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+
+  function handleLogout() {
+    setLogoutError(null);
+    logout.mutate(undefined, {
+      onError: (err) => setLogoutError(apiErrorMessage(err)),
+    });
+  }
 
   function toggleDark() {
     document.documentElement.classList.toggle("dark");
@@ -76,11 +89,18 @@ export function PtShell({ children }: { children: React.ReactNode }) {
           </div>
           <button
             type="button"
-            className="flex w-full items-center gap-2 px-3 text-xs font-medium text-danger transition-opacity hover:opacity-80"
+            onClick={handleLogout}
+            disabled={logout.isPending}
+            className="flex w-full items-center gap-2 px-3 text-xs font-medium text-danger transition-opacity hover:opacity-80 disabled:opacity-50"
           >
             <LogOut className="size-4" />
-            Exit
+            {logout.isPending ? "Keluar..." : "Exit"}
           </button>
+          {logoutError && (
+            <p className="px-3 text-[10px] leading-tight text-danger">
+              {logoutError}
+            </p>
+          )}
         </div>
       </aside>
 
