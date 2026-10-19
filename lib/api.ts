@@ -9,6 +9,9 @@ export const api = axios.create({
   },
 });
 
+// Cegah beberapa request 401 bersamaan memicu logout berulang.
+let handling401 = false;
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -18,10 +21,19 @@ api.interceptors.response.use(
     if (
       typeof window !== "undefined" &&
       err.response?.status === 401 &&
-      !isAuthRequest
+      !isAuthRequest &&
+      !handling401
     ) {
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-      window.location.href = "/login";
+      handling401 = true;
+      // Sesi tidak valid/kedaluwarsa: bersihkan cookie (best-effort) DULU,
+      // lalu ke /login. Tanpa ini, proxy bisa melempar balik ke /pt (loop).
+      api
+        .post("/auth/logout")
+        .catch(() => undefined)
+        .finally(() => {
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.href = "/login";
+        });
     }
     return Promise.reject(err);
   }
