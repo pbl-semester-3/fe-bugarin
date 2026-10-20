@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarDays, Lock, Mail, MapPin, Save, User } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -21,6 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUpdatePtProfile } from "@/hooks/usePtProfile";
+import { apiErrorMessage, getFieldErrors } from "@/lib/api";
+import { applyFieldErrors } from "@/lib/apply-field-errors";
 import type { PtProfile } from "@/lib/types/pt";
 import {
   ptProfileSchema,
@@ -31,6 +34,7 @@ import {
 // email & username read-only (backend hanya izinkan Admin mengubahnya).
 export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
   const mutation = useUpdatePtProfile();
+  const [generalError, setGeneralError] = useState<string | null>(null);
 
   const form = useForm<PtProfileForm>({
     resolver: zodResolver(ptProfileSchema),
@@ -44,6 +48,7 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
   });
 
   function onSubmit(values: PtProfileForm) {
+    setGeneralError(null);
     mutation.mutate(
       {
         nama: values.nama,
@@ -52,7 +57,19 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
         usia: values.usia,
         spesialisasi: values.spesialisasi,
       },
-      { onSuccess: () => form.reset(values) }
+      {
+        onSuccess: () => form.reset(values),
+        onError: (err) => {
+          // Backend memakai nama `jenisKelamin`, form memakai `gender`.
+          const fields = getFieldErrors(err);
+          if (fields) {
+            const unmapped = applyFieldErrors(form, fields, { jenisKelamin: "gender" });
+            if (unmapped) setGeneralError(unmapped);
+          } else {
+            setGeneralError(apiErrorMessage(err));
+          }
+        },
+      }
     );
   }
 
@@ -193,6 +210,9 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
             />
           </div>
 
+          {generalError && (
+            <p className="text-sm text-danger-strong">{generalError}</p>
+          )}
           <div className="flex items-center justify-end gap-3">
             <Button
               type="button"
