@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useOverrideWeeklyPlan } from "@/hooks/useKlienDetail";
+import { apiErrorMessage, getFieldErrors } from "@/lib/api";
 import type { WeeklyPlan } from "@/lib/types/pt";
 
 type WorkoutRow = { hari: string; jam: string; jenis: string };
@@ -30,6 +31,9 @@ export function OverridePlanDialog({
 }) {
   const [open, setOpen] = useState(false);
   const override = useOverrideWeeklyPlan(klienId);
+  // TODO(ui): tampilkan error per-field untuk workoutPlan/mealPlan (form masih
+  // memakai state array, bukan react-hook-form). Sementara: pesan pertama.
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const [workout, setWorkout] = useState<WorkoutRow[]>(
     plan.workoutPlan.map((w) => ({ hari: w.hari, jam: w.jam, jenis: w.jenis }))
@@ -52,6 +56,7 @@ export function OverridePlanDialog({
 
   function submit() {
     if (!valid) return;
+    setServerError(null);
     override.mutate(
       {
         planId: plan.id,
@@ -68,7 +73,14 @@ export function OverridePlanDialog({
           })),
         },
       },
-      { onSuccess: () => setOpen(false) }
+      {
+        onSuccess: () => setOpen(false),
+        onError: (err) => {
+          const fields = getFieldErrors(err);
+          const first = fields ? Object.values(fields)[0]?.[0] : null;
+          setServerError(first ?? apiErrorMessage(err));
+        },
+      }
     );
   }
 
@@ -214,6 +226,10 @@ export function OverridePlanDialog({
             </button>
           </div>
         </div>
+
+        {serverError && (
+          <p className="text-sm text-danger-strong">{serverError}</p>
+        )}
 
         <DialogFooter>
           <Button variant="ghost" type="button" onClick={() => setOpen(false)}>

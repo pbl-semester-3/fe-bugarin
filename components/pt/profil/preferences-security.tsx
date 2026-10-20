@@ -33,6 +33,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useUpdatePtPassword, useUpdatePtTheme } from "@/hooks/usePtProfile";
+import { apiErrorMessage, getFieldErrors } from "@/lib/api";
+import { applyFieldErrors } from "@/lib/apply-field-errors";
 import type { PtProfile, Tema } from "@/lib/types/pt";
 import {
   ptPasswordSchema,
@@ -45,6 +47,7 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const updateTheme = useUpdatePtTheme();
   const updatePassword = useUpdatePtPassword();
@@ -65,11 +68,14 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
   }
 
   function openChangePassword() {
+    form.clearErrors();
+    setServerError(null);
     form.setValue("currentPassword", currentPassword);
     setDialogOpen(true);
   }
 
   function onSubmit(values: PtPasswordForm) {
+    setServerError(null);
     updatePassword.mutate(
       {
         passwordSaatIni: values.currentPassword,
@@ -81,6 +87,19 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
           setCurrentPassword("");
           setDialogOpen(false);
           setSuccessOpen(true);
+        },
+        onError: (err) => {
+          // Backend memakai `passwordSaatIni`/`passwordBaru`.
+          const fields = getFieldErrors(err);
+          if (fields) {
+            const unmapped = applyFieldErrors(form, fields, {
+              passwordSaatIni: "currentPassword",
+              passwordBaru: "newPassword",
+            });
+            if (unmapped) setServerError(unmapped);
+          } else {
+            setServerError(apiErrorMessage(err));
+          }
         },
       }
     );
@@ -199,6 +218,10 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
                 name="confirmPassword"
                 label="Konfirmasi Password Baru"
               />
+
+              {serverError && (
+                <p className="text-sm text-danger-strong">{serverError}</p>
+              )}
 
               <DialogFooter>
                 <Button

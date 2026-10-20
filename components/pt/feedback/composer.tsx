@@ -5,7 +5,7 @@ import { Bold, Code, Italic, List, ListOrdered, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useSendFeedback } from "@/hooks/useFeedback";
-import { apiErrorMessage } from "@/lib/api";
+import { apiErrorMessage, getFieldErrors } from "@/lib/api";
 import type { KlienListItem } from "@/lib/types/pt";
 
 // Toolbar format visual (design/FEEDBACK.md §4.2). Editor rich-text menyusul.
@@ -22,17 +22,25 @@ const tools = [
 export function Composer({ klien }: { klien: KlienListItem }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
+  // TODO(ui): ganti dengan error per-field bawaan FormMessage bila form ini
+  // dimigrasikan ke react-hook-form. Untuk sekarang ditampilkan dekat textarea.
+  const [pesanError, setPesanError] = useState<string | null>(null);
   const send = useSendFeedback();
   const canSend = message.trim().length >= 5;
 
   function kirim() {
     if (!canSend) return;
     setError(null);
+    setPesanError(null);
     send.mutate(
       { klienId: klien.id, pesan: message.trim() },
       {
         onSuccess: () => setMessage(""),
-        onError: (e) => setError(apiErrorMessage(e)),
+        onError: (e) => {
+          const fields = getFieldErrors(e);
+          setPesanError(fields?.pesan?.[0] ?? null);
+          if (!fields) setError(apiErrorMessage(e));
+        },
       }
     );
   }
@@ -72,6 +80,9 @@ export function Composer({ klien }: { klien: KlienListItem }) {
         />
       </div>
 
+      {pesanError && (
+        <p className="mt-2 text-sm text-danger-strong">{pesanError}</p>
+      )}
       {error && <p className="mt-2 text-sm text-danger-strong">{error}</p>}
 
       <div className="mt-4 flex items-center justify-end gap-2">

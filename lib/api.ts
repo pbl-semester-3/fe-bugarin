@@ -39,16 +39,37 @@ api.interceptors.response.use(
   }
 );
 
+type ApiErrorBody = {
+  // Backend (error-handler.ts) mengirim `{ error: { fields: { field: string[] } } }`
+  // untuk ZodError, atau `{ error: string }` untuk AppError.
+  error?: string | { fields?: Record<string, string[] | undefined> };
+};
+
+// Ambil error validasi per-field dari response backend. Null bila bukan error field.
+export function getFieldErrors(err: unknown): Record<string, string[]> | null {
+  if (!axios.isAxiosError(err)) return null;
+  const data = err.response?.data as ApiErrorBody | undefined;
+  const error = data?.error;
+  if (!error || typeof error === "string" || !error.fields) return null;
+
+  const result: Record<string, string[]> = {};
+  for (const [field, messages] of Object.entries(error.fields)) {
+    if (messages && messages.length > 0) result[field] = messages;
+  }
+  return Object.keys(result).length > 0 ? result : null;
+}
+
 export function apiErrorMessage(err: unknown, fallback = "Terjadi kesalahan.") {
   if (axios.isAxiosError(err)) {
-    const data = err.response?.data as
-      | { error?: string | { fields?: Record<string, string> } }
-      | undefined;
+    const data = err.response?.data as ApiErrorBody | undefined;
     const error = data?.error;
     if (typeof error === "string") return error;
     if (error && typeof error === "object" && error.fields) {
-      const first = Object.values(error.fields)[0];
-      if (first) return first;
+      // Ambil pesan pertama (array) — sebelumnya keliru mengembalikan array-nya.
+      const first = Object.values(error.fields).find(
+        (messages) => messages && messages.length > 0
+      );
+      if (first?.[0]) return first[0];
     }
     if (err.message) return err.message;
   }

@@ -1,16 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { Check, Clock } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRespondPairingRequest } from "@/hooks/usePairingRequests";
+import { apiErrorMessage, getFieldErrors } from "@/lib/api";
 import { tujuanLabel, type PairingRequest } from "@/lib/types/pt";
 import { DeclineDialog } from "./decline-dialog";
 
 // Kartu pengajuan (disederhanakan: backend hanya { id, nama, tujuan }).
 export function VerifikasiCard({ request }: { request: PairingRequest }) {
   const respond = useRespondPairingRequest();
+  // TODO(ui): ganti dengan error per-field (FormMessage) bila form dimigrasikan.
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <article className="rounded-panel bg-white p-6 shadow-card">
@@ -45,12 +49,28 @@ export function VerifikasiCard({ request }: { request: PairingRequest }) {
           variant="success"
           className="rounded-pill px-4"
           disabled={respond.isPending}
-          onClick={() => respond.mutate({ id: request.id })}
+          onClick={() => {
+            setError(null);
+            respond.mutate(
+              { id: request.id },
+              {
+                onError: (err) => {
+                  const fields = getFieldErrors(err);
+                  setError(
+                    (fields ? Object.values(fields)[0]?.[0] : null) ??
+                      apiErrorMessage(err)
+                  );
+                },
+              }
+            );
+          }}
         >
           <Check className="size-4" />
           Terima Klien
         </Button>
       </div>
+
+      {error && <p className="mt-3 text-sm text-danger-strong">{error}</p>}
     </article>
   );
 }

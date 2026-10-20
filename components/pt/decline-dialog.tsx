@@ -14,25 +14,47 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRespondPairingRequest } from "@/hooks/usePairingRequests";
+import { apiErrorMessage, getFieldErrors } from "@/lib/api";
 import type { PairingRequest } from "@/lib/types/pt";
 
 // Modal tolak pengajuan. Backend: kirim `alasanPenolakan` -> ditolak.
 export function DeclineDialog({ request }: { request: PairingRequest }) {
   const [open, setOpen] = useState(false);
   const [alasan, setAlasan] = useState("");
+  // TODO(ui): ganti dengan error per-field (FormMessage) bila form dimigrasikan.
+  const [serverError, setServerError] = useState<string | null>(null);
   const respond = useRespondPairingRequest();
 
   const bisaKirim = alasan.trim().length > 0;
 
   function kirim() {
     if (!bisaKirim) return;
-    respond.mutate({ id: request.id, alasanPenolakan: alasan.trim() });
-    setAlasan("");
-    setOpen(false);
+    setServerError(null);
+    respond.mutate(
+      { id: request.id, alasanPenolakan: alasan.trim() },
+      {
+        onSuccess: () => {
+          setAlasan("");
+          setOpen(false);
+        },
+        onError: (err) => {
+          const fields = getFieldErrors(err);
+          setServerError(
+            fields?.alasanPenolakan?.[0] ?? apiErrorMessage(err)
+          );
+        },
+      }
+    );
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) setServerError(null);
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="decline" className="rounded-pill px-4">
           <X className="size-4" />
@@ -60,6 +82,10 @@ export function DeclineDialog({ request }: { request: PairingRequest }) {
             placeholder="Tuliskan alasan penolakan untuk klien..."
           />
         </div>
+
+        {serverError && (
+          <p className="text-sm text-danger-strong">{serverError}</p>
+        )}
 
         <div className="flex items-center justify-end gap-2">
           <DialogClose asChild>
