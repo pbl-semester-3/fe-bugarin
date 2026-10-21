@@ -1,0 +1,32 @@
+name: Schema Check (Frontend)
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+jobs:
+  schema-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout frontend
+        uses: actions/checkout@v4
+
+      - name: Checkout backend (sumber kontrak)
+        uses: actions/checkout@v4
+        with:
+          repository: pbl-semester-3/be-bugarin
+          ref: dev
+          path: be
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Cek sinkronisasi schema FE vs BE
+        run: npm run schema:check
+        env:
+          CONTRACT_PATH: be/contract/schema-contract.json
