@@ -28,6 +28,14 @@ export default function RootLayout({
   return (
     <html lang="id" className={jakarta.variable}>
       <body className="font-sans antialiased">
+        {/* Terapkan tema admin tersimpan sebelum render pertama (anti-kedip).
+            Dibatasi ke rute /admin agar tidak memengaruhi tema halaman PT. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{if(location.pathname.indexOf("/admin")===0){var t=localStorage.getItem("bugarin-admin-theme");if(t==="dark"||t==="light"){document.documentElement.dataset.theme=t;}}}catch(e){}',
+          }}
+        />
         <QueryProvider>
           {children}
         </QueryProvider>
