@@ -31,6 +31,7 @@ export type PtProfile = {
     jenisKelamin: JenisKelamin | null;
     spesialisasi: Tujuan | null;
     tempatGym: string | null;
+    whatsapp: string | null;
     fotoUrl: string | null;
   };
 };

@@ -1,15 +1,17 @@
 import { z } from "zod";
 
-// Selaraskan manual (mirror disiplin) dengan schema Zod backend:
-// bugarin-backend/src/modules/pt/pt.schema.ts. Kontrak aturan dicek otomatis
-// lewat contract/schema-contract.json (npm run schema:check).
-// Form Profil PT — hanya field yang diizinkan backend (email/username read-only).
+// Form Profil PT — hanya field yang boleh diubah PT.
+// Read-only (hanya Admin): email, username, jenisKelamin, tempatGym, spesialisasi.
 export const ptProfileSchema = z.object({
   nama: z.string().min(2, "Nama minimal 2 karakter"),
-  tempatGym: z.string().min(3, "Tempat gym minimal 3 karakter"),
-  gender: z.enum(["pria", "wanita"]),
   usia: z.coerce.number().int().min(13, "Usia minimal 13 tahun"),
-  spesialisasi: z.enum(["turun_bb", "naik_bb"]),
+  whatsapp: z
+    .string()
+    .trim()
+    .refine(
+      (value) => value === "" || /^\+?[0-9]{8,14}$/.test(value),
+      "Format WhatsApp hanya '+' dan angka"
+    ),
 });
 
 export type PtProfileForm = z.infer<typeof ptProfileSchema>;

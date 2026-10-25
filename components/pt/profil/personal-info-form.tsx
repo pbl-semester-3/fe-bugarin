@@ -1,8 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Lock, Mail, MapPin, Save, User } from "lucide-react";
+import {
+  CalendarDays,
+  Dumbbell,
+  Lock,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+  User,
+  Users,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,62 +23,41 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useUpdatePtProfile } from "@/hooks/usePtProfile";
-import { apiErrorMessage, getFieldErrors } from "@/lib/api";
-import { applyFieldErrors } from "@/lib/apply-field-errors";
-import type { PtProfile } from "@/lib/types/pt";
+import {
+  genderLabel,
+  tujuanLabel,
+  type PtProfile,
+} from "@/lib/types/pt";
 import {
   ptProfileSchema,
   type PtProfileForm,
 } from "@/lib/schemas/pt-profile.schema";
 
 // Section 1 — Personal Information (design/PROFIL.md §4.1).
-// email & username read-only (backend hanya izinkan Admin mengubahnya).
+// Editable PT: nama, usia, whatsapp. Read-only (hanya Admin): email, username,
+// jenisKelamin, tempatGym, spesialisasi.
 export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
   const mutation = useUpdatePtProfile();
-  const [generalError, setGeneralError] = useState<string | null>(null);
 
   const form = useForm<PtProfileForm>({
     resolver: zodResolver(ptProfileSchema),
     defaultValues: {
       nama: profile.profile.nama,
-      tempatGym: profile.profile.tempatGym ?? "",
-      gender: profile.profile.jenisKelamin ?? "pria",
-      usia: profile.profile.usia ?? 17,
-      spesialisasi: profile.profile.spesialisasi ?? "turun_bb",
+      usia: profile.profile.usia ?? 13,
+      whatsapp: profile.profile.whatsapp ?? "",
     },
   });
 
   function onSubmit(values: PtProfileForm) {
-    setGeneralError(null);
     mutation.mutate(
       {
         nama: values.nama,
-        tempatGym: values.tempatGym,
-        jenisKelamin: values.gender,
         usia: values.usia,
-        spesialisasi: values.spesialisasi,
+        // Kosong = jangan kirim (backend tidak menerima string kosong).
+        ...(values.whatsapp.trim() ? { whatsapp: values.whatsapp.trim() } : {}),
       },
-      {
-        onSuccess: () => form.reset(values),
-        onError: (err) => {
-          // Backend memakai nama `jenisKelamin`, form memakai `gender`.
-          const fields = getFieldErrors(err);
-          if (fields) {
-            const unmapped = applyFieldErrors(form, fields, { jenisKelamin: "gender" });
-            if (unmapped) setGeneralError(unmapped);
-          } else {
-            setGeneralError(apiErrorMessage(err));
-          }
-        },
-      }
+      { onSuccess: () => form.reset(values) }
     );
   }
 
@@ -101,42 +89,32 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               )}
             />
 
-            <FormItem>
-              <FieldLabel>Alamat Email (read-only)</FieldLabel>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  className="rounded-card bg-surface-2 pl-10"
-                  value={profile.user.email}
-                  disabled
-                  readOnly
-                />
-              </div>
-            </FormItem>
+            <ReadOnlyField
+              label="Alamat Email"
+              icon={<Mail className="size-4" />}
+              value={profile.user.email}
+            />
 
-            <FormItem>
-              <FieldLabel>Username (read-only)</FieldLabel>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  className="rounded-card bg-surface-2 pl-10"
-                  value={`@${profile.user.username}`}
-                  disabled
-                  readOnly
-                />
-              </div>
-            </FormItem>
+            <ReadOnlyField
+              label="Username"
+              icon={<Lock className="size-4" />}
+              value={`@${profile.user.username}`}
+            />
 
             <FormField
               control={form.control}
-              name="tempatGym"
+              name="whatsapp"
               render={({ field }) => (
                 <FormItem>
-                  <FieldLabel>Lokasi Gym</FieldLabel>
+                  <FieldLabel>Nomor WhatsApp</FieldLabel>
                   <FormControl>
                     <div className="relative">
-                      <MapPin className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input className="rounded-card pl-10" {...field} />
+                      <Phone className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        className="rounded-card pl-10"
+                        placeholder="+6281234567890"
+                        {...field}
+                      />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -144,26 +122,10 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FieldLabel>Jenis Kelamin</FieldLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full rounded-card">
-                        <SelectValue placeholder="Pilih jenis kelamin" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="pria">Laki-laki</SelectItem>
-                      <SelectItem value="wanita">Perempuan</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <ReadOnlyField
+              label="Jenis Kelamin"
+              icon={<Users className="size-4" />}
+              value={genderLabel(profile.profile.jenisKelamin)}
             />
 
             <FormField
@@ -187,32 +149,19 @@ export function PersonalInfoForm({ profile }: { profile: PtProfile }) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="spesialisasi"
-              render={({ field }) => (
-                <FormItem>
-                  <FieldLabel>Spesialisasi</FieldLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full rounded-card">
-                        <SelectValue placeholder="Pilih spesialisasi" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="turun_bb">Turun BB</SelectItem>
-                      <SelectItem value="naik_bb">Naik BB</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <ReadOnlyField
+              label="Lokasi Gym"
+              icon={<MapPin className="size-4" />}
+              value={profile.profile.tempatGym ?? "-"}
+            />
+
+            <ReadOnlyField
+              label="Spesialisasi"
+              icon={<Dumbbell className="size-4" />}
+              value={tujuanLabel(profile.profile.spesialisasi)}
             />
           </div>
 
-          {generalError && (
-            <p className="text-sm text-danger-strong">{generalError}</p>
-          )}
           <div className="flex items-center justify-end gap-3">
             <Button
               type="button"
@@ -243,5 +192,34 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
     <FormLabel className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
       {children}
     </FormLabel>
+  );
+}
+
+function ReadOnlyField({
+  label,
+  icon,
+  value,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  value: string;
+}) {
+  return (
+    <div className="grid gap-2">
+      <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+        {label} (read-only)
+      </p>
+      <div className="relative">
+        <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground">
+          {icon}
+        </span>
+        <Input
+          className="rounded-card bg-surface-2 pl-10"
+          value={value}
+          disabled
+          readOnly
+        />
+      </div>
+    </div>
   );
 }
