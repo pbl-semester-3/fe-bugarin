@@ -30,11 +30,13 @@ Selain modul Klien dan PT, tersedia **Dashboard Web Admin** untuk mengelola selu
 - **Feedback** — pilih klien → tulis masukan → notifikasi ke klien.
 - **Profil** — data diri, spesialisasi, **tempat gym** (dipakai AI menyusun jadwal), ganti password, tema.
 
-**Web Admin**
-- **Dashboard** — statistik global platform.
-- **CRUD User** — kelola Klien & PT (PT dibuat Admin, tanpa registrasi mandiri).
-- **Riwayat** — log feedback PT→Klien dan log aktivitas CRUD Admin (audit).
-- **Profil** — data diri, ganti password, tema.
+**Web Admin** (UI selesai; data masih dummy)
+- **Dashboard** — ringkasan klien/PT aktif, tren aktivitas sesi & registrasi, komposisi spesialisasi PT.
+- **Kelola Pengguna** — 2 tab: daftar Klien dan daftar PT. Filter/search, pagination, daftarkan PT baru, hapus Klien/PT, dan halaman Edit PT (identitas, paksa reset password, suspend).
+- **Riwayat** — 2 tab read-only: log feedback PT→Klien dan jejak audit CRUD Admin.
+- **Profil** — data diri, ganti password, dan mode tampilan Terang/Gelap.
+
+> Edit Klien dan Tambah Klien belum diimplementasikan (belum ada desain/keputusan produk). Detail status & daftar dummy: [`docs/CATATAN.md`](docs/CATATAN.md).
 
 > Mobile App (Klien) dan backend Express berada di repo terpisah. Detail scope & business rules: [`docs/Bugarin_PRD.md`](docs/Bugarin_PRD.md).
 
@@ -49,8 +51,9 @@ Desain UI/UX ada di file Figma **"UI/UX PBL KEL 7"**:
 
 Spesifikasi desain per halaman (angka dari panel Inspect Figma) disimpan di folder [`design/`](design/):
 
-- [`design/DESIGN_PT.md`](design/DESIGN_PT.md) — token warna, tipografi, komponen global.
-- [`design/DASHBOARD.md`](design/DASHBOARD.md), [`design/VERIFIKASI.md`](design/VERIFIKASI.md), [`design/KLIEN.md`](design/KLIEN.md), [`design/RIWAYAT.md`](design/RIWAYAT.md), [`design/FEEDBACK.md`](design/FEEDBACK.md), [`design/PROFIL.md`](design/PROFIL.md), [`design/LOGIN.md`](design/LOGIN.md).
+- [`design/DESIGN_PT.md`](design/DESIGN_PT.md) — token warna, tipografi, komponen global PT.
+- **PT:** [`design/DASHBOARD.md`](design/DASHBOARD.md), [`design/VERIFIKASI.md`](design/VERIFIKASI.md), [`design/KLIEN.md`](design/KLIEN.md), [`design/RIWAYAT.md`](design/RIWAYAT.md), [`design/FEEDBACK.md`](design/FEEDBACK.md), [`design/PROFIL.md`](design/PROFIL.md), [`design/LOGIN.md`](design/LOGIN.md).
+- **Admin:** [`design/admin/dashboard-admin.md`](design/admin/dashboard-admin.md), [`design/admin/kelola-pengguna.md`](design/admin/kelola-pengguna.md), [`design/admin/riwayat.md`](design/admin/riwayat.md), [`design/admin/profil.md`](design/admin/profil.md), [`design/admin/dark-mode.md`](design/admin/dark-mode.md).
 
 Selain itu, [`design/figma-plugin/`](design/figma-plugin/) berisi **plugin Figma** untuk membuat ulang tampilan web app ini ke Figma (lihat README-nya).
 
@@ -66,12 +69,15 @@ cp .env.example .env.local   # isi NEXT_PUBLIC_API_URL (backend lokal atau Rende
 npm run dev    # http://localhost:3000
 ```
 
-**Menjalankan mode slicing (data dummy, tanpa backend):**
+**Melihat UI Admin (data dummy, sebelum auth/integrasi Admin siap):**
 1. `npm run dev`
-2. Buka `http://localhost:3000/dev-login`
-3. Klik **"Masuk sebagai PT (dev)"** → cookie `token=dev` di-set → diarahkan ke `/pt/dashboard`.
+2. Buka `http://localhost:3000`, lalu di DevTools Console set cookie lokal:
+   ```js
+   document.cookie = "token=dev; path=/";
+   ```
+3. Buka `http://localhost:3000/admin/dashboard`.
 
-> Halaman `/pt/*` dan `/admin/*` dijaga `proxy.ts` (cek keberadaan cookie `token`). Lihat [`docs/CATATAN.md`](docs/CATATAN.md) untuk daftar data dummy & cara pembersihannya.
+> Halaman `/pt/*` dan `/admin/*` dijaga `proxy.ts` (baru cek keberadaan cookie `token`; role guard nyata belum aktif). Login Admin belum di-wire. Detail status, risiko, dan daftar dummy: [`docs/CATATAN.md`](docs/CATATAN.md).
 
 **Sebelum mulai:** baca [`docs/Bugarin_PRD_Frontend.md`](docs/Bugarin_PRD_Frontend.md) dan skill di folder [`skills/`](skills/) (`nextjs-app-router-patterns`, `shadcn-ui-patterns`, `tanstack-query-patterns`, `form-validation-patterns`, `frontend-taste-bugarin`).
 
@@ -83,16 +89,16 @@ npm run dev    # http://localhost:3000
 app/
  ├─ (auth)/login/       # split-screen login
  ├─ pt/                 # Web PT: dashboard, verifikasi, klien, klien/[id], riwayat, feedback, profil
- ├─ admin/              # Web Admin: dashboard (+ CRUD user menyusul)
- └─ dev-login/          # helper slicing (dev only, 404 di production)
+ └─ admin/              # Web Admin: dashboard, users (+ users/pt/[id]/edit), riwayat, profil
 components/
- ├─ shell/              # pt-shell.tsx (sidebar + header)
+ ├─ shell/              # pt-shell.tsx, admin-shell.tsx (sidebar + header)
  ├─ pt/                 # komponen halaman PT (termasuk dashboard/, riwayat/, feedback/, profil/)
+ ├─ admin/              # komponen halaman Admin + komponen shared admin
  └─ ui/                 # komponen shadcn
-hooks/                  # hook TanStack Query
-lib/                    # api.ts (Axios), query-keys.ts, mock/, schemas/
+hooks/                  # hook TanStack Query (termasuk useAdmin*.ts)
+lib/                    # api.ts (Axios), query-keys.ts, mock/admin.ts, types/, schemas/
 providers/              # QueryProvider
-design/                 # spec desain per halaman + figma-plugin/
+design/                 # spec desain PT, admin/, figma-plugin/
 docs/                   # PRD, workflow, catatan
 proxy.ts                # BUKAN middleware.ts — lihat skill nextjs-app-router-patterns
 ```

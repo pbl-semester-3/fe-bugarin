@@ -31,7 +31,7 @@ Dokumen ini adalah turunan dari `Bugarin_PRD.md` (PRD induk), khusus untuk tim/d
 app/
  ├─ (auth)/
  │   └─ login/page.tsx                  # shared login PT & Admin
- ├─ (pt)/
+ ├─ pt/                                 # folder biasa, bukan route group
  │   ├─ layout.tsx                      # guard role=pt, shell nav PT
  │   ├─ dashboard/page.tsx
  │   ├─ verifikasi/page.tsx
@@ -40,13 +40,17 @@ app/
  │   ├─ riwayat/page.tsx
  │   ├─ feedback/page.tsx
  │   └─ profil/page.tsx
- └─ (admin)/
+ └─ admin/
      ├─ layout.tsx                      # guard role=admin, shell nav Admin
      ├─ dashboard/page.tsx
-     ├─ users/page.tsx
-     ├─ riwayat/page.tsx
-     └─ profil/page.tsx
+     ├─ users/page.tsx                  # tab Klien & PT
+     ├─ users/pt/[id]/edit/page.tsx     # edit konfigurasi PT
+     ├─ riwayat/page.tsx                # tab Daftar PT & Audit Admin
+     └─ profil/page.tsx                 # tab Informasi & Keamanan
 ```
+
+> Catatan: `pt/` dan `admin/` sengaja folder biasa (bukan route group) agar
+> tidak bentrok saat build. Lihat `docs/SETUP.md`.
 
 ---
 
@@ -87,20 +91,53 @@ app/
 
 ## 5. Spesifikasi Halaman — Admin
 
-### 5.1 Dashboard (`/admin/dashboard`)
-- Cards statistik global (`GET /admin/dashboard-summary`): total klien, total PT, total pairing aktif, dll (detail metrik bisa disesuaikan saat implementasi).
+> Status: seluruh UI Admin sudah di-slicing dan di-merge ke `dev` dengan **data
+> dummy**. Autentikasi admin dan integrasi endpoint `/admin/*` belum dikerjakan
+> (lihat `docs/CATATAN.md`).
 
-### 5.2 CRUD User (`/admin/users`)
-- Tabel dengan filter/tab: **Klien** dan **PT** (`GET /admin/users?role=`).
-- Klien: aksi Edit, Hapus.
-- PT: aksi **Tambah PT Baru** (tombol buka `Dialog` form: nama, email, password sementara → `POST /admin/users/pt` — **tanpa approval**, langsung aktif), Edit, Hapus.
-- Konfirmasi hapus pakai `AlertDialog` shadcn (destructive action).
+### 5.1 Dashboard (`/admin/dashboard`)
+- Banner sambutan + 2 stat card: total klien aktif dan total PT aktif.
+- Chart tren aktivitas sesi & registrasi (bar + line, 7 bulan, bulan aktif ditandai).
+- Donut komposisi spesialisasi PT (2 segmen, total dihitung dinamis).
+- Endpoint: `GET /admin/dashboard-summary`.
+
+### 5.2 Kelola Pengguna (`/admin/users`)
+- Satu halaman, 2 tab: **Daftar Personal Trainer (PT)** dan **Daftar Klien**
+  (default Klien), state tab di query `?tab=`.
+- Filter bar: search (debounce ±300ms) + 3 dropdown per tab; pagination 5 baris.
+- Tab Klien: profil/email, PT pendamping atau pill "Tidak Ada PT", program &
+  progress, status `AKTIF`/`ONBOARDING`, aksi Edit/Hapus.
+- Tab PT: profil/ID/hub, pill keahlian, kredensial, status, cabang gym, aksi
+  Edit/Hapus.
+- Aksi **Daftarkan PT Baru** (tab PT) membuka dialog form: nama+gelar, email
+  `@bugarin.fit`, WhatsApp `+62`, cabang, jenis kelamin, spesialisasi.
+- Halaman `/admin/users/pt/[id]/edit`: identitas & biodata, perbarui/paksa reset
+  password, toggle suspend, tombol Simpan Perubahan.
+- Konfirmasi hapus memakai dialog shared untuk PT dan Klien.
+- Endpoint yang dibutuhkan: `GET /admin/users?role=...`, `POST /admin/users/pt`,
+  `GET/PUT/DELETE /admin/users/:id`, `POST /admin/users/:id/force-reset-password`,
+  `PUT /admin/users/:id/suspend`.
+- **Belum diimplementasikan:** Edit Klien (belum ada desain) dan Tambah Klien
+  (open question produk). Tombol Edit Klien masih placeholder.
 
 ### 5.3 Riwayat (`/admin/riwayat`)
-- Tabel gabungan dari `GET /admin/riwayat`: log feedback PT→Klien dan log aktivitas CRUD admin. Bisa dipisah jadi 2 tab (Feedback Log / Admin Activity Log) supaya tidak campur aduk di satu tabel besar.
+- Read-only, 2 tab: **Daftar Personal Trainer (PT)** (default) dan **Audit Admin**.
+- Tab PT: search + filter kategori, tabel 6 kolom (waktu/ID, PT, klien+cohort,
+  kategori, catatan, Detail), modal Detail Feedback.
+- Tab Audit: tabel 5 kolom dengan zebra, badge aksi `CREATE/UPDATE/DELETE` dan
+  status `BERHASIL/GAGAL`. Filter/search sengaja ditunda.
+- Endpoint: `GET /admin/riwayat` (feedback + audit).
+- Tidak ada kolom rating/sentimen dan tidak ada aksi tulis.
 
 ### 5.4 Profil (`/admin/profil`)
-- Form data diri (nama, email, username), ganti password, toggle tema.
+- Banner profil + 2 tab (default Informasi Data Diri).
+- Tab Informasi: nama depan/belakang, email, telepon, bio; tombol Batalkan/Simpan;
+  blok "Mode Tampilan Antarmuka" (Terang/Gelap).
+- Tab Keamanan: kata sandi saat ini, kata sandi baru, konfirmasi; toggle
+  tampil/sembunyi; tautan "Lupa kata sandi?" masih TODO.
+- Preferensi tema disimpan di `localStorage`; belum ada upload foto.
+- Endpoint: `GET/PUT /admin/profile`, `PUT /admin/password`, opsional
+  `PUT /admin/theme`.
 
 ---
 

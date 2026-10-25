@@ -40,10 +40,11 @@ npm run dev    # http://localhost:3000
 ```
 app/
  ├─ (auth)/login/
- ├─ pt/          layout.tsx (role guard) + dashboard/ (stub)
- └─ admin/       layout.tsx (role guard) + dashboard/ (stub)
+ ├─ pt/          layout.tsx + dashboard, verifikasi, klien, klien/[id], riwayat, feedback, profil
+ └─ admin/       layout.tsx + dashboard, users, users/pt/[id]/edit, riwayat, profil
 proxy.ts         # BUKAN middleware.ts — lihat skills/nextjs-app-router-patterns
 lib/api.ts       # Axios instance, withCredentials true
+lib/mock/        # dummy aktif: admin.ts (PT sudah terintegrasi backend)
 lib/query-keys.ts
 providers/
 ```
@@ -51,5 +52,7 @@ providers/
 **Penting**: `pt/` dan `admin/` folder biasa, **bukan** route group `(pt)`/`(admin)` — route group tidak menambah segmen URL, dua route group isi `dashboard/page.tsx` akan bentrok jadi 1 path saat build.
 
 ## Yang Perlu Dikerjakan Selanjutnya
-- Role guard di `pt/layout.tsx` dan `admin/layout.tsx` masih placeholder — ganti dengan panggilan nyata ke `GET /pt/profile` / `GET /admin/profile`.
-- Halaman lain sesuai `docs/Bugarin_PRD_Frontend.md` bab 4 & 5.
+- **Auth & role guard**: login Admin belum di-wire; `pt/layout.tsx` dan `admin/layout.tsx` masih hardcode role. Ganti dengan validasi nyata (`GET /auth/me` atau profile per role).
+- **Integrasi API Admin**: ganti `lib/mock/admin.ts` dengan endpoint `/admin/*` (lihat `docs/CATATAN.md` bagian 6).
+- **Keputusan desain/produk** yang tertunda: Edit Klien, Tambah Klien, filter Audit, lupa kata sandi, review palet dark mode.
+- **Kualitas**: tabel semantik/a11y, uji responsif, dan CI `lint + typecheck + build`.
