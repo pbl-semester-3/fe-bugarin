@@ -88,6 +88,37 @@
   --radius-pill: 9999px;
 
   --shadow-card: 0 1px 3px rgba(24, 27, 37, 0.08);
+
+  /* Token halaman Admin (design/admin/*.md) — tidak mengubah token PT di atas */
+  --color-admin-bg: #f8f9ff;
+  --color-admin-heading: #0b1c30;
+  --color-admin-secondary: #5a5e69;
+  --color-admin-low: #eff4ff;
+  --color-admin-mid: #e5eeff;
+  --color-admin-track: #dce9ff;
+  --color-admin-navy: #213145;
+  --color-admin-on-navy: #c3c6d3;
+  --color-admin-green-text: #326b00;
+  --color-admin-green-deep: #214c00;
+  --color-admin-mint: #82f9be;
+  --color-admin-mint-text: #006c47;
+  --color-admin-brown: #95491f;
+  --color-admin-warning: #fff3ad;
+  --color-admin-warning-text: #773308;
+  --color-admin-danger-tint: #ffdad6;
+  --color-admin-danger-text: #93000a;
+  --color-admin-danger-dark: #a2361b;
+  --color-admin-footer: #eaf1ff;
+  --color-admin-peach: #ff9e6c;
+  --color-admin-surface: #ffffff;
+  --color-admin-inset: #ebedfb;
+  --color-admin-pill: #ffffff;
+  --color-admin-banner: #7dc04e;
+  --color-admin-banner-grad: #8fd56a;
+  --color-on-accent: #ffffff;
+  --color-aktif-tint: rgba(175, 246, 124, 0.4);
+  --color-onboarding-tint: rgba(246, 150, 101, 0.3);
+  --color-mint-tint: rgba(130, 249, 190, 0.4);
 }
 
 :root {
@@ -160,6 +191,41 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+/* Dark mode halaman Admin (design/admin/dark-mode.md — usulan, belum final).
+   Dipicu atribut data-theme="dark" yang di-set satu store tema admin
+   (ikon bulan topbar + segmented Profil). Token PT di atas tidak disentuh. */
+[data-theme="dark"] {
+  --color-admin-bg: #0b1c30;
+  --color-admin-surface: #12283f;
+  --color-admin-heading: #e8eff9;
+  --color-admin-secondary: #a8b7cb;
+  --color-admin-low: #1b3550;
+  --color-admin-mid: #244563;
+  --color-admin-track: #2f5272;
+  --color-admin-navy: #0a1626;
+  --color-admin-on-navy: #a8b7cb;
+  --color-admin-green-text: #9bdd6b;
+  --color-admin-green-deep: #9bdd6b;
+  --color-admin-brown: #ffb68f;
+  --color-admin-mint-text: #82f9be;
+  --color-admin-warning: rgba(255, 243, 173, 0.16);
+  --color-admin-warning-text: #ffe27a;
+  --color-admin-danger-tint: rgba(255, 180, 171, 0.16);
+  --color-admin-danger-text: #ffb4ab;
+  --color-admin-danger-dark: #ffb4ab;
+  --color-admin-footer: #12283f;
+  --color-admin-inset: #0f2237;
+  --color-admin-pill: #244563;
+  --color-admin-banner: #2f6b1c;
+  --color-admin-banner-grad: #3e8227;
+  --color-on-accent: #2a1204;
+  --color-aktif-tint: rgba(125, 192, 78, 0.18);
+  --color-onboarding-tint: rgba(246, 150, 101, 0.2);
+  --color-mint-tint: rgba(130, 249, 190, 0.16);
+  --color-on-primary: #0b1c30;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 @layer base {
