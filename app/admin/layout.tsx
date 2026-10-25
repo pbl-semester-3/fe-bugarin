@@ -1,18 +1,19 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { AdminShell } from "@/components/shell/admin-shell";
+import { getMe } from "@/lib/auth";
 
-// TODO: ganti fetch dummy ini dengan panggilan nyata ke GET /admin/profile.
-async function getRole(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-  if (!token) return null;
-  return "admin";
-}
+// Guard lapisan kedua (setelah proxy.ts): validasi role asli dari GET /auth/me.
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const me = await getMe();
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const role = await getRole();
-  if (role !== "admin") redirect("/login");
+  if (!me) redirect("/login");
+  if (me.role !== "admin") {
+    redirect(me.role === "pt" ? "/pt/dashboard" : "/login");
+  }
 
   return <AdminShell>{children}</AdminShell>;
 }
