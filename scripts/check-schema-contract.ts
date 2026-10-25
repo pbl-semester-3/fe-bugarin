@@ -62,10 +62,8 @@ const checks: Array<{
     schema: ptProfileSchema,
     fields: {
       nama: "nama",
-      tempatGym: "tempatGym",
-      gender: "jenisKelamin",
       usia: "usia",
-      spesialisasi: "spesialisasi",
+      whatsapp: "whatsapp",
     },
   },
   {
