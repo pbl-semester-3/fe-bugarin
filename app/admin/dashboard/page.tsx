@@ -7,7 +7,7 @@ import { WelcomeBanner } from "@/components/admin/dashboard/welcome-banner";
 import { AdminStatCard } from "@/components/admin/stat-card";
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 
-// Dashboard Admin (design/admin/dashboard-admin.md). Data dummy via useAdminDashboard.
+// Dashboard Admin (design/admin/dashboard-admin.md) — data dari API.
 export default function AdminDashboardPage() {
   const { data, isLoading, isError, refetch } = useAdminDashboard();
 
@@ -46,19 +46,19 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-5">
-      <WelcomeBanner totalActiveTrainers={data.welcome.totalActiveTrainers} />
+      <WelcomeBanner totalActiveTrainers={data.totalPt} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
         <AdminStatCard
           icon={<Users />}
-          label="Total Active Clients"
-          value={data.stats.totalActiveClients}
+          label="Total Klien Aktif"
+          value={data.totalKlien}
           className="h-[133px] sm:col-span-2"
         />
         <AdminStatCard
           icon={<Users />}
-          label="Total Active Personal Trainer"
-          value={data.stats.totalActivePersonalTrainers}
+          label="Total Personal Trainer Aktif"
+          value={data.totalPt}
           className="h-[133px] sm:col-span-2"
         />
       </div>

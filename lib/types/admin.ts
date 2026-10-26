@@ -3,20 +3,25 @@
 
 // ===== Dashboard (design/admin/dashboard-admin.md) =====
 export type AdminActivityPoint = {
-  month: string;
-  sessions: number;
-  newClients: number | null;
+  month: string; // "YYYY-MM"
+  label: string; // JAN..DES
+  totalRegistered: number;
+  totalNaikBb: number;
+  totalTurunBb: number;
   active?: boolean;
 };
 
 export type AdminSpecializationSlice = {
+  key: "turun_bb" | "naik_bb";
   label: string;
   count: number;
 };
 
 export type AdminDashboardData = {
-  welcome: { totalActiveTrainers: number };
-  stats: { totalActiveClients: number; totalActivePersonalTrainers: number };
+  totalKlien: number;
+  totalPt: number;
+  totalPairingAktif: number;
+  totalRequestPending: number;
   activityTrend: AdminActivityPoint[];
   specialization: AdminSpecializationSlice[];
 };

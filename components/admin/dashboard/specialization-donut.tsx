@@ -4,12 +4,18 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useAdminTheme } from "@/hooks/useAdminTheme";
 import type { AdminSpecializationSlice } from "@/lib/types/admin";
 
-const SLICE_COLORS_LIGHT = ["#BA1A1A", "#82F9BE"];
-// Dark mode: merah diganti #E5484D agar kontras di latar gelap (dark-mode.md §5.9).
-const SLICE_COLORS_DARK = ["#E5484D", "#82F9BE"];
+const SLICE_COLORS_LIGHT: Record<AdminSpecializationSlice["key"], string> = {
+  turun_bb: "#BA1A1A",
+  naik_bb: "#82F9BE",
+};
+// Dark mode: merah diganti agar kontras di latar gelap (dark-mode.md §5.9).
+const SLICE_COLORS_DARK: Record<AdminSpecializationSlice["key"], string> = {
+  turun_bb: "#E5484D",
+  naik_bb: "#82F9BE",
+};
 
 // Donut "Spesialisasi PT" (design/admin/dashboard-admin.md §3.5).
-// Angka tengah dihitung dinamis dari total segmen.
+// Warna dipetakan berdasarkan key (bukan urutan array).
 export function SpecializationDonut({
   data,
 }: {
@@ -44,11 +50,8 @@ export function SpecializationDonut({
               endAngle={-270}
               strokeWidth={0}
             >
-              {data.map((slice, index) => (
-                <Cell
-                  key={slice.label}
-                  fill={sliceColors[index % sliceColors.length]}
-                />
+              {data.map((slice) => (
+                <Cell key={slice.key} fill={sliceColors[slice.key]} />
               ))}
             </Pie>
             <Tooltip
@@ -76,20 +79,17 @@ export function SpecializationDonut({
       </div>
 
       <div className="mt-2 space-y-2">
-        {data.map((slice, index) => {
+        {data.map((slice) => {
           const pct = total > 0 ? Math.round((slice.count / total) * 100) : 0;
           return (
             <div
-              key={slice.label}
+              key={slice.key}
               className="flex items-center justify-between text-xs"
             >
               <span className="flex items-center gap-2 text-admin-heading">
                 <span
                   className="size-2.5 rounded-full"
-                  style={{
-                    backgroundColor:
-                      sliceColors[index % sliceColors.length],
-                  }}
+                  style={{ backgroundColor: sliceColors[slice.key] }}
                 />
                 {slice.label}
               </span>

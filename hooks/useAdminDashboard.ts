@@ -1,11 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { mockAdminDashboard } from "@/lib/mock/admin";
+import { api } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
+import type { AdminDashboardData } from "@/lib/types/admin";
 
-// TODO(integrasi): ganti queryFn ke GET /admin/dashboard-summary lalu hapus mock.
+// GET /admin/dashboard-summary
 export function useAdminDashboard() {
   return useQuery({
     queryKey: queryKeys.admin.dashboard,
-    queryFn: () => Promise.resolve(mockAdminDashboard),
+    queryFn: () =>
+      api
+        .get<{ data: AdminDashboardData }>("/admin/dashboard-summary")
+        .then((r) => r.data.data),
   });
 }

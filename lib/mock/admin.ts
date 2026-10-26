@@ -2,29 +2,10 @@
 // Sumber: design/admin/*.md bagian "Data". JANGAN diimpor langsung oleh
 // komponen — akses hanya lewat hooks/useAdmin*.ts agar mudah dibersihkan.
 import type {
-  AdminDashboardData,
   AdminProfile,
   AdminRiwayatData,
   AdminUsersData,
 } from "@/lib/types/admin";
-
-export const mockAdminDashboard: AdminDashboardData = {
-  welcome: { totalActiveTrainers: 86 },
-  stats: { totalActiveClients: 4, totalActivePersonalTrainers: 2 },
-  activityTrend: [
-    { month: "JAN", sessions: 45, newClients: 40 },
-    { month: "FEB", sessions: 60, newClients: 50 },
-    { month: "MAR", sessions: 74, newClients: 68 },
-    { month: "APR", sessions: 66, newClients: 60 },
-    { month: "MEI", sessions: 86, newClients: 80 },
-    { month: "JUN", sessions: 92, newClients: 90 },
-    { month: "JUL (AKTIF)", sessions: 100, newClients: null, active: true },
-  ],
-  specialization: [
-    { label: "Turun Berat Badan", count: 48 },
-    { label: "Naik Berat Badan", count: 38 },
-  ],
-};
 
 export const mockAdminUsers: AdminUsersData = {
   stats: { totalActiveClients: 1428, clientsConnectedToPT: 1392, activeTrainers: 86 },
