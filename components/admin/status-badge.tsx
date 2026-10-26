@@ -8,6 +8,7 @@ const statusBadgeVariants = cva(
     variants: {
       variant: {
         aktif: "bg-aktif-tint text-admin-green-text",
+        nonaktif: "bg-admin-danger-tint text-admin-danger-text",
         onboarding: "bg-onboarding-tint text-admin-brown",
         create: "bg-primary/20 text-admin-green-deep",
         berhasil: "bg-primary/20 text-admin-green-deep",

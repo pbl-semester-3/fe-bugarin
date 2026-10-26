@@ -62,6 +62,8 @@ export const mockAdminUsers: AdminUsersData = {
       createdAt: "2024-01-14",
       status: "AKTIF",
       branch: "Senopati Hub (Jakarta Selatan)",
+      photoUrl: null,
+      whatsapp: "+62 811-0881-001",
     },
     {
       id: 2,
@@ -73,6 +75,8 @@ export const mockAdminUsers: AdminUsersData = {
       createdAt: "2024-02-03",
       status: "AKTIF",
       branch: "Kemang Hub (Jakarta Selatan)",
+      photoUrl: null,
+      whatsapp: "+62 811-0742-002",
     },
     {
       id: 3,
@@ -84,6 +88,8 @@ export const mockAdminUsers: AdminUsersData = {
       createdAt: "2024-03-21",
       status: "AKTIF",
       branch: "Senopati Hub (Jakarta Selatan)",
+      photoUrl: null,
+      whatsapp: "+62 811-0617-003",
     },
     {
       id: 4,
@@ -95,6 +101,8 @@ export const mockAdminUsers: AdminUsersData = {
       createdAt: "2024-04-09",
       status: "AKTIF",
       branch: "BSD Hub (Tangerang Selatan)",
+      photoUrl: null,
+      whatsapp: "+62 811-0555-004",
     },
     {
       id: 5,
@@ -106,6 +114,8 @@ export const mockAdminUsers: AdminUsersData = {
       createdAt: "2024-05-17",
       status: "AKTIF",
       branch: "Depok Hub (Jawa Barat)",
+      photoUrl: null,
+      whatsapp: "+62 811-0490-005",
     },
   ],
 };

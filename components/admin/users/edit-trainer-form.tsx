@@ -20,7 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAdminUsers } from "@/hooks/useAdminUsers";
+import { useAdminTrainers, useSendTrainerResetCode, useUpdateTrainer } from "@/hooks/useAdminTrainers";
+import { apiErrorMessage } from "@/lib/api";
 import { cn } from "cn";
 
 const BRANCH_OPTIONS = [
@@ -37,42 +38,104 @@ const labelClass =
 
 // Halaman Edit PT (design/admin/kelola-pengguna.md §8).
 export function EditTrainerForm({ trainerId }: { trainerId: number }) {
-  const { data, isLoading } = useAdminUsers();
-  const trainer = data?.trainers.find((t) => t.id === trainerId);
+  const { data: trainers, isLoading } = useAdminTrainers();
+  const trainer = trainers?.find((t) => t.id === trainerId);
+  const updateProfile = useUpdateTrainer();
+  const setActive = useUpdateTrainer();
+  const sendResetCode = useSendTrainerResetCode();
+  const branchOptions =
+    trainer?.hub && !BRANCH_OPTIONS.includes(trainer.hub)
+      ? [...BRANCH_OPTIONS, trainer.hub]
+      : BRANCH_OPTIONS;
 
   const [fullName, setFullName] = useState("");
-  const [whatsapp, setWhatsapp] = useState("+62 811-2345-6789");
+  const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [branch, setBranch] = useState(BRANCH_OPTIONS[0]);
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [suspended, setSuspended] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [suspendError, setSuspendError] = useState<string | null>(null);
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
+  const [resetError, setResetError] = useState<string | null>(null);
 
   const [initialized, setInitialized] = useState(false);
   if (!initialized && trainer) {
     setInitialized(true);
     setFullName(trainer.name);
     setEmail(trainer.email);
+    setWhatsapp(trainer.whatsapp ?? "");
     setBranch(
-      BRANCH_OPTIONS.find((b) => b.startsWith(trainer.hub)) ??
-        BRANCH_OPTIONS[0]
+      trainer.hub && trainer.hub !== "-" ? trainer.hub : BRANCH_OPTIONS[0]
     );
+    setSuspended(trainer.status === "NONAKTIF");
   }
 
-  function handleSave() {
-    // TODO(integrasi): PUT /admin/users/:id
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  async function handleSave() {
+    setSaveError(null);
+    const normalizedWhatsapp = whatsapp.replace(/[^\d+]/g, "");
+    try {
+      await updateProfile.mutateAsync({
+        id: trainerId,
+        nama: fullName.trim(),
+        email: email.trim(),
+        tempatGym: branch,
+        ...(normalizedWhatsapp ? { whatsapp: normalizedWhatsapp } : {}),
+        ...(password ? { password } : {}),
+      });
+      setPassword("");
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      setSaveError(apiErrorMessage(err, "Gagal menyimpan perubahan."));
+    }
   }
 
-  function handleForceReset() {
-    if (!window.confirm("Paksa reset password? Sesi login PT akan keluar.")) {
+  async function handleToggleSuspend() {
+    const next = !suspended;
+    if (
+      next &&
+      !window.confirm(
+        "Suspend akun pelatih ini? Akses login dan booking sesi akan dinonaktifkan."
+      )
+    ) {
       return;
     }
-    // TODO(integrasi): POST /admin/users/:id/force-reset-password
-    setResetSent(true);
-    setTimeout(() => setResetSent(false), 2000);
+
+    setSuspendError(null);
+    try {
+      const res = await setActive.mutateAsync({
+        id: trainerId,
+        isActive: !next,
+      });
+      setSuspended(res.data.data.isActive === false);
+    } catch (err) {
+      setSuspendError(apiErrorMessage(err, "Gagal mengubah status akun PT."));
+    }
+  }
+
+  async function handleForceReset() {
+    if (!trainer) return;
+    if (
+      !window.confirm(
+        "Kirim kode reset password ke email PT? PT perlu memasukkan kode untuk membuat sandi baru."
+      )
+    ) {
+      return;
+    }
+
+    setResetError(null);
+    setResetMessage(null);
+    try {
+      await sendResetCode.mutateAsync(trainer.email);
+      setResetMessage(
+        "Jika akun aktif, kode reset telah dikirim ke email PT."
+      );
+    } catch (err) {
+      setResetError(apiErrorMessage(err, "Gagal mengirim kode reset."));
+    }
   }
 
   if (isLoading) {
@@ -187,7 +250,7 @@ export function EditTrainerForm({ trainerId }: { trainerId: number }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {BRANCH_OPTIONS.map((option) => (
+                    {branchOptions.map((option) => (
                       <SelectItem key={option} value={option}>
                         {option}
                       </SelectItem>
@@ -217,7 +280,9 @@ export function EditTrainerForm({ trainerId }: { trainerId: number }) {
               <input
                 id="edit-password"
                 type={showPassword ? "text" : "password"}
-                defaultValue="password-dummy"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Kosongkan jika tidak diubah"
                 className={cn(inputClass, "pr-9")}
               />
               <button
@@ -236,14 +301,27 @@ export function EditTrainerForm({ trainerId }: { trainerId: number }) {
                 )}
               </button>
             </div>
-            <div className="flex justify-end">
+            <div className="flex flex-col items-end gap-1">
               <button
                 type="button"
                 onClick={handleForceReset}
-                className="rounded-md bg-brand px-4 py-2 text-[11px] font-medium text-on-accent transition-opacity hover:opacity-90"
+                disabled={sendResetCode.isPending}
+                className="rounded-md bg-brand px-4 py-2 text-[11px] font-medium text-on-accent transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                {resetSent ? "Link reset terkirim" : "Paksa Reset Password"}
+                {sendResetCode.isPending
+                  ? "Mengirim..."
+                  : "Kirim Kode Reset Password"}
               </button>
+              {resetMessage && (
+                <p className="text-[10px] text-admin-green-text">
+                  {resetMessage}
+                </p>
+              )}
+              {resetError && (
+                <p className="text-[10px] text-admin-danger-text">
+                  {resetError}
+                </p>
+              )}
             </div>
           </div>
 
@@ -256,27 +334,28 @@ export function EditTrainerForm({ trainerId }: { trainerId: number }) {
                 Nonaktifkan akses login dan booking sesi jika pelatih sedang
                 mengambil cuti panjang atau audit operasional.
               </p>
+              <p className="mt-1 text-[10px] font-bold tracking-wide uppercase">
+                Status saat ini:{" "}
+                <span
+                  className={
+                    suspended
+                      ? "text-admin-danger-text"
+                      : "text-admin-green-text"
+                  }
+                >
+                  {suspended ? "NONAKTIF" : "AKTIF"}
+                </span>
+              </p>
             </div>
             <button
               type="button"
               role="switch"
               aria-checked={suspended}
               aria-label="Kunci sementara akun pelatih"
-              onClick={() => {
-                const next = !suspended;
-                if (
-                  next &&
-                  !window.confirm(
-                    "Suspend akun pelatih ini? Akses login dan booking sesi akan dinonaktifkan."
-                  )
-                ) {
-                  return;
-                }
-                // TODO(integrasi): PUT /admin/users/:id/suspend
-                setSuspended(next);
-              }}
+              disabled={setActive.isPending}
+              onClick={handleToggleSuspend}
               className={cn(
-                "relative h-6 w-11 shrink-0 rounded-pill transition-colors",
+                "relative h-6 w-11 shrink-0 rounded-pill transition-colors disabled:opacity-60",
                 suspended ? "bg-danger-strong" : "bg-admin-track"
               )}
             >
@@ -288,19 +367,32 @@ export function EditTrainerForm({ trainerId }: { trainerId: number }) {
               />
             </button>
           </div>
+          {suspendError && (
+            <p className="mt-2 text-[10px] text-admin-danger-text">
+              {suspendError}
+            </p>
+          )}
         </section>
       </div>
 
       {/* Desain belum punya tombol Simpan (catatan inkonsistensi no. 1) —
           ditambahkan sesuai rekomendasi md. */}
-      <div className="flex justify-end">
+      <div className="flex flex-col items-end gap-1">
         <button
           type="button"
           onClick={handleSave}
-          className="rounded-control bg-brand px-6 py-2.5 text-sm font-semibold text-on-accent shadow-card transition-opacity hover:opacity-90"
+          disabled={updateProfile.isPending}
+          className="rounded-control bg-brand px-6 py-2.5 text-sm font-semibold text-on-accent shadow-card transition-opacity hover:opacity-90 disabled:opacity-60"
         >
-          {saved ? "Perubahan tersimpan" : "Simpan Perubahan"}
+          {updateProfile.isPending
+            ? "Menyimpan..."
+            : saved
+              ? "Perubahan tersimpan"
+              : "Simpan Perubahan"}
         </button>
+        {saveError && (
+          <p className="text-[10px] text-admin-danger-text">{saveError}</p>
+        )}
       </div>
     </div>
   );

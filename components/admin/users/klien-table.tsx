@@ -94,14 +94,14 @@ export function KlienTable({ rows, onDelete }: KlienTableProps) {
                 {/* TODO(design): Edit Klien belum ada desain — handler sengaja kosong. */}
                 <button
                   type="button"
-                  className="rounded-md bg-admin-mid px-3 py-1.5 text-[11px] font-medium text-admin-heading transition-colors hover:bg-admin-track"
+                  className="rounded-md bg-admin-warning px-3 py-1.5 text-[11px] font-medium text-admin-warning-text transition-opacity hover:opacity-90"
                 >
                   Edit
                 </button>
                 <button
                   type="button"
                   onClick={() => onDelete(row)}
-                  className="rounded-md bg-admin-mid px-3 py-1.5 text-[11px] font-medium text-admin-heading transition-colors hover:bg-admin-track"
+                  className="rounded-md bg-admin-danger-tint px-3 py-1.5 text-[11px] font-medium text-admin-danger-text transition-opacity hover:opacity-90"
                 >
                   Hapus
                 </button>

@@ -5,6 +5,7 @@ type AvatarCellSize = 32 | 40;
 
 interface AvatarCellProps {
   name: string;
+  src?: string | null;
   sub?: React.ReactNode;
   size?: AvatarCellSize;
   /** Ring oranye — klien Onboarding tanpa PT (design/admin/kelola-pengguna.md §4.2). */
@@ -17,6 +18,7 @@ interface AvatarCellProps {
 // Sel avatar + nama + sub-teks (dipakai tabel Klien, PT, Riwayat).
 export function AvatarCell({
   name,
+  src,
   sub,
   size = 40,
   ring = false,
@@ -28,6 +30,7 @@ export function AvatarCell({
     <div className={cn("flex items-center gap-3", className)}>
       <Avatar
         name={name}
+        src={src}
         size={size}
         className={cn(ring && "rounded-full ring-2 ring-brand")}
       />
