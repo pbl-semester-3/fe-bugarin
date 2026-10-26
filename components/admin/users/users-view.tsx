@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Users } from "lucide-react";
 import { AdminFilterBar, type AdminFilterSelect } from "@/components/admin/filter-bar";
 import { PageBanner } from "@/components/admin/page-banner";
 import { AdminPagination } from "@/components/admin/pagination";
@@ -11,6 +11,7 @@ import { AdminTabSwitcher } from "@/components/admin/tab-switcher";
 import { TableCard } from "@/components/admin/table-card";
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
 import { useAdminUsers, useDeleteUser } from "@/hooks/useAdminUsers";
+import { useAdminTrainers, useDeleteTrainer } from "@/hooks/useAdminTrainers";
 import type { ClientRow, TrainerRow } from "@/lib/types/admin";
 import { CreateTrainerDialog } from "./create-trainer-dialog";
 import { KlienTable } from "./klien-table";
@@ -36,12 +37,18 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
     | null
   >(null);
 
-  const { data, isLoading } = useAdminUsers();
+  const { data: adminData, isLoading: isAdminUsersLoading } = useAdminUsers();
+  const { data: trainerData, isLoading: isTrainersLoading } = useAdminTrainers();
   const deleteUser = useDeleteUser();
+  const deleteTrainer = useDeleteTrainer();
 
-  const clients = useMemo(() => data?.clients ?? [], [data]);
-  const trainers = useMemo(() => data?.trainers ?? [], [data]);
-  const stats = data?.stats;
+  const clients = useMemo(() => adminData?.clients ?? [], [adminData]);
+  const trainers = useMemo(() => trainerData ?? [], [trainerData]);
+  const stats = adminData?.stats;
+  const activeTrainerCount = useMemo(
+    () => trainers.filter((trainer) => trainer.status === "AKTIF").length,
+    [trainers]
+  );
 
   function changeTab(next: TabValue) {
     setTab(next);
@@ -98,9 +105,10 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
   );
 
   const isKlien = tab === "klien";
+  const isLoading = isKlien ? isAdminUsersLoading : isTrainersLoading;
   const total = isKlien
     ? (stats?.totalActiveClients ?? filteredClients.length)
-    : (stats?.activeTrainers ?? filteredTrainers.length);
+    : filteredTrainers.length;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
   const safePage = Math.min(page, totalPages);
 
@@ -167,6 +175,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
           options: [
             { value: "all", label: "Semua Status PT" },
             { value: "AKTIF", label: "AKTIF" },
+            { value: "NONAKTIF", label: "NONAKTIF" },
           ],
         },
         {
@@ -211,14 +220,16 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
 
       <div className="grid grid-cols-1 gap-4 pb-2 sm:grid-cols-2">
         <AdminStatCard
+          icon={<Users />}
           label="Total Klien Aktif"
           value={(stats?.totalActiveClients ?? 0).toLocaleString("id-ID")}
-          className="h-[116px]"
+          className="h-[133px]"
         />
         <AdminStatCard
+          icon={<Users />}
           label="Klien Terhubung PT"
           value={(stats?.clientsConnectedToPT ?? 0).toLocaleString("id-ID")}
-          className="h-[116px]"
+          className="h-[133px]"
         />
       </div>
 
@@ -229,7 +240,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
           {
             value: "pt",
             label: "Daftar Personal Trainer (PT)",
-            badge: `${stats?.activeTrainers ?? 0} Aktif`,
+            badge: `${activeTrainerCount} Aktif`,
           },
           {
             value: "klien",
@@ -328,9 +339,19 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
             ? "Yakin Menghapus Akun Klien?"
             : "Yakin Menghapus Akun PT?"
         }
-        isPending={deleteUser.isPending}
+        isPending={
+          deleteTarget?.type === "pt"
+            ? deleteTrainer.isPending
+            : deleteUser.isPending
+        }
         onConfirm={() => {
           if (!deleteTarget) return;
+          if (deleteTarget.type === "pt") {
+            deleteTrainer.mutate(deleteTarget.row.id, {
+              onSuccess: () => setDeleteTarget(null),
+            });
+            return;
+          }
           deleteUser.mutate(deleteTarget.row.id, {
             onSuccess: () => setDeleteTarget(null),
           });

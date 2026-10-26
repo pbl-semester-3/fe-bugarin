@@ -13,7 +13,10 @@ interface PtTableProps {
 }
 
 function formatCreatedAt(iso: string) {
-  return new Date(iso).toLocaleDateString("id-ID", {
+  if (!iso) return "—";
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("id-ID", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -46,6 +49,7 @@ export function PtTable({ rows, onEdit, onDelete }: PtTableProps) {
             <div className="flex justify-center">
               <AvatarCell
                 name={row.name}
+                src={row.photoUrl}
                 size={32}
                 sub={`ID: ${row.trainerId} • ${row.hub}`}
                 nameClassName="text-[13px]"
@@ -73,7 +77,10 @@ export function PtTable({ rows, onEdit, onDelete }: PtTableProps) {
             </div>
 
             <div className="flex justify-center">
-              <StatusBadge variant="aktif" dot>
+              <StatusBadge
+                variant={row.status === "AKTIF" ? "aktif" : "nonaktif"}
+                dot
+              >
                 {row.status}
               </StatusBadge>
             </div>
@@ -84,14 +91,14 @@ export function PtTable({ rows, onEdit, onDelete }: PtTableProps) {
               <button
                 type="button"
                 onClick={() => onEdit(row)}
-                className="rounded-md bg-admin-mid px-3 py-1.5 text-[11px] font-medium text-admin-heading transition-colors hover:bg-admin-track"
+                className="rounded-md bg-admin-warning px-3 py-1.5 text-[11px] font-medium text-admin-warning-text transition-opacity hover:opacity-90"
               >
                 Edit
               </button>
               <button
                 type="button"
                 onClick={() => onDelete(row)}
-                className="rounded-md bg-admin-mid px-3 py-1.5 text-[11px] font-medium text-admin-heading transition-colors hover:bg-admin-track"
+                className="rounded-md bg-admin-danger-tint px-3 py-1.5 text-[11px] font-medium text-admin-danger-text transition-opacity hover:opacity-90"
               >
                 Hapus
               </button>

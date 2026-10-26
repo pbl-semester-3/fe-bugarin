@@ -41,6 +41,8 @@ export type ClientRow = {
   status: ClientStatus;
 };
 
+export type TrainerStatus = "AKTIF" | "NONAKTIF";
+
 export type TrainerRow = {
   id: number;
   name: string;
@@ -49,8 +51,10 @@ export type TrainerRow = {
   specialization: "Naik BB" | "Turun BB";
   email: string;
   createdAt: string;
-  status: "AKTIF";
+  status: TrainerStatus;
   branch: string;
+  photoUrl: string | null;
+  whatsapp: string | null;
 };
 
 export type AdminUsersStats = {
