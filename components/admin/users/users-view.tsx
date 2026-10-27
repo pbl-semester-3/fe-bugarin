@@ -10,7 +10,8 @@ import { AdminStatCard } from "@/components/admin/stat-card";
 import { AdminTabSwitcher } from "@/components/admin/tab-switcher";
 import { TableCard } from "@/components/admin/table-card";
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog";
-import { useAdminUsers, useDeleteUser } from "@/hooks/useAdminUsers";
+import { useAdminKlien, useDeleteKlien } from "@/hooks/useAdminKlien";
+import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import { useAdminTrainers, useDeleteTrainer } from "@/hooks/useAdminTrainers";
 import type { ClientRow, TrainerRow } from "@/lib/types/admin";
 import { CreateTrainerDialog } from "./create-trainer-dialog";
@@ -37,14 +38,31 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
     | null
   >(null);
 
-  const { data: adminData, isLoading: isAdminUsersLoading } = useAdminUsers();
+  const { data: klienData, isLoading: isKlienLoading } = useAdminKlien();
   const { data: trainerData, isLoading: isTrainersLoading } = useAdminTrainers();
-  const deleteUser = useDeleteUser();
+  const { data: dashboard } = useAdminDashboard();
+  const deleteKlien = useDeleteKlien();
   const deleteTrainer = useDeleteTrainer();
 
-  const clients = useMemo(() => adminData?.clients ?? [], [adminData]);
   const trainers = useMemo(() => trainerData ?? [], [trainerData]);
-  const stats = adminData?.stats;
+  // Foto PT tidak ikut di response list klien, jadi ambil dari data PT
+  // (kunci: nama PT yang sama dengan `ptNama`).
+  const trainerPhotoByName = useMemo(
+    () => new Map(trainers.map((trainer) => [trainer.name, trainer.photoUrl])),
+    [trainers]
+  );
+  const clients = useMemo(
+    () =>
+      (klienData ?? []).map((client) => ({
+        ...client,
+        trainerPhotoUrl: client.trainer
+          ? trainerPhotoByName.get(client.trainer) ?? null
+          : null,
+      })),
+    [klienData, trainerPhotoByName]
+  );
+  const totalActiveClients = dashboard?.totalKlien ?? 0;
+  const clientsConnectedToPT = dashboard?.totalPairingAktif ?? 0;
   const activeTrainerCount = useMemo(
     () => trainers.filter((trainer) => trainer.status === "AKTIF").length,
     [trainers]
@@ -76,7 +94,10 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
         const matchStatus =
           statusFilter === "all" || client.status === statusFilter;
         const matchProgram =
-          secondFilter === "all" || client.program === secondFilter;
+          secondFilter === "all" ||
+          (secondFilter === "none"
+            ? client.program === null
+            : client.program === secondFilter);
         const matchTrainer =
           thirdFilter === "all" || client.trainer === thirdFilter;
         return matchSearch && matchStatus && matchProgram && matchTrainer;
@@ -105,10 +126,8 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
   );
 
   const isKlien = tab === "klien";
-  const isLoading = isKlien ? isAdminUsersLoading : isTrainersLoading;
-  const total = isKlien
-    ? (stats?.totalActiveClients ?? filteredClients.length)
-    : filteredTrainers.length;
+  const isLoading = isKlien ? isKlienLoading : isTrainersLoading;
+  const total = isKlien ? filteredClients.length : filteredTrainers.length;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
   const safePage = Math.min(page, totalPages);
 
@@ -147,6 +166,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
             { value: "all", label: "Semua Program & Cohort" },
             { value: "Naik Berat Badan", label: "Naik Berat Badan" },
             { value: "Turun Berat Badan", label: "Turun Berat Badan" },
+            { value: "none", label: "Belum ada program" },
           ],
         },
         {
@@ -215,20 +235,20 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
       <PageBanner
         gradient
         title="Manajemen Terpusat Klien & Atlet Bugarin"
-        description={`Pantau ${(stats?.totalActiveClients ?? 0).toLocaleString("id-ID")} atlet aktif, alokasi Personal Trainer pendamping, program latihan aktif, serta kepatuhan biometrik atlet secara real-time.`}
+        description={`Pantau ${totalActiveClients.toLocaleString("id-ID")} atlet aktif, alokasi Personal Trainer pendamping, program latihan aktif, serta kepatuhan biometrik atlet secara real-time.`}
       />
 
       <div className="grid grid-cols-1 gap-4 pb-2 sm:grid-cols-2">
         <AdminStatCard
           icon={<Users />}
           label="Total Klien Aktif"
-          value={(stats?.totalActiveClients ?? 0).toLocaleString("id-ID")}
+          value={totalActiveClients.toLocaleString("id-ID")}
           className="h-[133px]"
         />
         <AdminStatCard
           icon={<Users />}
           label="Klien Terhubung PT"
-          value={(stats?.clientsConnectedToPT ?? 0).toLocaleString("id-ID")}
+          value={clientsConnectedToPT.toLocaleString("id-ID")}
           className="h-[133px]"
         />
       </div>
@@ -245,7 +265,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
           {
             value: "klien",
             label: "Daftar Klien",
-            badge: `${(stats?.totalActiveClients ?? 0).toLocaleString("id-ID")} Aktif`,
+            badge: `${totalActiveClients.toLocaleString("id-ID")} Aktif`,
           },
         ]}
         action={
@@ -272,7 +292,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
             }}
             searchPlaceholder={
               isKlien
-                ? "Cari nama klien, email, ID atlet, atau nama PT..."
+                ? "Cari nama klien, email, atau nama PT..."
                 : "Cari nama PT, email, atau ID trainer..."
             }
             selects={selects}
@@ -342,7 +362,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
         isPending={
           deleteTarget?.type === "pt"
             ? deleteTrainer.isPending
-            : deleteUser.isPending
+            : deleteKlien.isPending
         }
         onConfirm={() => {
           if (!deleteTarget) return;
@@ -352,7 +372,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
             });
             return;
           }
-          deleteUser.mutate(deleteTarget.row.id, {
+          deleteKlien.mutate(deleteTarget.row.id, {
             onSuccess: () => setDeleteTarget(null),
           });
         }}
