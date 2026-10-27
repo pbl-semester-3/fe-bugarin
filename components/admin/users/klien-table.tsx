@@ -31,6 +31,7 @@ export function KlienTable({ rows, onDelete }: KlienTableProps) {
 
         {rows.map((row) => {
           const isNaik = row.program === "Naik Berat Badan";
+          const hasProgram = row.program !== null;
           return (
             <div
               key={row.id}
@@ -40,6 +41,7 @@ export function KlienTable({ rows, onDelete }: KlienTableProps) {
               <div className="flex justify-center">
                 <AvatarCell
                   name={row.name}
+                  src={row.photoUrl}
                   sub={row.email}
                   ring={row.status === "ONBOARDING"}
                 />
@@ -48,7 +50,11 @@ export function KlienTable({ rows, onDelete }: KlienTableProps) {
               <div className="flex justify-center">
                 {row.trainer ? (
                   <div className="flex items-center gap-2">
-                    <Avatar name={row.trainer} size={32} />
+                    <Avatar
+                      name={row.trainer}
+                      src={row.trainerPhotoUrl}
+                      size={32}
+                    />
                     <p className="max-w-40 text-left text-xs leading-tight font-bold text-admin-heading">
                       {row.trainer}
                     </p>
@@ -63,16 +69,18 @@ export function KlienTable({ rows, onDelete }: KlienTableProps) {
               <div className="flex flex-col items-center gap-1.5">
                 <div className="flex w-[165px] items-center justify-between">
                   <span className="text-[11px] font-bold text-admin-heading">
-                    {row.program}
+                    {row.program ?? "Belum ada program"}
                   </span>
                   <span
                     className={
-                      isNaik
-                        ? "text-[11px] font-bold text-admin-green-text"
-                        : "text-[11px] font-bold text-admin-brown"
+                      !hasProgram
+                        ? "text-[11px] font-bold text-admin-secondary"
+                        : isNaik
+                          ? "text-[11px] font-bold text-admin-green-text"
+                          : "text-[11px] font-bold text-admin-brown"
                     }
                   >
-                    {row.progress}%
+                    {hasProgram ? `${row.progress}%` : "—"}
                   </span>
                 </div>
                 <AdminProgressBar

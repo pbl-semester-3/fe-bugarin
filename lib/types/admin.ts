@@ -36,7 +36,8 @@ export type ClientRow = {
   email: string;
   photoUrl: string | null;
   trainer: string | null;
-  program: ClientProgram;
+  trainerPhotoUrl?: string | null;
+  program: ClientProgram | null;
   progress: number;
   status: ClientStatus;
 };
