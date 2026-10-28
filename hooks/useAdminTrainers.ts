@@ -98,3 +98,41 @@ export function useSendTrainerResetCode() {
       api.post<{ data: string }>("/auth/forgot-password", { email }),
   });
 }
+
+export type CreateTrainerPayload = {
+  nama: string;
+  email: string;
+  password: string;
+  whatsapp: string;
+  jenisKelamin: "pria" | "wanita";
+  tempatGym: string;
+  spesialisasi: "turun_bb" | "naik_bb";
+};
+
+type CreateTrainerResponse = {
+  id: number;
+  email: string;
+  username: string;
+  role: "pt";
+  ptProfile: {
+    nama: string;
+    usia: number | null;
+    jenisKelamin: "pria" | "wanita" | null;
+    whatsapp: string | null;
+    tempatGym: string | null;
+    spesialisasi: "turun_bb" | "naik_bb" | null;
+  } | null;
+};
+
+// POST /admin/users/pt — username di-generate backend, password dari admin.
+export function useCreateTrainer() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateTrainerPayload) =>
+      api.post<{ data: CreateTrainerResponse }>("/admin/users/pt", payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.admin.users("pt") });
+      qc.invalidateQueries({ queryKey: queryKeys.admin.dashboard });
+    },
+  });
+}

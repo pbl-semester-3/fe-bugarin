@@ -76,7 +76,8 @@ export type TrainerForm = {
   whatsapp: string;
   branch: string;
   gender: "Laki-laki" | "Perempuan";
-  specialization: string;
+  specialization: "Naik BB" | "Turun BB" | "";
+  password: string;
 };
 
 export type TrainerEditForm = {
