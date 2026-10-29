@@ -100,9 +100,10 @@ export type FeedbackCategory =
 export type FeedbackLog = {
   id: string;
   time: string;
-  trainer: { name: string; title: string; level: string };
-  client: { name: string; cohort: string };
-  category: FeedbackCategory;
+  date?: string;
+  trainer: { name: string; title?: string; level?: string };
+  client: { name: string; cohort?: string };
+  category?: FeedbackCategory;
   note: string;
 };
 
