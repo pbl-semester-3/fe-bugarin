@@ -15,6 +15,7 @@ import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import { useAdminTrainers, useDeleteTrainer } from "@/hooks/useAdminTrainers";
 import type { ClientRow, TrainerRow } from "@/lib/types/admin";
 import { CreateTrainerDialog } from "./create-trainer-dialog";
+import { KlienDetailDialog } from "./klien-detail-dialog";
 import { KlienTable } from "./klien-table";
 import { PtTable } from "./pt-table";
 
@@ -32,6 +33,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
   const [thirdFilter, setThirdFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
+  const [viewTarget, setViewTarget] = useState<ClientRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<
     | { type: "klien"; row: ClientRow }
     | { type: "pt"; row: TrainerRow }
@@ -316,6 +318,7 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
           ) : (
             <KlienTable
               rows={pagedClients}
+              onView={setViewTarget}
               onDelete={(row) => setDeleteTarget({ type: "klien", row })}
             />
           )
@@ -343,6 +346,8 @@ export function UsersView({ initialTab }: { initialTab: TabValue }) {
       </TableCard>
 
       <CreateTrainerDialog open={createOpen} onOpenChange={setCreateOpen} />
+
+      <KlienDetailDialog row={viewTarget} onClose={() => setViewTarget(null)} />
 
       <ConfirmDeleteDialog
         open={deleteTarget !== null}
