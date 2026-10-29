@@ -131,10 +131,12 @@ export type AdminProfile = {
   firstName: string;
   lastName: string;
   email: string;
+  username?: string;
   phone: string;
   bio: string;
   photoUrl: string | null;
   role: "ADMIN";
+  tema?: "siang" | "malam";
   lastUpdatedAt: string;
 };
 

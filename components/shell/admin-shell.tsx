@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Bell,
   History,
@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
 import { SidebarItem } from "@/components/sidebar-item";
-import { useAdminProfile } from "@/hooks/useAdminProfile";
+import { useAdminProfile, useUpdateAdminTema } from "@/hooks/useAdminProfile";
 import { useAdminTheme } from "@/hooks/useAdminTheme";
 import { useLogout } from "@/hooks/useAuth";
 import { apiErrorMessage } from "@/lib/api";
@@ -35,7 +35,21 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   const logout = useLogout();
   const [logoutError, setLogoutError] = useState<string | null>(null);
-  const { theme, toggleAdminTheme } = useAdminTheme();
+  const { theme, setAdminTheme } = useAdminTheme();
+  const updateTema = useUpdateAdminTema();
+
+  // Tema dari backend menjadi sumber awal; toggle tetap tersimpan lokal saat request.
+  useEffect(() => {
+    if (profile?.tema) {
+      setAdminTheme(profile.tema === "malam" ? "dark" : "light");
+    }
+  }, [profile?.tema, setAdminTheme]);
+
+  function handleToggleTheme() {
+    const next = theme === "dark" ? "light" : "dark";
+    setAdminTheme(next);
+    updateTema.mutate(next === "dark" ? "malam" : "siang");
+  }
 
   function handleLogout() {
     setLogoutError(null);
@@ -91,7 +105,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-10 flex h-16 items-center justify-end gap-4 border-b border-surface-4 bg-admin-surface px-6">
           <button
             type="button"
-            onClick={toggleAdminTheme}
+            onClick={handleToggleTheme}
             aria-label={theme === "dark" ? "Kembali ke mode terang" : "Aktifkan mode gelap"}
             className="text-admin-secondary transition-colors hover:text-admin-heading"
           >

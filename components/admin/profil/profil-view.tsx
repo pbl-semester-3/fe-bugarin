@@ -99,7 +99,7 @@ export function ProfilView({ initialTab }: { initialTab: TabValue }) {
             );
           })}
         </div>
-        {profile && (
+        {profile && profile.lastUpdatedAt && (
           <p className="flex items-center gap-1.5 pr-2 text-[10px] font-bold tracking-wider text-admin-heading uppercase">
             <History className="size-3.5 text-admin-green-text" />
             Terakhir diubah: {formatLastUpdated(profile.lastUpdatedAt)}
