@@ -10,11 +10,12 @@ const GRID_COLS = "1.4fr 1.3fr 1.3fr 1fr 1fr";
 
 interface KlienTableProps {
   rows: ClientRow[];
+  onView: (row: ClientRow) => void;
   onDelete: (row: ClientRow) => void;
 }
 
 // Tabel tab Klien (design/admin/kelola-pengguna.md §4).
-export function KlienTable({ rows, onDelete }: KlienTableProps) {
+export function KlienTable({ rows, onView, onDelete }: KlienTableProps) {
   return (
     <div className="w-full overflow-x-auto">
       <div className="min-w-[900px]">
@@ -99,12 +100,12 @@ export function KlienTable({ rows, onDelete }: KlienTableProps) {
               </div>
 
               <div className="flex items-center justify-center gap-2">
-                {/* TODO(design): Edit Klien belum ada desain — handler sengaja kosong. */}
                 <button
                   type="button"
+                  onClick={() => onView(row)}
                   className="rounded-md bg-admin-warning px-3 py-1.5 text-[11px] font-medium text-admin-warning-text transition-opacity hover:opacity-90"
                 >
-                  Edit
+                  Lihat
                 </button>
                 <button
                   type="button"
