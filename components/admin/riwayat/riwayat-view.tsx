@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AdminFilterBar, type AdminFilterSelect } from "@/components/admin/filter-bar";
+import { AdminFilterBar } from "@/components/admin/filter-bar";
 import { PageBanner } from "@/components/admin/page-banner";
 import { AdminPagination } from "@/components/admin/pagination";
 import { AdminTabSwitcher } from "@/components/admin/tab-switcher";
 import { TableCard } from "@/components/admin/table-card";
 import { useAdminRiwayat } from "@/hooks/useAdminRiwayat";
+import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import type { FeedbackLog } from "@/lib/types/admin";
 import { AuditTable } from "./audit-table";
 import { FeedbackDetailDialog } from "./feedback-detail-dialog";
@@ -15,26 +16,16 @@ import { FeedbackTable } from "./feedback-table";
 
 type TabValue = "pt" | "audit";
 
-const CATEGORY_OPTIONS = [
-  { value: "all", label: "Semua Kategori" },
-  { value: "EVALUASI_MINGGUAN", label: "Evaluasi Sesi Mingguan" },
-  { value: "EVALUASI_BULANAN", label: "Evaluasi Bulanan" },
-  { value: "KOREKSI_TEKNIK", label: "Koreksi Teknik" },
-  { value: "PROGRESS_NUTRISI", label: "Progress Nutrisi" },
-  { value: "MOTIVASI_KEPATUHAN", label: "Motivasi & Kepatuhan" },
-  { value: "PEMULIHAN_CEDERA", label: "Pemulihan & Cedera" },
-];
-
 // View Riwayat Admin (design/admin/riwayat.md) — read-only, 2 tab.
 export function RiwayatView({ initialTab }: { initialTab: TabValue }) {
   const router = useRouter();
   const [tab, setTab] = useState<TabValue>(initialTab);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
   const [page, setPage] = useState(1);
   const [detail, setDetail] = useState<FeedbackLog | null>(null);
 
   const { data, isLoading } = useAdminRiwayat();
+  const { data: dashboard } = useAdminDashboard();
 
   const perPage = tab === "pt" ? 10 : 5;
 
@@ -48,10 +39,9 @@ export function RiwayatView({ initialTab }: { initialTab: TabValue }) {
         log.client.name.toLowerCase().includes(keyword) ||
         log.id.toLowerCase().includes(keyword) ||
         log.note.toLowerCase().includes(keyword);
-      const matchCategory = category === "all" || log.category === category;
-      return matchSearch && matchCategory;
+      return matchSearch;
     });
-  }, [data, search, category]);
+  }, [data, search]);
 
   const auditLogs = data?.auditLogs ?? [];
   const rows = tab === "pt" ? filteredFeedback : auditLogs;
@@ -70,22 +60,9 @@ export function RiwayatView({ initialTab }: { initialTab: TabValue }) {
   function changeTab(next: TabValue) {
     setTab(next);
     setSearch("");
-    setCategory("all");
     setPage(1);
     router.replace(`/admin/riwayat?tab=${next}`);
   }
-
-  const selects: AdminFilterSelect[] = [
-    {
-      value: category,
-      onValueChange: (v) => {
-        setCategory(v);
-        setPage(1);
-      },
-      placeholder: "Semua Kategori",
-      options: CATEGORY_OPTIONS,
-    },
-  ];
 
   const infoText = (
     <p className="text-[11px] text-admin-secondary">
@@ -112,7 +89,7 @@ export function RiwayatView({ initialTab }: { initialTab: TabValue }) {
           {
             value: "pt",
             label: "Daftar Personal Trainer (PT)",
-            badge: `${data?.activeTrainers ?? 0} Aktif`,
+            badge: `${dashboard?.totalPt ?? 0} Aktif`,
           },
           { value: "audit", label: "Audit Admin" },
         ]}
@@ -136,8 +113,8 @@ export function RiwayatView({ initialTab }: { initialTab: TabValue }) {
                 setSearch(v);
                 setPage(1);
               }}
-              searchPlaceholder="Cari PT, atau Keyword..."
-              selects={selects}
+              searchPlaceholder="Cari PT, klien, atau keyword..."
+              selects={[]}
               className="gap-1"
             />
             {infoText}
