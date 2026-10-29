@@ -1,6 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
+import { useUpdateAdminTema } from "@/hooks/useAdminProfile";
 import { useAdminTheme } from "@/hooks/useAdminTheme";
 import { cn } from "cn";
 
@@ -8,6 +9,12 @@ import { cn } from "cn";
 // satu store dengan ikon bulan/matahari di topbar (useAdminTheme).
 export function ThemeSegmented() {
   const { theme, setAdminTheme } = useAdminTheme();
+  const updateTema = useUpdateAdminTema();
+
+  function handleChange(next: "light" | "dark") {
+    setAdminTheme(next);
+    updateTema.mutate(next === "dark" ? "malam" : "siang");
+  }
 
   const options = [
     { value: "light" as const, label: "Terang", icon: Sun },
@@ -39,7 +46,7 @@ export function ThemeSegmented() {
               type="button"
               role="radio"
               aria-checked={active}
-              onClick={() => setAdminTheme(option.value)}
+              onClick={() => handleChange(option.value)}
               className={cn(
                 "flex flex-1 items-center justify-center gap-1.5 rounded-pill px-3 py-1.5 text-xs transition-all",
                 active

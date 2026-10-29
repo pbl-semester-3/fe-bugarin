@@ -64,13 +64,22 @@ export function InfoForm() {
 
   function onSubmit(values: InfoValues) {
     setFeedback(null);
-    updateProfile.mutate(values, {
-      onSuccess: () => {
-        setFeedback("Data diri berhasil disimpan.");
-        reset(values);
+    updateProfile.mutate(
+      {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        phone: values.phone.replace(/[^\d+]/g, ""),
+        bio: values.bio,
       },
-      onError: (err) => setFeedback(apiErrorMessage(err)),
-    });
+      {
+        onSuccess: () => {
+          setFeedback("Data diri berhasil disimpan.");
+          reset(values);
+        },
+        onError: (err) => setFeedback(apiErrorMessage(err)),
+      }
+    );
   }
 
   return (
