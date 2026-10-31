@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -71,8 +72,27 @@ export function LoginForm() {
       {/* Panel kanan: form */}
       <div className="flex w-full items-center justify-center bg-surface-tint p-6 lg:w-1/2">
         <div className="w-full max-w-[480px]">
-          <h1 className="text-4xl font-extrabold text-ink">
-            Welcome Back, Coach
+          <div className="flex flex-col items-center text-center">
+            <div className="flex items-center gap-3.5">
+              <Image
+                src="/bugarin-logo.png"
+                alt="Logo Bugarin"
+                width={514}
+                height={486}
+                priority
+                className="h-16 w-auto"
+              />
+              <span className="text-[34px] font-extrabold tracking-tight text-ink">
+                Bugarin
+              </span>
+            </div>
+            <p className="mt-3 text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+              Platform Personal Trainer
+            </p>
+          </div>
+
+          <h1 className="mt-10 text-4xl font-extrabold text-ink">
+            Selamat Datang, Coach!
           </h1>
 
           <Form {...form}>
