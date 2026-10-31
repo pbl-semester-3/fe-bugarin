@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Bell,
   History,
   LayoutDashboard,
   LogOut,
@@ -12,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
+import { AdminNotificationBell } from "@/components/admin/notifications/admin-notification-bell";
 import { SidebarItem } from "@/components/sidebar-item";
 import { useAdminProfile, useUpdateAdminTema } from "@/hooks/useAdminProfile";
 import { useAdminTheme } from "@/hooks/useAdminTheme";
@@ -115,14 +115,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <Moon className="size-5" />
             )}
           </button>
-          <button
-            type="button"
-            aria-label="Notifikasi"
-            className="relative text-admin-secondary transition-colors hover:text-admin-heading"
-          >
-            <Bell className="size-5" />
-            <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-danger-strong" />
-          </button>
+          <AdminNotificationBell />
           <Avatar name={namaAdmin} src={fotoUrl} size={32} />
         </header>
 
