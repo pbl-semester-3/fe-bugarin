@@ -22,7 +22,7 @@ export function PhoneFrame({
     >
       <div
         className={cn(
-          "relative aspect-[9/19] overflow-hidden rounded-[1.9rem] bg-landing-bg",
+          "relative aspect-[1/2] overflow-hidden rounded-[1.9rem] bg-landing-bg",
           screenClassName
         )}
       >
@@ -32,7 +32,8 @@ export function PhoneFrame({
             alt={label}
             fill
             sizes="(max-width: 768px) 70vw, 280px"
-            className="object-cover"
+            quality={90}
+            className="object-cover object-top"
           />
         ) : (
           <div className="flex h-full flex-col gap-3 bg-landing-bg p-4">

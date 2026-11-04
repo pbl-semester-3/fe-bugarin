@@ -63,7 +63,7 @@ export function AppPreview() {
             type="button"
             aria-label="Tampilan sebelumnya"
             onClick={() => go(-1)}
-            className="absolute top-1/2 left-0 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-landing-line bg-white text-landing-ink shadow-sm transition-colors hover:border-landing-orange hover:text-landing-orange sm:left-4"
+            className="absolute top-1/2 left-0 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-landing-line bg-white text-landing-ink shadow-sm transition-colors hover:border-landing-orange hover:text-landing-orange sm:left-4"
           >
             <ArrowLeft className="size-4" />
           </button>
@@ -71,7 +71,7 @@ export function AppPreview() {
             type="button"
             aria-label="Tampilan berikutnya"
             onClick={() => go(1)}
-            className="absolute top-1/2 right-0 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-landing-line bg-white text-landing-ink shadow-sm transition-colors hover:border-landing-orange hover:text-landing-orange sm:right-4"
+            className="absolute top-1/2 right-0 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-landing-line bg-white text-landing-ink shadow-sm transition-colors hover:border-landing-orange hover:text-landing-orange sm:right-4"
           >
             <ArrowRight className="size-4" />
           </button>
