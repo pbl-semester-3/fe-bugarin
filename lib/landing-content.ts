@@ -215,9 +215,9 @@ export const FAQS: LandingFaq[] = [
 ];
 
 export const FOOTER_CONTACTS = [
-  { label: "Email", value: "hello@bugarin.id" },
-  { label: "Telepon", value: "+62 812-0000-0000" },
-  { label: "Alamat", value: "Jakarta, Indonesia" },
+  { label: "Email", value: "hello@bugarin.com" },
+  { label: "Telepon", value: "+62 815-2852-5032" },
+  { label: "Alamat", value: "Malang, Indonesia" },
 ];
 
 export const FOOTER_SOCIALS = ["instagram", "tiktok", "youtube"] as const;

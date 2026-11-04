@@ -20,4 +20,3 @@ Semua aset landing sudah terpasang di `public/landing/` dan dipakai langsung. Op
 ## Konten dummy
 
 - Jawaban FAQ di `lib/landing-content.ts`.
-- Kontak footer (`FOOTER_CONTACTS`).
