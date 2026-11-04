@@ -119,6 +119,19 @@
   --color-aktif-tint: rgba(175, 246, 124, 0.4);
   --color-onboarding-tint: rgba(246, 150, 101, 0.3);
   --color-mint-tint: rgba(130, 249, 190, 0.4);
+
+  /* Token landing page (design/figma-plugin/Html → Body.png) */
+  --color-landing-bg: #fcf9f4;
+  --color-landing-cream: #f6f0e6;
+  --color-landing-surface: #ffffff;
+  --color-landing-orange: #f46b3c;
+  --color-landing-orange-soft: #fbefe9;
+  --color-landing-green: #8cbf3f;
+  --color-landing-green-soft: #eef6e3;
+  --color-landing-ink: #1f2933;
+  --color-landing-muted: #6b7280;
+  --color-landing-line: #e8e0d4;
+  --color-landing-footer: #202a33;
 }
 
 :root {
