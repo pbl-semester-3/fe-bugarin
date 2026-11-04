@@ -16,7 +16,7 @@ const jakarta = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Bugarin Dashboard",
+  title: "Bugarin",
   description: "Bugarin Personal Trainer & Admin Dashboard",
 };
 
