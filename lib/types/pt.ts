@@ -40,6 +40,7 @@ export type PtProfile = {
 export type JadwalLatihan = {
   klienId: number;
   namaKlien: string;
+  fotoUrl: string | null;
   hari: string;
   jam: string;
   jenis: string;
@@ -58,6 +59,7 @@ export type PairingRequest = {
   klien: {
     id: number;
     nama: string;
+    fotoUrl: string | null;
     tujuan: Tujuan | null;
   };
 };
@@ -66,6 +68,7 @@ export type PairingRequest = {
 export type KlienListItem = {
   id: number;
   nama: string;
+  fotoUrl: string | null;
   tujuan: Tujuan | null;
   durasiHari: number | null;
 };
@@ -77,6 +80,7 @@ export type KlienDetail = {
   profil: {
     id: number;
     nama: string;
+    fotoUrl: string | null;
     usia: number | null;
     jenisKelamin: JenisKelamin | null;
     tinggiBadanCm: number | null;
@@ -110,6 +114,7 @@ export type WeeklyPlan = {
 export type RiwayatRow = {
   id: number;
   nama: string;
+  fotoUrl: string | null;
   usia: number | null;
   jenisKelamin: JenisKelamin | null;
   bbAwalKg: number | null;
