@@ -19,7 +19,7 @@ export function VerifikasiCard({ request }: { request: PairingRequest }) {
   return (
     <article className="rounded-panel bg-white p-6 shadow-card">
       <div className="flex items-start gap-4">
-        <Avatar name={request.klien.nama} size={48} statusDot />
+        <Avatar name={request.klien.nama} src={request.klien.fotoUrl} size={48} statusDot />
         <div className="min-w-0 flex-1">
           <p className="text-lg font-bold text-ink">{request.klien.nama}</p>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">

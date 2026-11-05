@@ -82,7 +82,7 @@ export function KlienDetail({ id }: { id: number }) {
       {/* Kartu profil klien */}
       <section className="rounded-panel bg-white p-6 shadow-card">
         <div className="flex flex-wrap items-center gap-5">
-          <Avatar name={profil.nama} size={80} shape="square" />
+          <Avatar name={profil.nama} src={profil.fotoUrl} size={80} />
           <div className="min-w-0">
             <h1 className="text-[40px] leading-tight font-extrabold tracking-[-0.7px] text-ink">
               {profil.nama}

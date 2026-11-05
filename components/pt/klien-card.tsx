@@ -10,7 +10,7 @@ export function KlienCard({ klien }: { klien: KlienListItem }) {
     <article className="flex flex-col rounded-panel bg-white p-6 shadow-card">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
-          <Avatar name={klien.nama} size={56} shape="square" />
+          <Avatar name={klien.nama} src={klien.fotoUrl} size={56} />
           <div className="min-w-0">
             <p className="truncate text-lg font-extrabold text-ink">
               {klien.nama}

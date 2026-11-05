@@ -51,7 +51,7 @@ export function FeedbackView({
                     <span className="absolute top-1/2 left-0 h-[56px] w-1 -translate-y-1/2 rounded-r-full bg-primary" />
                   )}
                   <div className="flex items-center gap-3">
-                    <Avatar name={k.nama} size={48} />
+                    <Avatar name={k.nama} src={k.fotoUrl} size={48} />
                     <p className="min-w-0 flex-1 truncate text-lg font-semibold text-ink">
                       {k.nama}
                     </p>

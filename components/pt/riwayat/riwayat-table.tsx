@@ -69,7 +69,7 @@ export function RiwayatTable({
                 <TableRow key={row.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Avatar name={row.nama} size={40} statusDot />
+                      <Avatar name={row.nama} src={row.fotoUrl} size={40} statusDot />
                       <div className="min-w-0">
                         <p className="text-sm font-bold text-ink">{row.nama}</p>
                         <p className="text-[10px] font-bold tracking-wide text-muted-foreground uppercase">

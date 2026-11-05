@@ -13,7 +13,7 @@ export function SessionRow({ jadwal }: { jadwal: JadwalLatihan }) {
         <span className="text-sm font-bold">{jadwal.jam}</span>
       </div>
 
-      <Avatar name={jadwal.namaKlien} size={40} />
+      <Avatar name={jadwal.namaKlien} src={jadwal.fotoUrl} size={40} />
 
       <div className="min-w-0 flex-1">
         <p className="text-base font-semibold text-ink">{jadwal.namaKlien}</p>

@@ -7,7 +7,7 @@ import { tujuanLabel, type KlienListItem } from "@/lib/types/pt";
 export function AthleteCard({ klien }: { klien: KlienListItem }) {
   return (
     <section className="flex items-center gap-4 rounded-panel bg-white p-6 shadow-card">
-      <Avatar name={klien.nama} size={64} shape="square" />
+      <Avatar name={klien.nama} src={klien.fotoUrl} size={64} />
       <div className="min-w-0">
         <h2 className="text-[22px] leading-snug font-bold tracking-[-0.33px] text-ink">
           {klien.nama}
