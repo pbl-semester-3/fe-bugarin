@@ -59,9 +59,9 @@ export function ProfileIdentityCard({ profile }: { profile: PtProfile }) {
         <div className="relative -mt-14 ml-2 w-fit">
           <span
             aria-hidden
-            className="absolute -inset-2 rounded-full bg-accent-indigo/30"
+            className="absolute -inset-2 rounded-full bg-[#c9c3f5] dark:bg-[#3f3a6b]"
           />
-          <span className="relative block rounded-full bg-white p-1">
+          <span className="relative block rounded-full">
             <Avatar
               name={profile.profile.nama}
               src={fotoUrl}

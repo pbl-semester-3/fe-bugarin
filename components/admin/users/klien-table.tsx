@@ -44,7 +44,6 @@ export function KlienTable({ rows, onView, onDelete }: KlienTableProps) {
                   name={row.name}
                   src={row.photoUrl}
                   sub={row.email}
-                  ring={row.status === "ONBOARDING"}
                 />
               </div>
 

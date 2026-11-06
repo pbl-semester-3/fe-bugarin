@@ -68,8 +68,7 @@ export function ProfilView({ initialTab }: { initialTab: TabValue }) {
           name={nama}
           src={profile?.photoUrl ?? null}
           size={104}
-          shape="square"
-          className="rounded-card shadow-card [&_span]:rounded-card"
+          className="shadow-card"
         />
         <h1 className="text-[28px] font-bold text-white">{nama}</h1>
       </div>
