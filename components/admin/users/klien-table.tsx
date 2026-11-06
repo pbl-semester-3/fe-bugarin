@@ -54,7 +54,7 @@ export function KlienTable({ rows, onView, onDelete }: KlienTableProps) {
                     <Avatar
                       name={row.trainer}
                       src={row.trainerPhotoUrl}
-                      size={32}
+                      size={40}
                     />
                     <p className="max-w-40 text-left text-xs leading-tight font-bold text-admin-heading">
                       {row.trainer}

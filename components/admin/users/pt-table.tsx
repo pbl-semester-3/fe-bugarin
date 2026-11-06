@@ -50,7 +50,7 @@ export function PtTable({ rows, onEdit, onDelete }: PtTableProps) {
               <AvatarCell
                 name={row.name}
                 src={row.photoUrl}
-                size={32}
+                size={40}
                 sub={`ID: ${row.trainerId} • ${row.hub}`}
                 nameClassName="text-[13px]"
                 subClassName="text-[10px]"
