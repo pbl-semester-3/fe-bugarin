@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { getFaceCropUrl } from "@/lib/avatar-image";
 import { cn } from "cn";
 
 type AvatarSize = 32 | 40 | 48 | 56 | 64 | 80 | 104;
@@ -32,15 +33,17 @@ export function Avatar({
 }: AvatarProps) {
   const rounded = shape === "circle" ? "rounded-full" : "rounded-panel";
   const dimension = { width: size, height: size };
+  const imageSrc = getFaceCropUrl(src, size);
 
   return (
     <span className={cn("relative inline-flex shrink-0", className)} style={dimension}>
-      {src ? (
+      {imageSrc ? (
         <Image
-          src={src}
+          src={imageSrc}
           alt={name}
           width={size}
           height={size}
+          unoptimized
           className={cn("size-full object-cover", rounded)}
         />
       ) : (
