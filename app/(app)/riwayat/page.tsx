@@ -13,7 +13,8 @@ export default async function RiwayatPage({
 
   if (!me) redirect("/login");
   if (me.role === "admin") {
-    return <AdminRiwayatView initialTab={tab === "audit" ? "audit" : "pt"} />;
+    const initialTab = tab === "audit" ? "audit" : tab === "request" ? "request" : "pt";
+    return <AdminRiwayatView initialTab={initialTab} />;
   }
   if (me.role === "pt") return <PtRiwayatPage />;
   redirect("/login");

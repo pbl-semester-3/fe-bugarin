@@ -1,3 +1,5 @@
+import type { RequestLogParams } from "@/types/admin";
+
 export const queryKeys = {
   pt: {
     dashboard: ["pt", "dashboard"] as const,
@@ -13,6 +15,7 @@ export const queryKeys = {
     dashboard: ["admin", "dashboard"] as const,
     users: (role?: "klien" | "pt") => ["admin", "users", role ?? "all"] as const,
     riwayat: ["admin", "riwayat"] as const,
+    requestLogs: (params: RequestLogParams) => ["admin", "request-logs", params] as const,
     profile: ["admin", "profile"] as const,
   },
 };
