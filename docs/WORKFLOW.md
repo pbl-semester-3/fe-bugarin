@@ -19,7 +19,7 @@ Sama seperti Backend — task apa pun (halaman baru, komponen baru, integrasi en
 (status endpoint ini di be-bugarin: sudah ada / masih stub — cek dulu sebelum mulai)
 
 **Yang akan dibuat/diubah**:
-- `app/pt/verifikasi/page.tsx`
+- `app/(app)/verifikasi/page.tsx`
 - `hooks/usePairingRequests.ts` (query + mutation)
 - `components/tolak-dialog.tsx`
 
@@ -98,7 +98,7 @@ Aturan sama: 1 commit = 1 perubahan logis, bukan narasi proses, referensikan iss
 **Implementation Plan**: [link]
 
 **Yang selesai dikerjakan**:
-- [x] Halaman `/pt/verifikasi` — tabel daftar request + aksi Terima/Tolak
+- [x] Halaman `/verifikasi` — tabel daftar request + aksi Terima/Tolak
 - [x] Dialog alasan penolakan (wajib diisi sebelum submit)
 - [x] Invalidation ke dashboard-summary setelah aksi (jumlah klien ikut update)
 

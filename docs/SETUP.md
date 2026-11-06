@@ -39,20 +39,26 @@ npm run dev    # http://localhost:3000
 
 ```
 app/
- ├─ (auth)/login/
- ├─ pt/          layout.tsx + dashboard, verifikasi, klien, klien/[id], riwayat, feedback, profil
- └─ admin/       layout.tsx + dashboard, users, users/pt/[id]/edit, riwayat, profil
-proxy.ts         # BUKAN middleware.ts — lihat skills/nextjs-app-router-patterns
-lib/api.ts       # Axios instance, withCredentials true
-lib/mock/        # dummy aktif: admin.ts (PT sudah terintegrasi backend)
-lib/query-keys.ts
-providers/
+  (public)/page.tsx       # landing
+  (auth)/login/           # login
+  (app)/                  # web PT + Admin, URL bersih
+    dashboard/            # /dashboard (shared)
+    users/                # /users (Admin)
+    riwayat/              # /riwayat (shared)
+    profil/               # /profil (shared)
+    verifikasi/           # /verifikasi (PT)
+    klien/                # /klien (PT)
+    feedback/             # /feedback (PT)
+components/shell/         # shell, sidebar, notifikasi
+components/ui/            # komponen shadcn + avatar
+services/                 # api.ts, auth, service admin/pt
+types/                    # tipe domain
+public/fonts/             # font self-hosted
+proxy.ts                  # cek cookie route terlindungi
 ```
 
-**Penting**: `pt/` dan `admin/` folder biasa, **bukan** route group `(pt)`/`(admin)` — route group tidak menambah segmen URL, dua route group isi `dashboard/page.tsx` akan bentrok jadi 1 path saat build.
+**Penting**: `app/(app)` adalah route group bersama untuk PT dan Admin. URL tetap bersih karena halaman shared (`dashboard`, `riwayat`, `profil`) memilih view berdasarkan role; halaman khusus (`/users`, `/klien`, `/verifikasi`, `/feedback`) dijaga layout server masing-masing.
 
 ## Yang Perlu Dikerjakan Selanjutnya
-- **Auth & role guard**: login Admin belum di-wire; `pt/layout.tsx` dan `admin/layout.tsx` masih hardcode role. Ganti dengan validasi nyata (`GET /auth/me` atau profile per role).
-- **Integrasi API Admin**: ganti `lib/mock/admin.ts` dengan endpoint `/admin/*` (lihat `docs/CATATAN.md` bagian 6).
-- **Keputusan desain/produk** yang tertunda: Edit Klien, Tambah Klien, filter Audit, lupa kata sandi, review palet dark mode.
 - **Kualitas**: tabel semantik/a11y, uji responsif, dan CI `lint + typecheck + build`.
+- **Keputusan desain/produk** yang tertunda: Edit Klien, Tambah Klien, filter Audit, lupa kata sandi, review palet dark mode.

@@ -97,7 +97,7 @@ export function useAdminNotifications() {
         title: "Pengajuan pairing menunggu",
         description: "Menunggu verifikasi dari Personal Trainer.",
         count: pendingPairing,
-        href: "/admin/users?tab=klien",
+        href: "/users?tab=klien",
         unread: pendingPairing > snapshot.pairing,
       });
     }
@@ -107,7 +107,7 @@ export function useAdminNotifications() {
         title: "Klien sedang onboarding",
         description: "Belum terhubung dengan Personal Trainer.",
         count: onboarding,
-        href: "/admin/users?tab=klien",
+        href: "/users?tab=klien",
         unread: onboarding > snapshot.onboarding,
       });
     }

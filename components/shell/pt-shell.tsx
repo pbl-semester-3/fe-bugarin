@@ -13,22 +13,22 @@ import {
   UserCog,
   Users,
 } from "lucide-react";
-import { Avatar } from "@/components/pt/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { SidebarBrand } from "@/components/shell/sidebar-brand";
-import { SidebarItem } from "@/components/sidebar-item";
+import { SidebarItem } from "@/components/shell/sidebar-item";
 import { useLogout } from "@/hooks/useAuth";
 import { usePairingRequests } from "@/hooks/usePairingRequests";
 import { usePtTheme } from "@/hooks/usePtTheme";
 import { usePtProfile, useUpdatePtTheme } from "@/hooks/usePtProfile";
-import { apiErrorMessage } from "@/lib/api";
+import { apiErrorMessage } from "@/services/api";
 
 const navItems = [
-  { href: "/pt/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/pt/verifikasi", label: "Verifikasi", icon: ClipboardCheck },
-  { href: "/pt/klien", label: "Klien", icon: Users },
-  { href: "/pt/riwayat", label: "Riwayat", icon: History },
-  { href: "/pt/feedback", label: "Feedback", icon: MessageSquare },
-  { href: "/pt/profil", label: "Profil", icon: UserCog },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/verifikasi", label: "Verifikasi", icon: ClipboardCheck },
+  { href: "/klien", label: "Klien", icon: Users },
+  { href: "/riwayat", label: "Riwayat", icon: History },
+  { href: "/feedback", label: "Feedback", icon: MessageSquare },
+  { href: "/profil", label: "Profil", icon: UserCog },
 ];
 
 // Mengikuti layout global docs/DESIGN_PT.md §5.
@@ -77,7 +77,7 @@ export function PtShell({ children }: { children: React.ReactNode }) {
               key={item.href}
               {...item}
               badgeCount={
-                item.href === "/pt/verifikasi" ? pendingCount : undefined
+                item.href === "/verifikasi" ? pendingCount : undefined
               }
             />
           ))}

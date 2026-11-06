@@ -19,8 +19,8 @@ Dokumen ini adalah turunan dari `Bugarin_PRD.md` (PRD induk), khusus untuk tim/d
 ## 2. Autentikasi & Proteksi Rute
 
 - Token JWT disimpan sebagai cookie `httpOnly; Secure; SameSite=Strict` (diterbitkan backend saat login, lihat PRD Backend).
-- `proxy.ts` di root Next.js (bukan `middleware.ts` — nama file berubah di Next.js 16, lihat skill `nextjs-app-router-patterns`): cek keberadaan cookie session pada setiap request ke `/pt/*` dan `/admin/*`. Tidak ada token → redirect `/login`. Validasi role tetap dilakukan ulang di layout Server Component dan di backend Express — proxy hanya lapisan UX, bukan security boundary penuh.
-- Role di dalam JWT (`pt` / `admin`) menentukan grup rute yang boleh diakses — role `pt` tidak boleh mengakses `/admin/*` dan sebaliknya (validasi middleware + validasi ulang di backend, jangan andalkan frontend saja).
+- `proxy.ts` di root Next.js (bukan `middleware.ts` — nama file berubah di Next.js 16): mengecek keberadaan cookie session pada setiap request ke route web terlindungi (`/dashboard`, `/users`, `/riwayat`, `/profil`, `/verifikasi`, `/klien`, `/feedback`). Tidak ada token → redirect `/login`. Validasi role dilakukan ulang di layout Server Component dan backend Express — proxy hanya lapisan UX, bukan security boundary penuh.
+- Role di dalam JWT (`pt` / `admin`) menentukan view dan area yang boleh diakses. Guard server: `app/(app)/layout.tsx`, `app/(app)/users/layout.tsx` (admin), serta layout `klien`, `verifikasi`, dan `feedback` (PT). Role salah diarahkan ke `/dashboard`.
 - Axios instance dikonfigurasi `withCredentials: true` supaya cookie ikut terkirim ke backend (beda origin, sudah di-whitelist via CORS backend).
 
 ---
@@ -29,59 +29,79 @@ Dokumen ini adalah turunan dari `Bugarin_PRD.md` (PRD induk), khusus untuk tim/d
 
 ```
 app/
- ├─ (auth)/
- │   └─ login/page.tsx                  # shared login PT & Admin
- ├─ pt/                                 # folder biasa, bukan route group
- │   ├─ layout.tsx                      # guard role=pt, shell nav PT
- │   ├─ dashboard/page.tsx
- │   ├─ verifikasi/page.tsx
- │   ├─ klien/page.tsx                  # list klien
- │   ├─ klien/[id]/page.tsx             # detail + grafik + review plan
- │   ├─ riwayat/page.tsx
- │   ├─ feedback/page.tsx
- │   └─ profil/page.tsx
- └─ admin/
-     ├─ layout.tsx                      # guard role=admin, shell nav Admin
-     ├─ dashboard/page.tsx
-     ├─ users/page.tsx                  # tab Klien & PT
-     ├─ users/pt/[id]/edit/page.tsx     # edit konfigurasi PT
-     ├─ riwayat/page.tsx                # tab Daftar PT & Audit Admin
-     └─ profil/page.tsx                 # tab Informasi & Keamanan
+  (public)/
+    page.tsx                       # landing
+    components/                    # komponen landing
+  (auth)/
+    login/
+      page.tsx                     # shared login PT & Admin
+      components/login-form.tsx
+  (app)/
+    layout.tsx                     # guard role + pilih shell
+    components/
+      admin/                       # komponen admin lintas halaman
+      pt/                          # komponen PT lintas halaman
+    dashboard/
+      page.tsx                     # /dashboard (shared Admin/PT)
+      components/admin|pt/
+    users/                         # /users (Admin)
+      layout.tsx
+      page.tsx
+      components/
+      pt/[id]/edit/page.tsx
+    riwayat/                       # /riwayat (shared)
+      page.tsx
+      components/admin|pt/
+    profil/                        # /profil (shared)
+      page.tsx
+      components/admin|pt/
+    verifikasi/                    # /verifikasi (PT)
+      layout.tsx
+      page.tsx
+      components/
+    klien/                         # /klien (PT)
+      layout.tsx
+      page.tsx
+      [id]/page.tsx
+      components/
+    feedback/                      # /feedback (PT)
+      layout.tsx
+      page.tsx
+      components/
 ```
 
-> Catatan: `pt/` dan `admin/` sengaja folder biasa (bukan route group) agar
-> tidak bentrok saat build. Lihat `docs/SETUP.md`.
+> Catatan: route group `(app)` dipakai bersama PT dan Admin agar URL bersih. Halaman shared memilih view berdasarkan role; halaman khusus dijaga layout server masing-masing. Lihat `docs/SETUP.md`.
 
 ---
 
 ## 4. Spesifikasi Halaman — PT
 
-### 4.1 Dashboard (`/pt/dashboard`)
+### 4.1 Dashboard (`/dashboard`)
 - Card jumlah klien aktif.
 - List/tabel jadwal latihan minggu ini (gabungan semua klien, dari `GET /pt/dashboard-summary`) — kolom: nama klien, hari, jam, jenis, lokasi (`tempat_gym`).
 - Komponen: shadcn `Card`, `Table`.
 
-### 4.2 Verifikasi (`/pt/verifikasi`)
+### 4.2 Verifikasi (`/verifikasi`)
 - Tabel daftar request pending (`GET /pt/pairing-requests`): nama klien, tujuan, tanggal request.
 - Aksi per baris: tombol **Terima** (langsung `PUT /pt/pairing-requests/:id`) dan **Tolak** (buka `Dialog` shadcn berisi textarea alasan → submit).
 - Setelah aksi, invalidate query list (TanStack Query `invalidateQueries`).
 
-### 4.3 Klien (`/pt/klien` dan `/pt/klien/[id]`)
-- List (`/pt/klien`): tabel klien diterima (`GET /pt/klien`), klik baris → ke halaman detail.
-- Detail (`/pt/klien/[id]`):
+### 4.3 Klien (`/klien` dan `/klien/[id]`)
+- List (`/klien`): tabel klien diterima (`GET /pt/klien`), klik baris → ke halaman detail.
+- Detail (`/klien/[id]`):
   - Info klien (nama, usia, gender, BB awal-sekarang, tujuan).
   - **Grafik BB historis** (Recharts line chart) dari `weight_logs` klien (via `GET /pt/klien/:id`).
   - **Section Review Weekly Plan** (`GET /pt/klien/:id/weekly-plan`): tampilkan `workout_plan` dan `meal_plan` dalam format readable (list, bukan raw JSON) + 2 tombol:
     - **Setuju** → `PUT /pt/weekly-plan/:id/approve`.
     - **Override** → buka form edit (bisa berupa form terstruktur per hari/menu, bukan textarea JSON mentah, supaya PT tidak perlu paham JSON) → `PUT /pt/weekly-plan/:id/override`.
 
-### 4.4 Riwayat (`/pt/riwayat`)
+### 4.4 Riwayat (`/riwayat`)
 - Tabel ringkas seluruh klien: nama, usia, gender, BB awal, BB sekarang (`GET /pt/riwayat`). Read-only, tanpa aksi.
 
-### 4.5 Feedback (`/pt/feedback`)
+### 4.5 Feedback (`/feedback`)
 - List nama klien (mirip halaman Klien tapi ringkas) — klik nama → buka panel/`Dialog` form textarea feedback → `POST /pt/klien/:id/feedbacks`.
 
-### 4.6 Profil (`/pt/profil`)
+### 4.6 Profil (`/profil`)
 - Form data diri: nama, email, username, jenis kelamin, usia, spesialisasi (dropdown Turun BB/Naik BB), **tempat gym** (wajib diisi — field baru, penting untuk fitur jadwal AI).
 - Form ganti password.
 - Toggle tema siang/malam.
@@ -91,17 +111,16 @@ app/
 
 ## 5. Spesifikasi Halaman — Admin
 
-> Status: seluruh UI Admin sudah di-slicing dan di-merge ke `dev` dengan **data
-> dummy**. Autentikasi admin dan integrasi endpoint `/admin/*` belum dikerjakan
-> (lihat `docs/CATATAN.md`).
+> Status: UI Admin sudah di-merge dan terintegrasi dengan endpoint `/admin/*`.
+> Detail endpoint dan catatan integrasi ada di `docs/CATATAN.md`.
 
-### 5.1 Dashboard (`/admin/dashboard`)
+### 5.1 Dashboard (`/dashboard`)
 - Banner sambutan + 2 stat card: total klien aktif dan total PT aktif.
 - Chart tren aktivitas sesi & registrasi (bar + line, 7 bulan, bulan aktif ditandai).
 - Donut komposisi spesialisasi PT (2 segmen, total dihitung dinamis).
 - Endpoint: `GET /admin/dashboard-summary`.
 
-### 5.2 Kelola Pengguna (`/admin/users`)
+### 5.2 Kelola Pengguna (`/users`)
 - Satu halaman, 2 tab: **Daftar Personal Trainer (PT)** dan **Daftar Klien**
   (default Klien), state tab di query `?tab=`.
 - Filter bar: search (debounce ±300ms) + 3 dropdown per tab; pagination 5 baris.
@@ -111,7 +130,7 @@ app/
   Edit/Hapus.
 - Aksi **Daftarkan PT Baru** (tab PT) membuka dialog form: nama+gelar, email
   `@bugarin.fit`, WhatsApp `+62`, cabang, jenis kelamin, spesialisasi.
-- Halaman `/admin/users/pt/[id]/edit`: identitas & biodata, perbarui/paksa reset
+- Halaman `/users/pt/[id]/edit`: identitas & biodata, perbarui/paksa reset
   password, toggle suspend, tombol Simpan Perubahan.
 - Konfirmasi hapus memakai dialog shared untuk PT dan Klien.
 - Endpoint yang dibutuhkan: `GET /admin/users?role=...`, `POST /admin/users/pt`,
@@ -120,7 +139,7 @@ app/
 - **Belum diimplementasikan:** Edit Klien (belum ada desain) dan Tambah Klien
   (open question produk). Tombol Edit Klien masih placeholder.
 
-### 5.3 Riwayat (`/admin/riwayat`)
+### 5.3 Riwayat (`/riwayat`)
 - Read-only, 2 tab: **Daftar Personal Trainer (PT)** (default) dan **Audit Admin**.
 - Tab PT: search + filter kategori, tabel 6 kolom (waktu/ID, PT, klien+cohort,
   kategori, catatan, Detail), modal Detail Feedback.
@@ -129,7 +148,7 @@ app/
 - Endpoint: `GET /admin/riwayat` (feedback + audit).
 - Tidak ada kolom rating/sentimen dan tidak ada aksi tulis.
 
-### 5.4 Profil (`/admin/profil`)
+### 5.4 Profil (`/profil`)
 - Banner profil + 2 tab (default Informasi Data Diri).
 - Tab Informasi: nama depan/belakang, email, telepon, bio; tombol Batalkan/Simpan;
   blok "Mode Tampilan Antarmuka" (Terang/Gelap).
@@ -174,4 +193,4 @@ Terapkan pola serupa untuk seluruh resource di Bab 4 dan 5 — satu file hook pe
 - Tombol **Setuju** pada Weekly Plan disable jika status plan bukan `pending_review` (sudah diproses sebelumnya) — cegah aksi ganda.
 - Grafik BB kosong (klien baru, belum ada `weight_logs`) → tampilkan empty state, bukan chart kosong/error.
 - Form Override Weekly Plan: validasi struktur data sebelum submit (jangan kirim field kosong yang bikin JSON tidak valid ke backend).
-- Halaman `/pt/klien/[id]` dan `/pt/klien` harus validasi klien tsb benar terdaftar di bawah PT yang login (backend yang enforce, tapi frontend redirect ke 404/403 kalau API menolak).
+- Halaman `/klien/[id]` dan `/klien` harus validasi klien tsb benar terdaftar di bawah PT yang login (backend yang enforce, tapi frontend redirect ke 404/403 kalau API menolak).

@@ -5,7 +5,7 @@ import type {
   AdminProfile,
   AdminRiwayatData,
   AdminUsersData,
-} from "@/lib/types/admin";
+} from "@/types/admin";
 
 export const mockAdminUsers: AdminUsersData = {
   stats: { totalActiveClients: 1428, clientsConnectedToPT: 1392, activeTrainers: 86 },

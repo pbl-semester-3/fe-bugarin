@@ -1,19 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
+import {
+  deletePtPhoto,
+  uploadPtPhoto,
+} from "@/services/pt/profile.service";
 
 // POST /pt/profile/photo — multipart field `foto` (jpeg/png/webp, ≤ 2 MB).
 export function useUploadPtPhoto() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (file: File) => {
-      const form = new FormData();
-      form.append("foto", file);
-      // JANGAN set Content-Type manual — axios mengisi boundary multipart.
-      return api
-        .post<{ data: { fotoUrl: string } }>("/pt/profile/photo", form)
-        .then((r) => r.data.data);
-    },
+    mutationFn: uploadPtPhoto,
     onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.pt.profile }),
   });
 }
@@ -22,7 +18,7 @@ export function useUploadPtPhoto() {
 export function useDeletePtPhoto() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => api.delete("/pt/profile/photo"),
+    mutationFn: deletePtPhoto,
     onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.pt.profile }),
   });
 }
