@@ -14,6 +14,7 @@ export function useLogout() {
     onSuccess: () => {
       // Bersihkan cache data personal agar tidak terbawa setelah login ulang.
       queryClient.clear();
+      document.documentElement.classList.remove("dark");
       router.replace("/login");
       router.refresh();
     },

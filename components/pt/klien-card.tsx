@@ -47,7 +47,7 @@ export function KlienCard({ klien }: { klien: KlienListItem }) {
 
       <Link
         href={`/pt/klien/${klien.id}`}
-        className="mt-4 flex items-center justify-center gap-1 rounded-card bg-brand py-2.5 text-sm font-bold text-white transition-colors hover:bg-brand/90"
+        className="mt-4 flex items-center justify-center gap-1 rounded-card bg-brand py-2.5 text-sm font-bold text-on-secondary transition-colors hover:bg-brand/90"
       >
         Lihat Profil &amp; Program Lengkap
         <ArrowRight className="size-3.5" />

@@ -53,7 +53,7 @@ export function ProfileIdentityCard({ profile }: { profile: PtProfile }) {
 
   return (
     <section className="overflow-hidden rounded-panel bg-white shadow-card">
-      <div className="h-28 bg-primary" />
+      <div className="h-28 bg-primary dark:bg-[#2f6b1c]" />
 
       <div className="px-6 pb-6">
         <div className="relative -mt-14 ml-2 w-fit">

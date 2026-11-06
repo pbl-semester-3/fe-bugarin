@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Bell,
   ClipboardCheck,
@@ -9,14 +9,17 @@ import {
   LogOut,
   MessageSquare,
   Moon,
+  Sun,
   UserCog,
   Users,
 } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
+import { SidebarBrand } from "@/components/shell/sidebar-brand";
 import { SidebarItem } from "@/components/sidebar-item";
 import { useLogout } from "@/hooks/useAuth";
 import { usePairingRequests } from "@/hooks/usePairingRequests";
-import { usePtProfile } from "@/hooks/usePtProfile";
+import { usePtTheme } from "@/hooks/usePtTheme";
+import { usePtProfile, useUpdatePtTheme } from "@/hooks/usePtProfile";
 import { apiErrorMessage } from "@/lib/api";
 
 const navItems = [
@@ -40,6 +43,14 @@ export function PtShell({ children }: { children: React.ReactNode }) {
 
   const logout = useLogout();
   const [logoutError, setLogoutError] = useState<string | null>(null);
+  const { theme, setPtTheme } = usePtTheme();
+  const updateTheme = useUpdatePtTheme();
+
+  useEffect(() => {
+    if (profile?.user.tema) {
+      setPtTheme(profile.user.tema);
+    }
+  }, [profile?.user.tema, setPtTheme]);
 
   function handleLogout() {
     setLogoutError(null);
@@ -49,19 +60,16 @@ export function PtShell({ children }: { children: React.ReactNode }) {
   }
 
   function toggleDark() {
-    document.documentElement.classList.toggle("dark");
+    const next = theme === "malam" ? "siang" : "malam";
+    setPtTheme(next);
+    updateTheme.mutate(next);
   }
 
   return (
-    <div className="flex min-h-screen bg-surface-tint">
+    <div className="flex min-h-screen bg-surface-tint dark:bg-[#0b1c30]">
       {/* Sidebar sticky: tetap di tempat walau konten halaman panjang (tidak ikut scroll). */}
       <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col overflow-y-auto bg-sidebar p-4">
-        <div className="px-3 pt-2 pb-6">
-          <p className="text-lg font-bold text-white">Bugarin</p>
-          <p className="text-[10px] font-semibold tracking-widest text-primary uppercase">
-            PT Platform
-          </p>
-        </div>
+        <SidebarBrand subtitle="PT Platform" />
 
         <nav className="flex flex-col gap-1">
           {navItems.map((item) => (
@@ -109,10 +117,16 @@ export function PtShell({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             onClick={toggleDark}
-            aria-label="Toggle tema"
+            aria-label={
+              theme === "malam" ? "Kembali ke mode terang" : "Aktifkan mode gelap"
+            }
             className="text-ink-soft transition-colors hover:text-ink"
           >
-            <Moon className="size-5" />
+            {theme === "malam" ? (
+              <Sun className="size-5" />
+            ) : (
+              <Moon className="size-5" />
+            )}
           </button>
           <button
             type="button"

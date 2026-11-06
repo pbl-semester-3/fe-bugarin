@@ -24,7 +24,7 @@ export function ProfilView() {
       </div>
       <div className="space-y-6 lg:col-span-8">
         <PersonalInfoForm profile={profile} />
-        <PreferencesSecurity profile={profile} />
+        <PreferencesSecurity />
       </div>
     </div>
   );

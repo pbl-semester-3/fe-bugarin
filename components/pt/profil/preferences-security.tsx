@@ -32,18 +32,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { usePtTheme } from "@/hooks/usePtTheme";
 import { useUpdatePtPassword, useUpdatePtTheme } from "@/hooks/usePtProfile";
 import { apiErrorMessage, getFieldErrors } from "@/lib/api";
 import { applyFieldErrors } from "@/lib/apply-field-errors";
-import type { PtProfile, Tema } from "@/lib/types/pt";
 import {
   ptPasswordSchema,
   type PtPasswordForm,
 } from "@/lib/schemas/pt-profile.schema";
 
 // Section 2 — Preferences & Security (design/PROFIL.md §4.2).
-export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
-  const [theme, setTheme] = useState<Tema>(profile.user.tema);
+export function PreferencesSecurity() {
+  const { theme, setPtTheme } = usePtTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
@@ -61,9 +61,8 @@ export function PreferencesSecurity({ profile }: { profile: PtProfile }) {
     },
   });
 
-  function applyTheme(next: Tema) {
-    setTheme(next);
-    document.documentElement.classList.toggle("dark", next === "malam");
+  function applyTheme(next: "siang" | "malam") {
+    setPtTheme(next);
     updateTheme.mutate(next);
   }
 

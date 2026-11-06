@@ -206,6 +206,67 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* Token PT tambahan untuk mode gelap. Token shadcn di atas sudah di-override
+   oleh .dark; blok ini menyelaraskan token brand PT (surface, ink, status).
+   html.dark dipakai agar selalu menang dari blok .dark generik. */
+html.dark {
+  --primary: #7dc04e;
+  --primary-foreground: #0b1c30;
+  --secondary: #244563;
+  --secondary-foreground: #e8eff9;
+  --muted: #1b3550;
+  --muted-foreground: #93a3b8;
+  --accent: #244563;
+  --accent-foreground: #e8eff9;
+  --border: #2a4260;
+  --input: #3d5a7a;
+  --ring: #493ee5;
+  --background: #0b1c30;
+  --foreground: #e8eff9;
+  --card: #12283f;
+  --card-foreground: #e8eff9;
+  --popover: #17324d;
+  --popover-foreground: #e8eff9;
+
+  --color-ink: #e8eff9;
+  --color-ink-soft: #a8b7cb;
+  --color-outline: #2a4260;
+  --color-surface-tint: #1b3550;
+  --color-surface-alt: #12283f;
+  --color-surface-2: #1b3550;
+  --color-surface-3: #244563;
+  --color-surface-4: #2a4260;
+  --color-surface-5: #17324d;
+  --color-success: #9bdd6b;
+  --color-success-container: #82f9be;
+  --color-success-deep: #d7ffd0;
+  --color-danger: #ff6c6c;
+  --color-danger-strong: #ffb4ab;
+  --color-danger-container: rgba(255, 180, 171, 0.16);
+  --color-secondary-strong: #ffb68f;
+  --color-secondary-deep: #ffb68f;
+  --color-accent-indigo: #9d95ff;
+  --color-warning: #f59e0b;
+  --color-on-primary: #0b1c30;
+  --color-on-secondary: #2a1204;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  /* Sidebar tetap seperti versi terang, sama dengan Admin. */
+  --sidebar: #2c303a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #7dc04e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #493ee5;
+}
+
+/* Kartu PT memakai bg-white literal; di mode gelap jadikan surface-alt. */
+html.dark .bg-white {
+  background-color: var(--color-surface-alt);
+}
+
 /* Dark mode halaman Admin (design/admin/dark-mode.md — usulan, belum final).
    Dipicu atribut data-theme="dark" yang di-set satu store tema admin
    (ikon bulan topbar + segmented Profil). Token PT di atas tidak disentuh. */

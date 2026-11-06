@@ -28,12 +28,11 @@ export default function RootLayout({
   return (
     <html lang="id" className={jakarta.variable}>
       <body className="font-sans antialiased">
-        {/* Terapkan tema admin tersimpan sebelum render pertama (anti-kedip).
-            Dibatasi ke rute /admin agar tidak memengaruhi tema halaman PT. */}
+        {/* Terapkan tema tersimpan sebelum render pertama (anti-kedip). */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'try{if(location.pathname.indexOf("/admin")===0){var t=localStorage.getItem("bugarin-admin-theme");if(t==="dark"||t==="light"){document.documentElement.dataset.theme=t;}}}catch(e){}',
+              'try{var p=location.pathname,d=document.documentElement;if(p.indexOf("/admin")===0){d.classList.remove("dark");var a=localStorage.getItem("bugarin-admin-theme");if(a==="dark"||a==="light"){d.dataset.theme=a;}}else if(p.indexOf("/pt")===0){d.removeAttribute("data-theme");var t=localStorage.getItem("bugarin-pt-theme");if(t==="malam"){d.classList.add("dark");}else{d.classList.remove("dark");}}else{d.classList.remove("dark");d.removeAttribute("data-theme");}}catch(e){}',
           }}
         />
         <QueryProvider>

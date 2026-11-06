@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/pt/avatar";
 import { AdminNotificationBell } from "@/components/admin/notifications/admin-notification-bell";
+import { SidebarBrand } from "@/components/shell/sidebar-brand";
 import { SidebarItem } from "@/components/sidebar-item";
 import { useAdminProfile, useUpdateAdminTema } from "@/hooks/useAdminProfile";
 import { useAdminTheme } from "@/hooks/useAdminTheme";
@@ -45,6 +46,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
   }, [profile?.tema, setAdminTheme]);
 
+  // Pastikan class tema PT tidak terbawa saat berpindah ke area admin.
+  useEffect(() => {
+    document.documentElement.classList.remove("dark");
+  }, []);
+
   function handleToggleTheme() {
     const next = theme === "dark" ? "light" : "dark";
     setAdminTheme(next);
@@ -61,12 +67,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-admin-bg">
       <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col overflow-y-auto bg-sidebar p-4">
-        <div className="px-3 pt-2 pb-6">
-          <p className="text-lg font-bold text-white">Bugarin</p>
-          <p className="text-[10px] font-semibold tracking-widest text-primary uppercase">
-            Admin
-          </p>
-        </div>
+        <SidebarBrand subtitle="Admin" />
 
         <nav className="flex flex-col gap-1">
           {navItems.map((item) => (
