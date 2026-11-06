@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { logout } from "@/services/auth.service";
 
 // POST /auth/logout -> cookie `token` dihapus backend.
 export function useLogout() {
@@ -10,7 +10,7 @@ export function useLogout() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: () => api.post("/auth/logout"),
+    mutationFn: logout,
     onSuccess: () => {
       // Bersihkan cache data personal agar tidak terbawa setelah login ulang.
       queryClient.clear();

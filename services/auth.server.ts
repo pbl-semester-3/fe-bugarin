@@ -1,9 +1,13 @@
+import "server-only";
+
+import { cache } from "react";
 import { cookies } from "next/headers";
-import type { Me } from "@/lib/types/auth";
+import type { Me } from "@/types/auth";
 
 // Server-only: ambil identitas sesi dari backend memakai cookie httpOnly.
 // Mengembalikan null bila belum login / token tidak valid / backend gagal.
-export async function getMe(): Promise<Me | null> {
+// cache() mencegah fetch berulang saat layout dan page memanggil getMe().
+export const getMe = cache(async (): Promise<Me | null> => {
   const token = (await cookies()).get("token")?.value;
   if (!token) return null;
 
@@ -22,4 +26,4 @@ export async function getMe(): Promise<Me | null> {
   } catch {
     return null;
   }
-}
+});
