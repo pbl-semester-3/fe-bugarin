@@ -10,21 +10,21 @@ import {
   UserCog,
   Users,
 } from "lucide-react";
-import { Avatar } from "@/components/pt/avatar";
-import { AdminNotificationBell } from "@/components/admin/notifications/admin-notification-bell";
+import { Avatar } from "@/components/ui/avatar";
+import { AdminNotificationBell } from "@/components/shell/notifications/admin-notification-bell";
 import { SidebarBrand } from "@/components/shell/sidebar-brand";
-import { SidebarItem } from "@/components/sidebar-item";
+import { SidebarItem } from "@/components/shell/sidebar-item";
 import { useAdminProfile, useUpdateAdminTema } from "@/hooks/useAdminProfile";
 import { useAdminTheme } from "@/hooks/useAdminTheme";
 import { useLogout } from "@/hooks/useAuth";
-import { apiErrorMessage } from "@/lib/api";
-import { adminProfileName } from "@/lib/types/admin";
+import { apiErrorMessage } from "@/services/api";
+import { adminProfileName } from "@/types/admin";
 
 const navItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/users", label: "Kelola Pengguna", icon: Users },
-  { href: "/admin/riwayat", label: "Riwayat", icon: History },
-  { href: "/admin/profil", label: "Profil", icon: UserCog },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/users", label: "Kelola Pengguna", icon: Users },
+  { href: "/riwayat", label: "Riwayat", icon: History },
+  { href: "/profil", label: "Profil", icon: UserCog },
 ];
 
 // Shell halaman Admin (design/admin/dashboard-admin.md §2–§3):
