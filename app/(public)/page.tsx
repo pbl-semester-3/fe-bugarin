@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { AboutSection } from "@/components/landing/about-section";
-import { AppPreview } from "@/components/landing/app-preview";
-import { FaqSection } from "@/components/landing/faq-section";
-import { HeroSection } from "@/components/landing/hero-section";
-import { HowItWorks } from "@/components/landing/how-it-works";
-import { ProblemSolution } from "@/components/landing/problem-solution";
-import { SiteFooter } from "@/components/landing/site-footer";
-import { SiteHeader } from "@/components/landing/site-header";
+import { AboutSection } from "@/app/(public)/components/about-section";
+import { AppPreview } from "@/app/(public)/components/app-preview";
+import { FaqSection } from "@/app/(public)/components/faq-section";
+import { HeroSection } from "@/app/(public)/components/hero-section";
+import { HowItWorks } from "@/app/(public)/components/how-it-works";
+import { ProblemSolution } from "@/app/(public)/components/problem-solution";
+import { SiteFooter } from "@/app/(public)/components/site-footer";
+import { SiteHeader } from "@/app/(public)/components/site-header";
 
 export const metadata: Metadata = {
   title: "Bugarin — Latihan Terarah, Progres Terukur",

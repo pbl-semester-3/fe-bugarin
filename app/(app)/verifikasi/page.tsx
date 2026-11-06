@@ -1,5 +1,5 @@
-import { PageHeader } from "@/components/pt/page-header";
-import { VerifikasiList } from "@/components/pt/verifikasi-list";
+import { PageHeader } from "@/app/(app)/components/pt/page-header";
+import { VerifikasiList } from "@/app/(app)/verifikasi/components/verifikasi-list";
 
 // Halaman Verifikasi (design/VERIFIKASI.md). Data lewat VerifikasiList (client).
 export default function VerifikasiPage() {

@@ -1,4 +1,4 @@
-import { UsersView } from "@/components/admin/users/users-view";
+import { UsersView } from "@/app/(app)/users/components/users-view";
 
 // Kelola Pengguna (design/admin/kelola-pengguna.md). Tab default: Klien.
 export default async function AdminUsersPage({

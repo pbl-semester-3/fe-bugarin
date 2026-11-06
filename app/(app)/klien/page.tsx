@@ -1,8 +1,8 @@
 "use client";
 
-import { PageHeader } from "@/components/pt/page-header";
+import { PageHeader } from "@/app/(app)/components/pt/page-header";
 import { Badge } from "@/components/ui/badge";
-import { KlienList } from "@/components/pt/klien-list";
+import { KlienList } from "@/app/(app)/klien/components/klien-list";
 import { useKlienList } from "@/hooks/useKlienList";
 
 // Halaman Klien PT (design/KLIEN.md). Data lewat useKlienList (mock sampai backend siap).

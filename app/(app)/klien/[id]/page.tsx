@@ -1,4 +1,4 @@
-import { KlienDetail } from "@/components/pt/klien-detail";
+import { KlienDetail } from "@/app/(app)/klien/[id]/components/klien-detail";
 
 // "View Full Profile & Program" — profil klien + program hasil generate AI.
 export default async function KlienDetailPage({

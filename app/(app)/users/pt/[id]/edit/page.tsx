@@ -1,4 +1,4 @@
-import { EditTrainerForm } from "@/components/admin/users/edit-trainer-form";
+import { EditTrainerForm } from "@/app/(app)/users/pt/[id]/edit/components/edit-trainer-form";
 
 // Halaman Edit PT (design/admin/kelola-pengguna.md §8).
 export default async function EditTrainerPage({

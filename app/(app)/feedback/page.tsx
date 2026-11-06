@@ -1,5 +1,5 @@
-import { FeedbackView } from "@/components/pt/feedback/feedback-view";
-import { PageHeader } from "@/components/pt/page-header";
+import { FeedbackView } from "@/app/(app)/feedback/components/feedback-view";
+import { PageHeader } from "@/app/(app)/components/pt/page-header";
 
 // Feedback Center (design/FEEDBACK.md). Klien terpilih dari query `?klien=<id>`
 // yang dikirim ikon komen di kartu halaman Klien.
