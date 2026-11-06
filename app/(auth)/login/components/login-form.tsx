@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -70,7 +71,7 @@ export function LoginForm() {
       <div className="flex w-full items-center justify-center bg-surface-tint p-6 lg:w-1/2">
         <div className="w-full max-w-[480px]">
           <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-3.5">
+            <Link href="/" className="flex items-center gap-3.5">
               <Image
                 src="/bugarin-logo.png"
                 alt="Logo Bugarin"
@@ -82,7 +83,7 @@ export function LoginForm() {
               <span className="text-[34px] font-extrabold tracking-tight text-ink">
                 Bugarin
               </span>
-            </div>
+            </Link>
             <p className="mt-3 text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase">
               Platform Personal Trainer
             </p>
