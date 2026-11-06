@@ -128,6 +128,38 @@ export type AdminRiwayatData = {
   auditLogs: AuditLog[];
 };
 
+// ===== Request Log (tab "Request Log" di Riwayat Admin) =====
+export type RequestLogRole = "klien" | "pt" | "admin";
+
+export type RequestLog = {
+  id: number;
+  requestId: string;
+  userId: number | null;
+  role: RequestLogRole | null;
+  method: string;
+  endpoint: string;
+  status: number;
+  message: string | null;
+  durationMs: number | null;
+  createdAt: string;
+};
+
+export type RequestLogParams = {
+  page?: number;
+  limit?: number;
+  status?: number;
+  role?: RequestLogRole;
+  q?: string;
+};
+
+export type RequestLogMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+};
+
 // ===== Profil (design/admin/profil.md) =====
 export type AdminProfile = {
   firstName: string;

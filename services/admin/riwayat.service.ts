@@ -24,7 +24,7 @@ type AdminRiwayatApi = {
   meta: unknown;
 };
 
-function formatWib(iso: string) {
+export function formatWib(iso: string) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return { time: "-", date: "-" };
   return {
