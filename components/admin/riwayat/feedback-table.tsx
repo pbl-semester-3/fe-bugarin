@@ -45,7 +45,8 @@ export function FeedbackTable({ rows, onDetail }: FeedbackTableProps) {
             <div className="flex justify-center">
               <AvatarCell
                 name={row.trainer.name}
-                size={32}
+                src={row.trainer.photoUrl}
+                size={40}
                 sub={row.date}
                 nameClassName="text-xs"
                 subClassName="text-[10px]"
@@ -55,7 +56,8 @@ export function FeedbackTable({ rows, onDetail }: FeedbackTableProps) {
             <div className="flex justify-center">
               <AvatarCell
                 name={row.client.name}
-                size={32}
+                src={row.client.photoUrl}
+                size={40}
                 sub={row.date}
                 nameClassName="text-xs"
                 subClassName="text-[10px]"

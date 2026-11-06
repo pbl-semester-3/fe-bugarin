@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { Avatar } from "@/components/pt/avatar";
 import {
   Dialog,
   DialogClose,
@@ -42,17 +43,31 @@ export function FeedbackDetailDialog({
                 <p className="text-[11px] tracking-wide text-admin-secondary uppercase">
                   Coach / Personal Trainer
                 </p>
-                <p className="mt-1 text-[15px] font-semibold text-admin-heading">
-                  {log.trainer.name}
-                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <Avatar
+                    name={log.trainer.name}
+                    src={log.trainer.photoUrl}
+                    size={40}
+                  />
+                  <p className="min-w-0 text-[15px] font-semibold text-admin-heading">
+                    {log.trainer.name}
+                  </p>
+                </div>
               </div>
               <div className="rounded-lg bg-admin-surface p-3 shadow-card">
                 <p className="text-[11px] tracking-wide text-admin-secondary uppercase">
                   Klien
                 </p>
-                <p className="mt-1 text-[15px] font-semibold text-admin-heading">
-                  {log.client.name}
-                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <Avatar
+                    name={log.client.name}
+                    src={log.client.photoUrl}
+                    size={40}
+                  />
+                  <p className="min-w-0 text-[15px] font-semibold text-admin-heading">
+                    {log.client.name}
+                  </p>
+                </div>
               </div>
             </div>
 

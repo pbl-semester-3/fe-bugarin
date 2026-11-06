@@ -101,8 +101,8 @@ export type FeedbackLog = {
   id: string;
   time: string;
   date?: string;
-  trainer: { name: string; title?: string; level?: string };
-  client: { name: string; cohort?: string };
+  trainer: { name: string; photoUrl: string | null; title?: string; level?: string };
+  client: { name: string; photoUrl: string | null; cohort?: string };
   category?: FeedbackCategory;
   note: string;
 };
@@ -117,6 +117,7 @@ export type AuditLog = {
   actor: string;
   action: AuditAction;
   target: string;
+  targetPhotoUrl: string | null;
   module: string;
   status: AuditStatus;
 };

@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/pt/avatar";
 import { AvatarCell } from "@/components/admin/avatar-cell";
 import { StatusBadge } from "@/components/admin/status-badge";
 import type { AuditLog } from "@/lib/types/admin";
@@ -40,7 +41,7 @@ export function AuditTable({ rows }: { rows: AuditLog[] }) {
             </div>
 
             <div className="flex justify-center">
-              <AvatarCell name={row.actor} size={32} nameClassName="text-xs" />
+              <AvatarCell name={row.actor} size={40} nameClassName="text-xs" />
             </div>
 
             <div className="flex justify-center">
@@ -49,13 +50,18 @@ export function AuditTable({ rows }: { rows: AuditLog[] }) {
               </StatusBadge>
             </div>
 
-            <div>
-              <p className="text-xs font-semibold text-admin-heading">
-                {row.target}
-              </p>
-              <p className="text-[10px] tracking-widest text-[#41493A] uppercase">
-                {row.module}
-              </p>
+            <div className="flex items-center justify-center gap-2 text-left">
+              {row.target !== "-" && (
+                <Avatar name={row.target} src={row.targetPhotoUrl} size={40} />
+              )}
+              <div>
+                <p className="text-xs font-semibold text-admin-heading">
+                  {row.target}
+                </p>
+                <p className="text-[10px] tracking-widest text-[#41493A] uppercase">
+                  {row.module}
+                </p>
+              </div>
             </div>
 
             <div className="flex justify-center">

@@ -8,7 +8,9 @@ type AdminRiwayatApi = {
     feedbackLogs: {
       id: number;
       namaPt: string;
+      fotoPt: string | null;
       namaKlien: string;
+      fotoKlien: string | null;
       pesan: string;
       createdAt: string;
     }[];
@@ -16,6 +18,7 @@ type AdminRiwayatApi = {
       id: number;
       namaAdmin: string;
       namaTargetUser: string | null;
+      fotoTargetUser: string | null;
       aksi: string;
       createdAt: string;
     }[];
@@ -68,8 +71,8 @@ export function useAdminRiwayat() {
                 id: `FBK-${log.id}`,
                 time: when.time,
                 date: when.date,
-                trainer: { name: log.namaPt },
-                client: { name: log.namaKlien },
+                trainer: { name: log.namaPt, photoUrl: log.fotoPt ?? null },
+                client: { name: log.namaKlien, photoUrl: log.fotoKlien ?? null },
                 note: log.pesan,
               };
             }),
@@ -82,6 +85,7 @@ export function useAdminRiwayat() {
                 actor: log.namaAdmin,
                 action: toAuditAction(log.aksi),
                 target: log.namaTargetUser ?? "-",
+                targetPhotoUrl: log.fotoTargetUser ?? null,
                 module: "Kelola Pengguna",
                 status: "BERHASIL" as const,
               };
