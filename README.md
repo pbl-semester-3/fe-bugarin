@@ -69,15 +69,12 @@ cp .env.example .env.local   # isi NEXT_PUBLIC_API_URL (backend lokal atau Rende
 npm run dev    # http://localhost:3000
 ```
 
-**Melihat UI Admin (data dummy, sebelum auth/integrasi Admin siap):**
+**Menjalankan aplikasi:**
 1. `npm run dev`
-2. Buka `http://localhost:3000`, lalu di DevTools Console set cookie lokal:
-   ```js
-   document.cookie = "token=dev; path=/";
-   ```
-3. Buka `http://localhost:3000/admin/dashboard`.
+2. Buka `http://localhost:3000/login`, lalu masuk dengan akun Admin atau PT.
+3. Setelah login, kedua role diarahkan ke `/dashboard`.
 
-> Halaman `/pt/*` dan `/admin/*` dijaga `proxy.ts` (baru cek keberadaan cookie `token`; role guard nyata belum aktif). Login Admin belum di-wire. Detail status, risiko, dan daftar dummy: [`docs/CATATAN.md`](docs/CATATAN.md).
+> Halaman web PT/Admin memakai URL bersih (`/dashboard`, `/users`, `/klien`, dst). `proxy.ts` mengecek cookie, lalu guard role divalidasi di `app/(app)/layout.tsx` dan layout per area.
 
 **Sebelum mulai:** baca [`docs/Bugarin_PRD_Frontend.md`](docs/Bugarin_PRD_Frontend.md) dan skill di folder [`skills/`](skills/) (`nextjs-app-router-patterns`, `shadcn-ui-patterns`, `tanstack-query-patterns`, `form-validation-patterns`, `frontend-taste-bugarin`).
 
@@ -87,20 +84,31 @@ npm run dev    # http://localhost:3000
 
 ```
 app/
- ├─ (auth)/login/       # split-screen login
- ├─ pt/                 # Web PT: dashboard, verifikasi, klien, klien/[id], riwayat, feedback, profil
- └─ admin/              # Web Admin: dashboard, users (+ users/pt/[id]/edit), riwayat, profil
+  (public)/               # landing page + komponen landing
+  (auth)/login/           # split-screen login + komponen form
+  (app)/                  # halaman web PT/Admin dengan URL bersih
+    layout.tsx            # guard role + pilih AdminShell/PtShell
+    dashboard/            # /dashboard (shared Admin/PT)
+    users/                # /users, /users/pt/[id]/edit (Admin)
+    riwayat/              # /riwayat (shared Admin/PT)
+    profil/               # /profil (shared Admin/PT)
+    verifikasi/           # /verifikasi (PT)
+    klien/                # /klien, /klien/[id] (PT)
+    feedback/             # /feedback (PT)
 components/
- ├─ shell/              # pt-shell.tsx, admin-shell.tsx (sidebar + header)
- ├─ pt/                 # komponen halaman PT (termasuk dashboard/, riwayat/, feedback/, profil/)
- ├─ admin/              # komponen halaman Admin + komponen shared admin
- └─ ui/                 # komponen shadcn
-hooks/                  # hook TanStack Query (termasuk useAdmin*.ts)
-lib/                    # api.ts (Axios), query-keys.ts, mock/admin.ts, types/, schemas/
-providers/              # QueryProvider
-design/                 # spec desain PT, admin/, figma-plugin/
-docs/                   # PRD, workflow, catatan
-proxy.ts                # BUKAN middleware.ts — lihat skill nextjs-app-router-patterns
+  shell/                  # shell, sidebar, notifikasi (global)
+  ui/                     # komponen shadcn + avatar (global)
+hooks/                    # hook TanStack Query
+services/                 # api.ts + service per domain
+  admin/
+  pt/
+types/                    # tipe domain Admin/PT/auth
+lib/                      # query-keys.ts, schemas/, utility
+providers/                # QueryProvider
+design/                   # spec desain PT, admin/, figma-plugin/
+docs/                     # PRD, workflow, catatan
+public/fonts/             # font self-hosted
+proxy.ts                  # BUKAN middleware.ts — cek cookie route terlindungi
 ```
 
 ---

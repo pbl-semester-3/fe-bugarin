@@ -11,8 +11,8 @@ rujukan agar pembersihan dummy dan pekerjaan lanjutan tidak terlewat.
 - Fondasi frontend (Next.js 16 App Router, tema shadcn, TanStack Query, guard)
   sudah selesai.
 - **Web PT** sudah diintegrasikan ke backend asli untuk sebagian besar halaman.
-- **Web Admin** sudah selesai di-slicing (UI) tetapi **seluruh datanya masih
-  dummy**. Autentikasi admin dan integrasi endpoint `/admin/*` belum dikerjakan.
+- **Web Admin** sudah terintegrasi dengan endpoint `/admin/*`; mock lama tidak
+  lagi dipakai oleh komponen/hook aktif.
 - Tujuannya: UI Admin bisa langsung dilihat/direview tanpa menunggu backend.
 
 ## 2. Branch Kerja
@@ -35,44 +35,32 @@ Branch sengaja **tidak dihapus** agar jejak per halaman tetap terlihat.
 
 1. **Data dummy diisolasi** di `lib/mock/` dan hanya diakses lewat hook adaptor
    (`hooks/useAdmin*.ts`), bukan langsung dari komponen.
-2. **Halaman Admin memakai dummy**; tipe data di `lib/types/admin.ts` dibuat
-   mendekati kontrak API agar mudah diganti.
-3. **Tema Admin** disimpan di `localStorage` (`bugarin-admin-theme`) lewat
-   `hooks/useAdminTheme.ts`; atribut `data-theme` hanya diterapkan di rute
-   `/admin` agar tidak memengaruhi halaman PT.
-4. **Auth/role guard belum nyata.** `app/admin/layout.tsx` dan
-   `app/pt/layout.tsx` masih mengembalikan role tetap selama cookie `token`
-   ada. `proxy.ts` hanya mengecek keberadaan cookie.
+2. **Tipe domain** berada di `types/`; halaman Admin memakai kontrak API dari `services/admin/`.
+3. **Tema Admin** disimpan di `localStorage` (`bugarin-admin-theme`) lewat `hooks/useAdminTheme.ts`; tema dipilih berdasarkan role dari `getMe()` di `app/(app)/layout.tsx`, bukan prefix URL.
+4. **Auth/role guard** divalidasi di `app/(app)/layout.tsx` dan layout area. `proxy.ts` hanya mengecek keberadaan cookie; role sebenarnya dibaca dari `GET /auth/me` lewat `services/auth.server.ts`.
 5. **`/dev-login` sudah dihapus** dari repo. Untuk melihat UI Admin sekarang,
    gunakan cookie lokal (bagian 4).
 
 ## 4. Cara Menjalankan Mode Slicing Admin
 
 1. Jalankan `npm run dev`.
-2. Login normal belum bisa untuk Admin (form login masih menolak role selain
-   `pt`).
+2. Login normal bisa untuk Admin dan PT; keduanya diarahkan ke `/dashboard`.
 3. Buka DevTools → Console di `http://localhost:3000`, lalu set cookie lokal:
 
    ```js
    document.cookie = "token=dev; path=/";
    ```
 
-4. Buka `http://localhost:3000/admin/dashboard` (atau menu Admin lain).
+4. Buka `http://localhost:3000/dashboard` (atau menu Admin lain).
 5. Hapus cookie dengan `document.cookie = "token=; path=/; max-age=0"` untuk
    kembali ke kondisi belum login.
 
-> Cookie ini **hanya untuk lokal**, tidak httpOnly, dan menembus `/pt/*` maupun
-> `/admin/*` karena guard masih hardcode. Jangan dipakai di production.
+> Cookie ini hanya untuk lokal. Guard role tetap memanggil `GET /auth/me`; jangan dipakai di production.
 
 ## 5. Risiko / Hal yang Perlu Diperhatikan
 
-- **`getRole()` masih hardcode.** Admin/PT bisa saling menembus halaman selama
-  cookie `token` ada. Wajib diperbaiki bersama auth nyata (butuh `GET
-  /auth/me` atau profile per role dari backend).
-- **Login Admin belum di-wire.** `app/(auth)/login/page.tsx` baru mengarahkan
-  role `pt`; role `admin` masih menampilkan pesan bahwa halaman untuk PT.
-- **`proxy.ts`** mengarahkan semua user yang sudah login dan membuka `/login` ke
-  `/pt/dashboard`, termasuk admin.
+- **Guard role** divalidasi di layout server `app/(app)` dan layout area (`users`, `klien`, `verifikasi`, `feedback`). Role salah diarahkan ke `/dashboard`.
+- **proxy.ts** hanya memeriksa cookie pada route terlindungi; redirect role dilakukan server layout.
 - **Dummy harus dibersihkan** (bagian 6) dan **jangan** dipakai di production.
 - **Palet dark mode Admin masih usulan** (`design/admin/dark-mode.md`), belum
   ditinjau desainer.
@@ -95,8 +83,8 @@ Dummy yang tersisa: **`lib/mock/admin.ts`**.
 | `useUpdateAdminPassword` | ganti password | `PUT /admin/password` |
 
 TODO integrasi tambahan yang belum punya hook:
-- `app/admin/layout.tsx` → validasi role via `GET /admin/profile` / `GET /auth/me`.
-- `components/admin/users/edit-trainer-form.tsx`:
+- `app/(app)/layout.tsx` → validasi role via `GET /admin/profile` / `GET /auth/me`.
+- `app/(app)/users/pt/[id]/edit/components/edit-trainer-form.tsx`:
   - `PUT /admin/users/:id`
   - `POST /admin/users/:id/force-reset-password`
   - `PUT /admin/users/:id/suspend`
@@ -104,13 +92,12 @@ TODO integrasi tambahan yang belum punya hook:
   opsional bila ingin disimpan ke akun.
 
 Langkah pembersihan:
-1. Ganti `queryFn`/`mutationFn` di tiap hook ke panggilan `api` (TODO sudah
-   ditandai di masing-masing file).
+1. Panggilan API sudah dipindah ke `services/`; hook hanya mengelola React Query.
 2. Perluas `lib/query-keys.ts` agar menyimpan parameter filter/pagination.
 3. Pastikan tidak ada komponen yang mengimpor `lib/mock/` langsung.
 4. Hapus `lib/mock/admin.ts` (dan folder `lib/mock/` bila sudah kosong).
 5. Hapus komentar TODO integrasi yang sudah selesai.
-6. Update dokumen ini dan `docs/Bugarin_PRD_Frontend.md` setelah integrasi.
+6. Dokumen struktur sudah diperbarui mengikuti refactor `app/(app)`, `types/`, dan `services/`.
 
 ## 7. Fitur yang Sengaja Belum Diimplementasikan
 
@@ -128,16 +115,16 @@ Langkah pembersihan:
 ### 8.1 Baseline `dev` — 2026-10-25
 - [x] `npm run lint` → 0 error
 - [x] `npm run typecheck` → 0 error
-- [x] `npm run build` → sukses (14 route, termasuk seluruh `/admin/*`)
+- [x] `npm run build` → sukses (14 route bersih tanpa prefix `/pt` atau `/admin`)
 
 ### 8.2 Runtime Admin (dev server + curl) — 2026-10-25
-- [x] `GET /admin/dashboard` tanpa cookie → **307** `location: /login`
+- [x] `GET /dashboard` tanpa cookie → **307** `location: /login`
 - [x] Dengan `cookie: token=dev`:
-  - `/admin/dashboard` → 200
-  - `/admin/users` dan `/admin/users?tab=pt` → 200
-  - `/admin/riwayat` dan `/admin/riwayat?tab=audit` → 200
-  - `/admin/profil` → 200
-  - `/admin/users/pt/1/edit` → 200
+  - `/dashboard` → 200
+  - `/users` dan `/users?tab=pt` → 200
+  - `/riwayat` dan `/riwayat?tab=audit` → 200
+  - `/profil` → 200
+  - `/users/pt/1/edit` → 200
 - [x] Log dev server bersih (tanpa error runtime)
 
 ### 8.3 Riwayat pengujian PT

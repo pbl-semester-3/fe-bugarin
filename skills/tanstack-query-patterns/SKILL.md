@@ -65,7 +65,7 @@ Kenapa factory, bukan tulis `["pt", "klien", id]` manual di tiap file: kalau ben
 ```typescript
 // hooks/useKlienDetail.ts
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api } from "@/services/api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function useKlienDetail(id: number) {
@@ -82,7 +82,7 @@ export function useKlienDetail(id: number) {
 ```typescript
 // hooks/usePairingRequests.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api } from "@/services/api";
 import { queryKeys } from "@/lib/query-keys";
 
 export function usePairingRequests() {
