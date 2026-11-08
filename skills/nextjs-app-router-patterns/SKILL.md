@@ -75,13 +75,13 @@ Halaman dashboard Bugarin (Verifikasi, Klien detail, CRUD User) mayoritas **inte
 
 Pola per halaman:
 ```tsx
-// app/pt/verifikasi/page.tsx — Server Component tipis, cuma shell
+// app/(app)/verifikasi/page.tsx — Server Component tipis, cuma shell
 export default function VerifikasiPage() {
   return <VerifikasiTable />; // komponen client yang fetch data
 }
 ```
 ```tsx
-// components/verifikasi-table.tsx
+// app/(app)/verifikasi/components/verifikasi-table.tsx
 "use client";
 import { usePairingRequests } from "@/hooks/usePairingRequests";
 
@@ -102,20 +102,44 @@ Next.js 16 mengubah default caching jadi **opt-in total**: tidak ada yang di-cac
 
 ## Struktur Route Groups (proteksi role)
 
+Bugarin memakai route group bersama `(app)` agar URL bersih untuk Admin dan PT:
+
 ```
 app/
- ├─ (auth)/login/page.tsx
- ├─ pt/
- │   ├─ layout.tsx     # cek role==='pt' dari data user (fetch profile), redirect kalau salah
- │   └─ .../page.tsx
- └─ admin/
-     ├─ layout.tsx     # cek role==='admin'
-     └─ .../page.tsx
+  (public)/
+    page.tsx
+    components/
+  (auth)/login/page.tsx
+  (app)/
+    layout.tsx                 # getMe + pilih shell, guard login
+    components/
+      admin/
+      pt/
+    dashboard/page.tsx         # shared: pilih view Admin/PT dari role
+    users/
+      layout.tsx               # admin only
+      page.tsx
+      components/
+      pt/[id]/edit/page.tsx
+    riwayat/page.tsx           # shared
+    profil/page.tsx            # shared
+    verifikasi/
+      layout.tsx               # PT only
+      page.tsx
+      components/
+    klien/
+      layout.tsx               # PT only
+      page.tsx
+      components/
+    feedback/
+      layout.tsx               # PT only
+      page.tsx
+      components/
 ```
 
-**Penting**: `pt/` dan `admin/` harus folder biasa, **bukan** route group `(pt)`/`(admin)` — route group tidak menambah segmen ke URL, jadi dua route group berbeda yang isinya sama-sama `dashboard/page.tsx` akan resolve ke path identik (`/dashboard`) dan bikin build gagal ("two parallel pages resolve to the same path"). Route group cuma aman dipakai kalau path-nya memang tidak diperebutkan folder lain, seperti `(auth)/login` di atas.
+**Penting**: jangan membuat `(pt)/dashboard/page.tsx` dan `(admin)/dashboard/page.tsx` secara terpisah — keduanya resolve ke `/dashboard` dan build gagal ("two parallel pages resolve to the same path"). Solusinya: satu halaman shared di `app/(app)/dashboard/page.tsx` yang memilih view berdasarkan role dari `getMe()`.
 
-`layout.tsx` per grup adalah lapisan kedua setelah `proxy.ts` — proxy cuma cek "ada token atau tidak", layout Server Component ini yang cek "role-nya benar untuk grup ini atau tidak" (fetch profile via cookie yang sama, redirect kalau role tidak cocok).
+`layout.tsx` per area adalah lapisan kedua setelah `proxy.ts` — proxy hanya cek "ada token atau tidak", layout Server Component yang cek "role-nya benar atau tidak" dan redirect ke `/dashboard` bila salah. `getMe()` dibungkus `cache()` agar layout dan page tidak fetch dua kali.
 
 ## Anti-Patterns
 

@@ -1,8 +1,63 @@
 # Bugarin Frontend
 
-Next.js 16 (App Router) + TypeScript + Tailwind v4 + TanStack Query — Web Dashboard PT & Admin.
+Web Dashboard **PT & Admin** untuk platform kebugaran **Bugarin** — Next.js 16 (App Router) + TypeScript + Tailwind v4 + TanStack Query.
 
-**Sebelum mulai**: baca `Bugarin_PRD_Frontend.md` dan skill di folder `skill/` (`nextjs-app-router-patterns`, `shadcn-ui-patterns`, `tanstack-query-patterns`, `form-validation-patterns`, `frontend-taste-bugarin`).
+---
+
+## Tentang Bugarin
+
+Bugarin adalah sistem monitoring kebugaran yang menghubungkan dua peran yang saling bergantung: **Klien** dan **Personal Trainer (PT)**. PT memantau progres klien — berat badan serta aktivitas harian/mingguan/bulanan — sementara Klien menerima dua sumber feedback: masukan langsung dari PT dan rekomendasi berbasis AI dari data historis progres mereka.
+
+Selain modul Klien dan PT, tersedia **Dashboard Web Admin** untuk mengelola seluruh pengguna platform. Implementasi AI (Google Gemini, dijalankan di backend) berfokus pada: (1) menghasilkan **Weekly Plan** (jadwal latihan + menu makan) secara generatif dari profil klien, dan (2) memberi **feedback tekstual** berdasarkan data historis progres klien.
+
+> Ringkasan lengkap ada di [`docs/Bugarin_PRD.md`](docs/Bugarin_PRD.md).
+
+### Peran pengguna
+
+| Role | Cara akun dibuat | Akses utama |
+|---|---|---|
+| Klien | Registrasi mandiri via Mobile App | Mobile App |
+| Personal Trainer (PT) | Dibuat langsung oleh Admin | **Web Dashboard PT** (repo ini) |
+| Admin | Dibuat manual saat inisialisasi (seed) | **Web Dashboard Admin** (repo ini) |
+
+### Fitur Web di repo ini
+
+**Web PT**
+- **Dashboard** — jumlah klien aktif + jadwal latihan mingguan hasil AI (semua klien).
+- **Verifikasi** — terima/tolak request klien baru (tolak wajib isi alasan).
+- **Klien** — detail klien, grafik BB historis, review Weekly Plan AI (Setuju / Override).
+- **Riwayat** — daftar ringkas seluruh klien (nama, usia, gender, BB awal–sekarang).
+- **Feedback** — pilih klien → tulis masukan → notifikasi ke klien.
+- **Profil** — data diri, spesialisasi, **tempat gym** (dipakai AI menyusun jadwal), ganti password, tema.
+
+**Web Admin** (UI selesai; data masih dummy)
+- **Dashboard** — ringkasan klien/PT aktif, tren aktivitas sesi & registrasi, komposisi spesialisasi PT.
+- **Kelola Pengguna** — 2 tab: daftar Klien dan daftar PT. Filter/search, pagination, daftarkan PT baru, hapus Klien/PT, dan halaman Edit PT (identitas, paksa reset password, suspend).
+- **Riwayat** — 2 tab read-only: log feedback PT→Klien dan jejak audit CRUD Admin.
+- **Profil** — data diri, ganti password, dan mode tampilan Terang/Gelap.
+
+> Edit Klien dan Tambah Klien belum diimplementasikan (belum ada desain/keputusan produk). Detail status & daftar dummy: [`docs/CATATAN.md`](docs/CATATAN.md).
+
+> Mobile App (Klien) dan backend Express berada di repo terpisah. Detail scope & business rules: [`docs/Bugarin_PRD.md`](docs/Bugarin_PRD.md).
+
+---
+
+## Desain (Figma)
+
+Desain UI/UX ada di file Figma **"UI/UX PBL KEL 7"**:
+
+- **Link:** https://www.figma.com/design/CRn1rzbufrR139Sb9GqoF1/UI-UX-PBL-KEL-7
+- **Halaman:** `UI Website PT`, `UI Website Admin`, `UI Mobile`.
+
+Spesifikasi desain per halaman (angka dari panel Inspect Figma) disimpan di folder [`design/`](design/):
+
+- [`design/DESIGN_PT.md`](design/DESIGN_PT.md) — token warna, tipografi, komponen global PT.
+- **PT:** [`design/DASHBOARD.md`](design/DASHBOARD.md), [`design/VERIFIKASI.md`](design/VERIFIKASI.md), [`design/KLIEN.md`](design/KLIEN.md), [`design/RIWAYAT.md`](design/RIWAYAT.md), [`design/FEEDBACK.md`](design/FEEDBACK.md), [`design/PROFIL.md`](design/PROFIL.md), [`design/LOGIN.md`](design/LOGIN.md).
+- **Admin:** [`design/admin/dashboard-admin.md`](design/admin/dashboard-admin.md), [`design/admin/kelola-pengguna.md`](design/admin/kelola-pengguna.md), [`design/admin/riwayat.md`](design/admin/riwayat.md), [`design/admin/profil.md`](design/admin/profil.md), [`design/admin/dark-mode.md`](design/admin/dark-mode.md).
+
+Selain itu, [`design/figma-plugin/`](design/figma-plugin/) berisi **plugin Figma** untuk membuat ulang tampilan web app ini ke Figma (lihat README-nya).
+
+---
 
 ## Setup Cepat
 
@@ -11,26 +66,70 @@ nvm use
 npm install
 cp .env.example .env.local   # isi NEXT_PUBLIC_API_URL (backend lokal atau Render)
 
-npx shadcn@latest init
-npx shadcn@latest add button table dialog alert-dialog form input select card badge textarea
-
 npm run dev    # http://localhost:3000
 ```
+
+**Menjalankan aplikasi:**
+1. `npm run dev`
+2. Buka `http://localhost:3000/login`, lalu masuk dengan akun Admin atau PT.
+3. Setelah login, kedua role diarahkan ke `/dashboard`.
+
+> Halaman web PT/Admin memakai URL bersih (`/dashboard`, `/users`, `/klien`, dst). `proxy.ts` mengecek cookie, lalu guard role divalidasi di `app/(app)/layout.tsx` dan layout per area.
+
+**Sebelum mulai:** baca [`docs/Bugarin_PRD_Frontend.md`](docs/Bugarin_PRD_Frontend.md) dan skill di folder [`skills/`](skills/) (`nextjs-app-router-patterns`, `shadcn-ui-patterns`, `tanstack-query-patterns`, `form-validation-patterns`, `frontend-taste-bugarin`).
+
+---
 
 ## Struktur
 
 ```
 app/
- ├─ (auth)/login/
- ├─ (pt)/          layout.tsx (role guard) + dashboard/ (stub)
- └─ (admin)/       layout.tsx (role guard) + dashboard/ (stub)
-proxy.ts           # BUKAN middleware.ts — lihat skill nextjs-app-router-patterns
-lib/api.ts         # Axios instance, withCredentials true
-lib/query-keys.ts  # query key factory TanStack Query
-providers/         # QueryProvider
+  (public)/               # landing page + komponen landing
+  (auth)/login/           # split-screen login + komponen form
+  (app)/                  # halaman web PT/Admin dengan URL bersih
+    layout.tsx            # guard role + pilih AdminShell/PtShell
+    dashboard/            # /dashboard (shared Admin/PT)
+    users/                # /users, /users/pt/[id]/edit (Admin)
+    riwayat/              # /riwayat (shared Admin/PT)
+    profil/               # /profil (shared Admin/PT)
+    verifikasi/           # /verifikasi (PT)
+    klien/                # /klien, /klien/[id] (PT)
+    feedback/             # /feedback (PT)
+components/
+  shell/                  # shell, sidebar, notifikasi (global)
+  ui/                     # komponen shadcn + avatar (global)
+hooks/                    # hook TanStack Query
+services/                 # api.ts + service per domain
+  admin/
+  pt/
+types/                    # tipe domain Admin/PT/auth
+lib/                      # query-keys.ts, schemas/, utility
+providers/                # QueryProvider
+design/                   # spec desain PT, admin/, figma-plugin/
+docs/                     # PRD, workflow, catatan
+public/fonts/             # font self-hosted
+proxy.ts                  # BUKAN middleware.ts — cek cookie route terlindungi
 ```
 
-## Yang Perlu Dikerjakan Selanjutnya
-- Role guard di `(pt)/layout.tsx` dan `(admin)/layout.tsx` masih placeholder (`getRole()` selalu return role tetap) — ganti dengan panggilan nyata ke `GET /pt/profile` / `GET /admin/profile`.
-- Halaman lain sesuai `Bugarin_PRD_Frontend.md` bab 4 & 5 (Verifikasi, Klien detail+grafik, Riwayat, Feedback, Profil, CRUD User).
-- Jalankan `npx shadcn@latest init` dulu sebelum pakai komponen di `components/ui/` (belum di-generate di scaffold ini).
+---
+
+## Testing Lokal (wajib sebelum push)
+
+```bash
+npm run lint         # 0 error
+npm run typecheck    # 0 error
+npm run build        # sukses (build produksi penuh)
+```
+
+Alur kerja & aturan commit: [`docs/WORKFLOW.md`](docs/WORKFLOW.md).
+
+---
+
+## Referensi
+
+- [`docs/Bugarin_PRD.md`](docs/Bugarin_PRD.md) — PRD induk (overview, scope, user flow, ERD, keamanan).
+- [`docs/Bugarin_PRD_Frontend.md`](docs/Bugarin_PRD_Frontend.md) — PRD turunan frontend.
+- [`docs/bugarin_tech_stack.md`](docs/bugarin_tech_stack.md) — rincian tech stack.
+- [`docs/CATATAN.md`](docs/CATATAN.md) — mode data dummy untuk slicing UI.
+- [`docs/WORKFLOW.md`](docs/WORKFLOW.md) — alur kerja & commit.
+- [`docs/SETUP.md`](docs/SETUP.md) — setup.

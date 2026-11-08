@@ -1,25 +1,44 @@
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import "./globals.css";
+import { QueryProvider } from "@/providers/query-provider";
 
-// TODO: ganti fetch dummy ini dengan panggilan nyata ke GET /admin/profile.
-async function getRole(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-  if (!token) return null;
-  return "admin";
-}
+// Font di-host sendiri (bukan next/font/google) untuk menghindari bug Next.js 16 +
+// Turbopack: Google Fonts kadang mengembalikan URL tanpa ekstensi sehingga build gagal
+// ("next/font/google queries have exactly one entry"). Lihat vercel/next.js#99114.
+// File: Plus Jakarta Sans (variable, latin) — lisensi OFL.
+const jakarta = localFont({
+  src: "../public/fonts/PlusJakartaSans-latin.woff2",
+  weight: "200 800",
+  style: "normal",
+  variable: "--font-jakarta",
+  display: "swap",
+});
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const role = await getRole();
-  if (role !== "admin") redirect("/login");
+export const metadata: Metadata = {
+  title: "Bugarin",
+  description: "Bugarin Personal Trainer & Admin Dashboard",
+};
 
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <div className="flex min-h-screen">
-      <nav className="w-56 border-r p-4">
-        {/* TODO: nav item Dashboard, CRUD User, Riwayat, Profil */}
-        <p className="font-semibold">Bugarin Admin</p>
-      </nav>
-      <main className="flex-1 p-6">{children}</main>
-    </div>
+    <html lang="id" className={jakarta.variable}>
+      <body className="font-sans antialiased">
+        {/* Area publik/auth selalu terang. Tema role diterapkan di app/(app)/layout.tsx. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var d=document.documentElement;d.classList.remove("dark");d.removeAttribute("data-theme");}catch(e){}',
+          }}
+        />
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+      </body>
+    </html>
   );
 }

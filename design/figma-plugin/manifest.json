@@ -1,0 +1,10 @@
+{
+  "name": "Bugarin Web App Replica",
+  "id": "bugarin-webapp-replica-dev",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

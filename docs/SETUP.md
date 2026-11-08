@@ -39,17 +39,26 @@ npm run dev    # http://localhost:3000
 
 ```
 app/
- ├─ (auth)/login/
- ├─ pt/          layout.tsx (role guard) + dashboard/ (stub)
- └─ admin/       layout.tsx (role guard) + dashboard/ (stub)
-proxy.ts         # BUKAN middleware.ts — lihat skills/nextjs-app-router-patterns
-lib/api.ts       # Axios instance, withCredentials true
-lib/query-keys.ts
-providers/
+  (public)/page.tsx       # landing
+  (auth)/login/           # login
+  (app)/                  # web PT + Admin, URL bersih
+    dashboard/            # /dashboard (shared)
+    users/                # /users (Admin)
+    riwayat/              # /riwayat (shared)
+    profil/               # /profil (shared)
+    verifikasi/           # /verifikasi (PT)
+    klien/                # /klien (PT)
+    feedback/             # /feedback (PT)
+components/shell/         # shell, sidebar, notifikasi
+components/ui/            # komponen shadcn + avatar
+services/                 # api.ts, auth, service admin/pt
+types/                    # tipe domain
+public/fonts/             # font self-hosted
+proxy.ts                  # cek cookie route terlindungi
 ```
 
-**Penting**: `pt/` dan `admin/` folder biasa, **bukan** route group `(pt)`/`(admin)` — route group tidak menambah segmen URL, dua route group isi `dashboard/page.tsx` akan bentrok jadi 1 path saat build.
+**Penting**: `app/(app)` adalah route group bersama untuk PT dan Admin. URL tetap bersih karena halaman shared (`dashboard`, `riwayat`, `profil`) memilih view berdasarkan role; halaman khusus (`/users`, `/klien`, `/verifikasi`, `/feedback`) dijaga layout server masing-masing.
 
 ## Yang Perlu Dikerjakan Selanjutnya
-- Role guard di `pt/layout.tsx` dan `admin/layout.tsx` masih placeholder — ganti dengan panggilan nyata ke `GET /pt/profile` / `GET /admin/profile`.
-- Halaman lain sesuai `docs/Bugarin_PRD_Frontend.md` bab 4 & 5.
+- **Kualitas**: tabel semantik/a11y, uji responsif, dan CI `lint + typecheck + build`.
+- **Keputusan desain/produk** yang tertunda: Edit Klien, Tambah Klien, filter Audit, lupa kata sandi, review palet dark mode.

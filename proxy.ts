@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 // Next.js 16: file ini WAJIB bernama proxy.ts (bukan middleware.ts) — lihat skill
 // nextjs-app-router-patterns. Ini hanya UX layer (redirect kalau tidak ada cookie),
 // BUKAN security boundary — validasi role & kepemilikan data tetap wajib di backend Express.
+// Redirect /login (saat sudah login) ditangani server component karena butuh tahu role.
 export default function proxy(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   if (!token) {
@@ -13,5 +14,13 @@ export default function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/pt/:path*", "/admin/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/users/:path*",
+    "/riwayat/:path*",
+    "/profil/:path*",
+    "/verifikasi/:path*",
+    "/klien/:path*",
+    "/feedback/:path*",
+  ],
 };

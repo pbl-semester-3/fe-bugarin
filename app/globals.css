@@ -1,20 +1,312 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 /* Dark mode manual via class "dark" di <html> — dikontrol dari data tema profil
    (siang/malam), BUKAN prefers-color-scheme OS. Lihat skill shadcn-ui-patterns. */
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
+/* ============================================================
+   Token desain Bugarin PT — sumber: docs/DESIGN_PT.md §8.1
+   Token shadcn (--primary, --secondary, dst.) di-OVERRIDE agar seluruh
+   aplikasi mengikuti brand PT. Token yang tidak punya padanan shadcn
+   ditambahkan sebagai --color-* baru.
+   ============================================================ */
+
+@theme inline {
+  /* mapping shadcn (dipakai komponen components/ui/*) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Token tambahan DESIGN_PT (tidak ada padanannya sebagai semantic shadcn) */
 @theme {
-  --color-background: #ffffff;
-  --color-foreground: #111827;
+  --color-brand: #f69665; /* oranye brand (accent action) */
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-ink: #181b25;
+  --color-ink-soft: #464555;
+  --color-outline: #c7c4d8;
+  --color-surface-tint: #f1f3ff;
+  --color-surface-alt: #f9f9ff;
+  --color-surface-2: #ebedfb;
+  --color-surface-3: #e5e8f5;
+  --color-surface-4: #dfe2ef;
+  --color-surface-5: #e2dfff;
+  --color-success: #006c47;
+  --color-success-container: #82f9be;
+  --color-success-deep: #002113;
+  --color-danger: #ff6c6c;
+  --color-danger-strong: #ba1a1a;
+  --color-danger-container: #ffdad6;
+  --color-secondary-strong: #c34e31;
+  --color-secondary-deep: #a2361b;
+  --color-accent-indigo: #493ee5;
+  --color-warning: #f59e0b;
+
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-panel: 16px; /* kartu pengajuan & modal Verifikasi (design/VERIFIKASI.md §4.2) */
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 1px 3px rgba(24, 27, 37, 0.08);
+
+  /* Token halaman Admin (design/admin/*.md) — tidak mengubah token PT di atas */
+  --color-admin-bg: #f8f9ff;
+  --color-admin-heading: #0b1c30;
+  --color-admin-secondary: #5a5e69;
+  --color-admin-low: #eff4ff;
+  --color-admin-mid: #e5eeff;
+  --color-admin-track: #dce9ff;
+  --color-admin-navy: #213145;
+  --color-admin-on-navy: #c3c6d3;
+  --color-admin-green-text: #326b00;
+  --color-admin-green-deep: #214c00;
+  --color-admin-mint: #82f9be;
+  --color-admin-mint-text: #006c47;
+  --color-admin-brown: #95491f;
+  --color-admin-warning: #fff3ad;
+  --color-admin-warning-text: #773308;
+  --color-admin-danger-tint: #ffdad6;
+  --color-admin-danger-text: #93000a;
+  --color-admin-danger-dark: #a2361b;
+  --color-admin-footer: #eaf1ff;
+  --color-admin-peach: #ff9e6c;
+  --color-admin-surface: #ffffff;
+  --color-admin-inset: #ebedfb;
+  --color-admin-pill: #ffffff;
+  --color-admin-banner: #7dc04e;
+  --color-admin-banner-grad: #8fd56a;
+  --color-on-accent: #ffffff;
+  --color-aktif-tint: rgba(175, 246, 124, 0.4);
+  --color-onboarding-tint: rgba(246, 150, 101, 0.3);
+  --color-mint-tint: rgba(130, 249, 190, 0.4);
+
+  /* Token landing page (design/figma-plugin/Html → Body.png) */
+  --color-landing-bg: #fcf9f4;
+  --color-landing-cream: #f6f0e6;
+  --color-landing-surface: #ffffff;
+  --color-landing-orange: #f46b3c;
+  --color-landing-orange-soft: #fbefe9;
+  --color-landing-green: #8cbf3f;
+  --color-landing-green-soft: #eef6e3;
+  --color-landing-ink: #1f2933;
+  --color-landing-muted: #6b7280;
+  --color-landing-line: #e8e0d4;
+  --color-landing-footer: #202a33;
 }
 
+:root {
+  --radius: 0.75rem; /* 12px — radius kartu */
+
+  --background: #f1f3ff; /* surface-tint */
+  --foreground: #181b25; /* ink */
+  --card: #ffffff;
+  --card-foreground: #181b25;
+  --popover: #ffffff;
+  --popover-foreground: #181b25;
+  --primary: #7dc04e;
+  --primary-foreground: #ffffff; /* on-primary — ikut Figma; alternatif: #181b25 (ink) */
+  --secondary: #e5e8f5; /* surface-3 (tombol secondary abu) */
+  --secondary-foreground: #181b25;
+  --muted: #ebedfb; /* surface-2 */
+  --muted-foreground: #777587; /* muted */
+  --accent: #ebedfb; /* surface-2 (hover bawaan shadcn) */
+  --accent-foreground: #181b25;
+  --destructive: #ba1a1a; /* danger-strong */
+  --border: #c7c4d8; /* outline */
+  --input: #dfe2ef; /* surface-4 */
+  --ring: #493ee5; /* accent-indigo */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: #2c303a; /* sidebar gelap */
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #7dc04e; /* menu aktif */
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #493ee5;
+}
+
+/* TODO: dark mode BUGARIN belum didesain (docs/DESIGN_PT.md §9.2).
+   Nilai di bawah masih tema gelap generik; ganti saat desain dark tersedia. */
 .dark {
-  --color-background: #0f172a;
-  --color-foreground: #f1f5f9;
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
-body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+/* Token PT tambahan untuk mode gelap. Token shadcn di atas sudah di-override
+   oleh .dark; blok ini menyelaraskan token brand PT (surface, ink, status).
+   html.dark dipakai agar selalu menang dari blok .dark generik. */
+html.dark {
+  --primary: #7dc04e;
+  --primary-foreground: #0b1c30;
+  --secondary: #244563;
+  --secondary-foreground: #e8eff9;
+  --muted: #1b3550;
+  --muted-foreground: #93a3b8;
+  --accent: #244563;
+  --accent-foreground: #e8eff9;
+  --border: #2a4260;
+  --input: #3d5a7a;
+  --ring: #493ee5;
+  --background: #0b1c30;
+  --foreground: #e8eff9;
+  --card: #12283f;
+  --card-foreground: #e8eff9;
+  --popover: #17324d;
+  --popover-foreground: #e8eff9;
+
+  --color-ink: #e8eff9;
+  --color-ink-soft: #a8b7cb;
+  --color-outline: #2a4260;
+  --color-surface-tint: #1b3550;
+  --color-surface-alt: #12283f;
+  --color-surface-2: #1b3550;
+  --color-surface-3: #244563;
+  --color-surface-4: #2a4260;
+  --color-surface-5: #17324d;
+  --color-success: #9bdd6b;
+  --color-success-container: #82f9be;
+  --color-success-deep: #d7ffd0;
+  --color-danger: #ff6c6c;
+  --color-danger-strong: #ffb4ab;
+  --color-danger-container: rgba(255, 180, 171, 0.16);
+  --color-secondary-strong: #ffb68f;
+  --color-secondary-deep: #ffb68f;
+  --color-accent-indigo: #9d95ff;
+  --color-warning: #f59e0b;
+  --color-on-primary: #0b1c30;
+  --color-on-secondary: #2a1204;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  /* Sidebar tetap seperti versi terang, sama dengan Admin. */
+  --sidebar: #2c303a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #7dc04e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #493ee5;
+}
+
+/* Kartu PT memakai bg-white literal; di mode gelap jadikan surface-alt. */
+html.dark .bg-white {
+  background-color: var(--color-surface-alt);
+}
+
+/* Dark mode halaman Admin (design/admin/dark-mode.md — usulan, belum final).
+   Dipicu atribut data-theme="dark" yang di-set satu store tema admin
+   (ikon bulan topbar + segmented Profil). Token PT di atas tidak disentuh. */
+[data-theme="dark"] {
+  --color-admin-bg: #0b1c30;
+  --color-admin-surface: #12283f;
+  --color-admin-heading: #e8eff9;
+  --color-admin-secondary: #a8b7cb;
+  --color-admin-low: #1b3550;
+  --color-admin-mid: #244563;
+  --color-admin-track: #2f5272;
+  --color-admin-navy: #0a1626;
+  --color-admin-on-navy: #a8b7cb;
+  --color-admin-green-text: #9bdd6b;
+  --color-admin-green-deep: #9bdd6b;
+  --color-admin-brown: #ffb68f;
+  --color-admin-mint-text: #82f9be;
+  --color-admin-warning: rgba(255, 243, 173, 0.16);
+  --color-admin-warning-text: #ffe27a;
+  --color-admin-danger-tint: rgba(255, 180, 171, 0.16);
+  --color-admin-danger-text: #ffb4ab;
+  --color-admin-danger-dark: #ffb4ab;
+  --color-admin-footer: #12283f;
+  --color-admin-inset: #0f2237;
+  --color-admin-pill: #244563;
+  --color-admin-banner: #2f6b1c;
+  --color-admin-banner-grad: #3e8227;
+  --color-on-accent: #2a1204;
+  --color-aktif-tint: rgba(125, 192, 78, 0.18);
+  --color-onboarding-tint: rgba(246, 150, 101, 0.2);
+  --color-mint-tint: rgba(130, 249, 190, 0.16);
+  --color-on-primary: #0b1c30;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

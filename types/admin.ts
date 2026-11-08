@@ -1,0 +1,180 @@
+// Tipe data halaman Admin (design/admin/*.md). Selama slicing, nilai berasal
+// dari lib/mock/admin.ts — struktur dibuat mendekati kontrak API nantinya.
+
+// ===== Dashboard (design/admin/dashboard-admin.md) =====
+export type AdminActivityPoint = {
+  month: string; // "YYYY-MM"
+  label: string; // JAN..DES
+  totalRegistered: number;
+  totalNaikBb: number;
+  totalTurunBb: number;
+  active?: boolean;
+};
+
+export type AdminSpecializationSlice = {
+  key: "turun_bb" | "naik_bb";
+  label: string;
+  count: number;
+};
+
+export type AdminDashboardData = {
+  totalKlien: number;
+  totalPt: number;
+  totalPairingAktif: number;
+  totalRequestPending: number;
+  activityTrend: AdminActivityPoint[];
+  specialization: AdminSpecializationSlice[];
+};
+
+// ===== Kelola Pengguna (design/admin/kelola-pengguna.md) =====
+export type ClientStatus = "AKTIF" | "ONBOARDING";
+export type ClientProgram = "Naik Berat Badan" | "Turun Berat Badan";
+
+export type ClientRow = {
+  id: number;
+  name: string;
+  email: string;
+  photoUrl: string | null;
+  trainer: string | null;
+  trainerPhotoUrl?: string | null;
+  program: ClientProgram | null;
+  progress: number;
+  status: ClientStatus;
+};
+
+export type TrainerStatus = "AKTIF" | "NONAKTIF";
+
+export type TrainerRow = {
+  id: number;
+  name: string;
+  trainerId: string;
+  hub: string;
+  specialization: "Naik BB" | "Turun BB";
+  email: string;
+  createdAt: string;
+  status: TrainerStatus;
+  branch: string;
+  photoUrl: string | null;
+  whatsapp: string | null;
+};
+
+export type AdminUsersStats = {
+  totalActiveClients: number;
+  clientsConnectedToPT: number;
+  activeTrainers: number;
+};
+
+export type AdminUsersData = {
+  stats: AdminUsersStats;
+  clients: ClientRow[];
+  trainers: TrainerRow[];
+};
+
+export type TrainerForm = {
+  fullName: string;
+  email: string;
+  whatsapp: string;
+  branch: string;
+  gender: "Laki-laki" | "Perempuan";
+  specialization: "Naik BB" | "Turun BB" | "";
+  password: string;
+};
+
+export type TrainerEditForm = {
+  fullName: string;
+  whatsapp: string;
+  email: string;
+  branch: string;
+  suspended: boolean;
+};
+
+// ===== Riwayat (design/admin/riwayat.md) =====
+export type FeedbackCategory =
+  | "EVALUASI_MINGGUAN"
+  | "EVALUASI_BULANAN"
+  | "KOREKSI_TEKNIK"
+  | "PROGRESS_NUTRISI"
+  | "MOTIVASI_KEPATUHAN"
+  | "PEMULIHAN_CEDERA";
+
+export type FeedbackLog = {
+  id: string;
+  time: string;
+  date?: string;
+  trainer: { name: string; photoUrl: string | null; title?: string; level?: string };
+  client: { name: string; photoUrl: string | null; cohort?: string };
+  category?: FeedbackCategory;
+  note: string;
+};
+
+export type AuditAction = "CREATE" | "UPDATE" | "DELETE";
+export type AuditStatus = "BERHASIL" | "GAGAL";
+
+export type AuditLog = {
+  id: number;
+  time: string;
+  date: string;
+  actor: string;
+  action: AuditAction;
+  target: string;
+  targetPhotoUrl: string | null;
+  module: string;
+  status: AuditStatus;
+};
+
+export type AdminRiwayatData = {
+  activeTrainers: number;
+  feedbackLogs: FeedbackLog[];
+  auditLogs: AuditLog[];
+};
+
+// ===== Request Log (tab "Request Log" di Riwayat Admin) =====
+export type RequestLogRole = "klien" | "pt" | "admin";
+
+export type RequestLog = {
+  id: number;
+  requestId: string;
+  userId: number | null;
+  role: RequestLogRole | null;
+  method: string;
+  endpoint: string;
+  status: number;
+  message: string | null;
+  durationMs: number | null;
+  createdAt: string;
+};
+
+export type RequestLogParams = {
+  page?: number;
+  limit?: number;
+  status?: number;
+  role?: RequestLogRole;
+  q?: string;
+};
+
+export type RequestLogMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+};
+
+// ===== Profil (design/admin/profil.md) =====
+export type AdminProfile = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username?: string;
+  phone: string;
+  bio: string;
+  photoUrl: string | null;
+  role: "ADMIN";
+  tema?: "siang" | "malam";
+  lastUpdatedAt: string;
+};
+
+export function adminProfileName(profile: AdminProfile | null | undefined) {
+  if (!profile) return "Admin";
+  return `${profile.firstName} ${profile.lastName}`.trim() || "Admin";
+}

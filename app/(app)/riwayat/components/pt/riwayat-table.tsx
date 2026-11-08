@@ -1,0 +1,123 @@
+import { ArrowDown, ArrowUp, Hourglass } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
+import { EmptyState } from "@/app/(app)/components/pt/empty-state";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  netDelta,
+  tujuanLabel,
+  type RiwayatRow,
+} from "@/types/pt";
+
+// Kartu "Matriks Progres Atletik" (design/RIWAYAT.md §4).
+export function RiwayatTable({
+  rows,
+  isLoading,
+}: {
+  rows: RiwayatRow[];
+  isLoading: boolean;
+}) {
+  return (
+    <section className="rounded-card bg-white">
+      <h2 className="p-4 text-lg font-semibold text-ink">
+        Matriks Progres Atletik
+      </h2>
+
+      {isLoading ? (
+        <p className="py-16 text-center text-sm text-muted-foreground">
+          Memuat riwayat...
+        </p>
+      ) : rows.length === 0 ? (
+        <EmptyState
+          icon={<Hourglass />}
+          title="Tidak ada data yang cocok"
+          description="Coba ubah filter tujuan atau gender."
+        />
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                Profil Klien
+              </TableHead>
+              <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                Target
+              </TableHead>
+              <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                BB Awal
+              </TableHead>
+              <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                BB Sekarang
+              </TableHead>
+              <TableHead className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                Selisih
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => {
+              const delta = netDelta(row);
+              const isDown = delta !== null && delta < 0;
+              return (
+                <TableRow key={row.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Avatar name={row.nama} src={row.fotoUrl} size={40} statusDot />
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-ink">{row.nama}</p>
+                        <p className="text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
+                          {row.usia !== null ? `Usia ${row.usia}` : "-"}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        row.tujuan === "turun_bb"
+                          ? "weight-loss"
+                          : row.tujuan === "naik_bb"
+                            ? "hypertrophy"
+                            : "queued"
+                      }
+                    >
+                      {tujuanLabel(row.tujuan)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs font-semibold text-ink">
+                    {row.bbAwalKg !== null ? `${row.bbAwalKg} kg` : "-"}
+                  </TableCell>
+                  <TableCell className="text-xs font-bold text-ink">
+                    {row.bbSekarangKg !== null ? `${row.bbSekarangKg} kg` : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {delta === null ? (
+                      <span className="text-xs text-muted-foreground">-</span>
+                    ) : (
+                      <Badge variant={isDown ? "delta-down" : "delta-up"}>
+                        {isDown ? (
+                          <ArrowDown className="size-3" />
+                        ) : (
+                          <ArrowUp className="size-3" />
+                        )}
+                        {delta > 0 ? "+" : ""}
+                        {delta.toFixed(1)} kg
+                      </Badge>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      )}
+    </section>
+  );
+}
