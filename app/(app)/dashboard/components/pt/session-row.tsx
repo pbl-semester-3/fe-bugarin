@@ -6,11 +6,11 @@ import type { JadwalLatihan } from "@/types/pt";
 export function SessionRow({ jadwal }: { jadwal: JadwalLatihan }) {
   return (
     <div className="flex items-center gap-4 rounded-card bg-surface-tint p-4">
-      <div className="flex h-12 w-20 shrink-0 flex-col items-center justify-center gap-0.5 rounded-control bg-surface-3 text-ink">
+      <div className="flex h-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-control bg-surface-3 px-2.5 text-ink min-w-[5rem]">
         <span className="text-[9px] font-semibold tracking-wide uppercase">
           {jadwal.hari}
         </span>
-        <span className="text-sm font-bold">{jadwal.jam}</span>
+        <span className="whitespace-nowrap text-sm font-bold">{jadwal.jam}</span>
       </div>
 
       <Avatar name={jadwal.namaKlien} src={jadwal.fotoUrl} size={40} />
