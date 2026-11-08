@@ -102,12 +102,28 @@ export type WorkoutItem = {
 export type MealItem = { waktu: string; menu: string; estimasiKalori: number };
 export type PlanStatus = "pending_review" | "disetujui" | "override";
 
+export type ConflictTipe = "antar_klien" | "dalam_plan";
+
+export type ScheduleConflict = {
+  proposedIndex: number;
+  hari: string;
+  jam: string;
+  jenis: string;
+  tipe: ConflictTipe;
+  denganKlienId: number | null;
+  denganNamaKlien: string | null;
+  denganHari: string;
+  denganJam: string;
+  denganJenis: string;
+};
+
 export type WeeklyPlan = {
   id: number;
   mingguMulai: string;
   status: PlanStatus;
   workoutPlan: WorkoutItem[];
   mealPlan: MealItem[];
+  conflicts?: ScheduleConflict[];
 };
 
 // GET /pt/riwayat

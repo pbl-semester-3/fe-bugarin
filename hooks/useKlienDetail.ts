@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
 import {
   approveWeeklyPlan,
+  checkWeeklyPlanConflicts,
   getKlienDetail,
   getWeeklyPlan,
   overrideWeeklyPlan,
@@ -56,6 +57,19 @@ export function useOverrideWeeklyPlan(klienId: number) {
     }) => overrideWeeklyPlan(planId, payload),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: queryKeys.pt.weeklyPlan(klienId) }),
+  });
+}
+
+// POST /pt/weekly-plan/:id/check-conflicts — dipakai saat mengedit jadwal.
+export function useCheckWeeklyPlanConflicts() {
+  return useMutation({
+    mutationFn: ({
+      planId,
+      workoutPlan,
+    }: {
+      planId: number;
+      workoutPlan: import("@/services/pt/klien.service").OverrideWorkoutItem[];
+    }) => checkWeeklyPlanConflicts(planId, workoutPlan),
   });
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useOverrideWeeklyPlan } from "@/hooks/useKlienDetail";
+import { useCheckWeeklyPlanConflicts, useOverrideWeeklyPlan } from "@/hooks/useKlienDetail";
 import { apiErrorMessage, getFieldErrors } from "@/services/api";
-import type { WeeklyPlan } from "@/types/pt";
+import type { ScheduleConflict, WeeklyPlan } from "@/types/pt";
 
 type WorkoutRow = { hari: string; jam: string; jenis: string };
 type MealRow = { waktu: string; menu: string; estimasiKalori: string };
@@ -31,9 +31,12 @@ export function OverridePlanDialog({
 }) {
   const [open, setOpen] = useState(false);
   const override = useOverrideWeeklyPlan(klienId);
-  // TODO(ui): tampilkan error per-field untuk workoutPlan/mealPlan (form masih
-  // memakai state array, bukan react-hook-form). Sementara: pesan pertama.
+  const checkConflicts = useCheckWeeklyPlanConflicts();
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const [conflicts, setConflicts] = useState<ScheduleConflict[]>([]);
+  const [checking, setChecking] = useState(false);
+  const [checkError, setCheckError] = useState<string | null>(null);
 
   const [workout, setWorkout] = useState<WorkoutRow[]>(
     plan.workoutPlan.map((w) => ({ hari: w.hari, jam: w.jam, jenis: w.jenis }))
@@ -46,17 +49,78 @@ export function OverridePlanDialog({
     }))
   );
 
+  const workoutValid =
+    workout.length > 0 && workout.every((w) => w.hari && w.jam && w.jenis);
   const valid =
-    workout.length > 0 &&
+    workoutValid &&
     meal.length > 0 &&
-    workout.every((w) => w.hari && w.jam && w.jenis) &&
-    meal.every(
-      (m) => m.waktu && m.menu && Number(m.estimasiKalori) > 0
-    );
+    meal.every((m) => m.waktu && m.menu && Number(m.estimasiKalori) > 0);
 
-  function submit() {
+  // Cek bentrok real-time saat hari/jam diubah (debounce), termasuk saat dialog dibuka.
+  const checkConflictsAsync = checkConflicts.mutateAsync;
+
+  useEffect(() => {
+    if (!open || !workoutValid) return;
+
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      setChecking(true);
+      checkConflictsAsync({
+        planId: plan.id,
+        workoutPlan: workout.map((w) => ({ hari: w.hari, jam: w.jam, jenis: w.jenis })),
+      })
+        .then((result) => {
+          if (cancelled) return;
+          setConflicts(result);
+          setCheckError(null);
+        })
+        .catch((err) => {
+          if (cancelled) return;
+          setConflicts([]);
+          setCheckError(apiErrorMessage(err, "Gagal memeriksa bentrok jadwal."));
+        })
+        .finally(() => {
+          if (!cancelled) setChecking(false);
+        });
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [open, workout, workoutValid, plan.id, checkConflictsAsync]);
+
+  // Saat form belum valid/dialog tertutup, sembunyikan hasil cek lama.
+  const activeConflicts = open && workoutValid ? conflicts : [];
+  const activeCheckError = open && workoutValid ? checkError : null;
+  const hasConflict = activeConflicts.length > 0;
+  const saveDisabled =
+    !valid ||
+    override.isPending ||
+    checking ||
+    hasConflict ||
+    activeCheckError !== null;
+
+  async function submit() {
     if (!valid) return;
     setServerError(null);
+
+    // Cek ulang sebelum menyimpan (server juga menolak bila bentrok).
+    try {
+      const fresh = await checkConflicts.mutateAsync({
+        planId: plan.id,
+        workoutPlan: workout.map((w) => ({ hari: w.hari, jam: w.jam, jenis: w.jenis })),
+      });
+      setConflicts(fresh);
+      if (fresh.length > 0) {
+        setServerError("Jadwal masih bentrok. Perbaiki hari/jam terlebih dahulu.");
+        return;
+      }
+    } catch (err) {
+      setServerError(apiErrorMessage(err, "Gagal memeriksa bentrok jadwal."));
+      return;
+    }
+
     override.mutate(
       {
         planId: plan.id,
@@ -84,8 +148,18 @@ export function OverridePlanDialog({
     );
   }
 
+  function handleOpenChange(next: boolean) {
+    setOpen(next);
+    if (!next) {
+      setConflicts([]);
+      setCheckError(null);
+      setChecking(false);
+      setServerError(null);
+    }
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="secondary" className="rounded-pill px-4">
           Override
@@ -102,53 +176,67 @@ export function OverridePlanDialog({
         <div className="space-y-5">
           <div className="space-y-2">
             <Label>Rencana Latihan</Label>
-            {workout.map((row, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <Input
-                  placeholder="Hari"
-                  value={row.hari}
-                  onChange={(e) =>
-                    setWorkout((prev) =>
-                      prev.map((r, idx) =>
-                        idx === i ? { ...r, hari: e.target.value } : r
-                      )
-                    )
-                  }
-                />
-                <Input
-                  placeholder="Jam"
-                  value={row.jam}
-                  onChange={(e) =>
-                    setWorkout((prev) =>
-                      prev.map((r, idx) =>
-                        idx === i ? { ...r, jam: e.target.value } : r
-                      )
-                    )
-                  }
-                />
-                <Input
-                  placeholder="Jenis"
-                  value={row.jenis}
-                  onChange={(e) =>
-                    setWorkout((prev) =>
-                      prev.map((r, idx) =>
-                        idx === i ? { ...r, jenis: e.target.value } : r
-                      )
-                    )
-                  }
-                />
-                <button
-                  type="button"
-                  aria-label="Hapus baris"
-                  onClick={() =>
-                    setWorkout((prev) => prev.filter((_, idx) => idx !== i))
-                  }
-                  className="shrink-0 text-muted-foreground hover:text-danger-strong"
-                >
-                  <Trash2 className="size-4" />
-                </button>
-              </div>
-            ))}
+            {workout.map((row, i) => {
+              const rowConflicts = activeConflicts.filter(
+                (c) => c.proposedIndex === i
+              );
+              return (
+                <div key={i} className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      placeholder="Hari"
+                      value={row.hari}
+                      onChange={(e) =>
+                        setWorkout((prev) =>
+                          prev.map((r, idx) =>
+                            idx === i ? { ...r, hari: e.target.value } : r
+                          )
+                        )
+                      }
+                    />
+                    <Input
+                      placeholder="Jam"
+                      value={row.jam}
+                      onChange={(e) =>
+                        setWorkout((prev) =>
+                          prev.map((r, idx) =>
+                            idx === i ? { ...r, jam: e.target.value } : r
+                          )
+                        )
+                      }
+                    />
+                    <Input
+                      placeholder="Jenis"
+                      value={row.jenis}
+                      onChange={(e) =>
+                        setWorkout((prev) =>
+                          prev.map((r, idx) =>
+                            idx === i ? { ...r, jenis: e.target.value } : r
+                          )
+                        )
+                      }
+                    />
+                    <button
+                      type="button"
+                      aria-label="Hapus baris"
+                      onClick={() =>
+                        setWorkout((prev) => prev.filter((_, idx) => idx !== i))
+                      }
+                      className="shrink-0 text-muted-foreground hover:text-danger-strong"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
+                  {rowConflicts.map((c, idx) => (
+                    <p key={idx} className="pl-1 text-xs text-danger-strong">
+                      {c.tipe === "dalam_plan"
+                        ? `Bentrok dengan sesi lain di plan ini (${c.denganHari} ${c.denganJam}).`
+                        : `Bentrok dengan ${c.denganNamaKlien} (${c.denganHari} ${c.denganJam}).`}
+                    </p>
+                  ))}
+                </div>
+              );
+            })}
             <button
               type="button"
               onClick={() =>
@@ -227,6 +315,18 @@ export function OverridePlanDialog({
           </div>
         </div>
 
+        {checking && (
+          <p className="text-sm text-muted-foreground">Memeriksa bentrok jadwal...</p>
+        )}
+        {activeCheckError && (
+          <p className="text-sm text-danger-strong">{activeCheckError}</p>
+        )}
+        {hasConflict && (
+          <p className="text-sm text-danger-strong">
+            Ada {activeConflicts.length} bentrok. Tombol simpan dinonaktifkan sampai
+            jadwal bebas bentrok.
+          </p>
+        )}
         {serverError && (
           <p className="text-sm text-danger-strong">{serverError}</p>
         )}
@@ -238,7 +338,7 @@ export function OverridePlanDialog({
           <Button
             variant="accent"
             className="rounded-pill"
-            disabled={!valid || override.isPending}
+            disabled={saveDisabled}
             onClick={submit}
           >
             Simpan Override

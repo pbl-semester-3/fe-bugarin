@@ -3,6 +3,7 @@ import type {
   KlienDetail,
   KlienListItem,
   MealItem,
+  ScheduleConflict,
   WeeklyPlan,
 } from "@/types/pt";
 
@@ -43,4 +44,16 @@ export async function overrideWeeklyPlan(
   payload: OverridePlanInput
 ) {
   await api.put(`/pt/weekly-plan/${planId}/override`, payload);
+}
+
+// POST /pt/weekly-plan/:id/check-conflicts — cek bentrok sebelum menyimpan.
+export async function checkWeeklyPlanConflicts(
+  planId: number,
+  workoutPlan: OverrideWorkoutItem[]
+) {
+  const res = await api.post<{ data: { conflicts: ScheduleConflict[] } }>(
+    `/pt/weekly-plan/${planId}/check-conflicts`,
+    { workoutPlan }
+  );
+  return res.data.data.conflicts;
 }

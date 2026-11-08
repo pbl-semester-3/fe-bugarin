@@ -24,6 +24,7 @@ import { OverridePlanDialog } from "@/app/(app)/klien/[id]/components/override-p
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useApproveWeeklyPlan, useKlienDetail } from "@/hooks/useKlienDetail";
+import { apiErrorMessage } from "@/services/api";
 import {
   genderLabel,
   planStatusLabel,
@@ -231,12 +232,39 @@ export function KlienDetail({ id }: { id: number }) {
               </div>
             </div>
 
+            {(plan.conflicts?.length ?? 0) > 0 && (
+              <div className="mt-6 rounded-card border border-danger-strong/40 bg-danger-strong/5 p-4 text-sm text-danger-strong">
+                <p className="font-semibold">Jadwal bentrok dengan klien lain:</p>
+                <ul className="mt-1 list-disc pl-5">
+                  {plan.conflicts!.map((c, i) => (
+                    <li key={i}>
+                      {c.hari} {c.jam}
+                      {c.tipe === "dalam_plan"
+                        ? ` bentrok dengan sesi lain di plan ini (${c.denganHari} ${c.denganJam})`
+                        : ` bentrok dengan ${c.denganNamaKlien} (${c.denganHari} ${c.denganJam})`}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-xs">
+                  Perbaiki lewat Override sebelum menyetujui.
+                </p>
+              </div>
+            )}
+
+            {approve.isError && (
+              <p className="mt-3 text-sm text-danger-strong">
+                {apiErrorMessage(approve.error)}
+              </p>
+            )}
+
             {plan.status === "pending_review" && (
               <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
                 <OverridePlanDialog klienId={id} plan={plan} />
                 <Button
                   className="rounded-pill px-4"
-                  disabled={approve.isPending}
+                  disabled={
+                    approve.isPending || (plan.conflicts?.length ?? 0) > 0
+                  }
                   onClick={() => approve.mutate(plan.id)}
                 >
                   <Check className="size-4" />
