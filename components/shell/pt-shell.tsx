@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Bell,
   ClipboardCheck,
   History,
   LayoutDashboard,
@@ -16,6 +15,7 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { SidebarBrand } from "@/components/shell/sidebar-brand";
 import { SidebarItem } from "@/components/shell/sidebar-item";
+import { PtNotificationBell } from "@/components/shell/notifications/pt-notification-bell";
 import { useLogout } from "@/hooks/useAuth";
 import { usePairingRequests } from "@/hooks/usePairingRequests";
 import { usePtTheme } from "@/hooks/usePtTheme";
@@ -128,14 +128,7 @@ export function PtShell({ children }: { children: React.ReactNode }) {
               <Moon className="size-5" />
             )}
           </button>
-          <button
-            type="button"
-            aria-label="Notifikasi"
-            className="relative text-ink-soft transition-colors hover:text-ink"
-          >
-            <Bell className="size-5" />
-            <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-danger" />
-          </button>
+          <PtNotificationBell />
           <Avatar name={namaPt} src={fotoUrl} size={32} />
         </header>
 
