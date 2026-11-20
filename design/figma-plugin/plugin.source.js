@@ -66,6 +66,120 @@ function gradient(hexes) {
   };
 }
 
+function rgbToHex(c) {
+  const h = (n) => Math.round(n * 255).toString(16).padStart(2, "0").toUpperCase();
+  return "#" + h(c.r) + h(c.g) + h(c.b);
+}
+
+function b64ToBytes(b64) {
+  if (typeof figma !== "undefined" && typeof figma.base64Decode === "function") return figma.base64Decode(b64);
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  const clean = b64.replace(/[^A-Za-z0-9+/]/g, "");
+  const bytes = new Uint8Array((clean.length * 3) >> 2);
+  let p = 0;
+  let buffer = 0;
+  let bits = 0;
+  for (let i = 0; i < clean.length; i++) {
+    buffer = (buffer << 6) | chars.indexOf(clean[i]);
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      bytes[p++] = (buffer >> bits) & 0xff;
+    }
+  }
+  return bytes.subarray(0, p);
+}
+
+// Gambar dari ASSETS (base64) -> node frame dengan image fill.
+function img(key, w, h, o) {
+  o = o || {};
+  const f = box(o.name || "image/" + key, w, h, {
+    radius: o.radius,
+    fill: "#CBD5E1",
+    dir: o.dir,
+    gap: o.gap,
+    pad: o.pad,
+    align: o.align,
+    justify: o.justify,
+  });
+  const b64 = ASSETS[key];
+  if (b64) {
+    try {
+      const imageObj = figma.createImage(b64ToBytes(b64));
+      f.fills = [{ type: "IMAGE", imageHash: imageObj.hash, scaleMode: o.scaleMode || "FILL" }];
+    } catch (e) {
+      /* fallback warna abu */
+    }
+  }
+  return f;
+}
+
+// Pemetaan warna terang -> gelap untuk frame varian dark.
+const DARK_SURFACE = {
+  "#FFFFFF": "#12283F",
+  "#F9F9FF": "#17324D",
+  "#F1F3FF": "#1B3550",
+  "#EBEDFB": "#1B3550",
+  "#E5E8F5": "#244563",
+  "#DFE2EF": "#2A4260",
+  "#C7C4D8": "#2A4260",
+  "#F8F9FF": "#0B1C30",
+  "#EFF4FF": "#1B3550",
+  "#E5EEFF": "#244563",
+  "#DCE9FF": "#2F5272",
+  "#EAF1FF": "#0F2437",
+  "#213145": "#0A1626",
+  "#C3C6D3": "#A8B7CB",
+  "#41493A": "#A8B7CB",
+};
+const DARK_SURFACE_PAGE = Object.assign({}, DARK_SURFACE, {
+  "#F1F3FF": "#0B1C30",
+  "#F8F9FF": "#0B1C30",
+  "#FCF9F4": "#0B1C30",
+});
+const DARK_TEXT = {
+  "#181B25": "#E8EFF9",
+  "#464555": "#A8B7CB",
+  "#777587": "#A8B7CB",
+  "#0B1C30": "#E8EFF9",
+  "#213145": "#E8EFF9",
+  "#5A5E69": "#A8B7CB",
+  "#41493A": "#A8B7CB",
+};
+
+function remapPaints(node, key, map, pageMap) {
+  const arr = node[key];
+  if (!arr || !arr.length) return;
+  let changed = false;
+  const next = arr.map((p) => {
+    if (!p || p.type !== "SOLID" || !p.color) return p;
+    const hex = rgbToHex(p.color);
+    let to = pageMap && pageMap[hex] ? pageMap[hex] : map[hex];
+    if (!to) return p;
+    changed = true;
+    return Object.assign({}, p, { color: rgb(to) });
+  });
+  if (changed) node[key] = next;
+}
+
+function applyDark(node) {
+  const isPage = node.name === "main-col" || node.name === "content" || node.name === "page";
+  if (node.type === "TEXT") {
+    remapPaints(node, "fills", DARK_TEXT, null);
+  } else {
+    remapPaints(node, "fills", DARK_SURFACE, isPage ? DARK_SURFACE_PAGE : null);
+    remapPaints(node, "strokes", DARK_SURFACE, isPage ? DARK_SURFACE_PAGE : null);
+  }
+  if ("children" in node) {
+    for (const child of node.children) applyDark(child);
+  }
+  return node;
+}
+
+function darkCopy(fn) {
+  return applyDark(fn());
+}
+
 function box(name, w, h, o) {
   o = o || {};
   const f = figma.createFrame();
@@ -294,9 +408,12 @@ function badgeDelta(down, label) {
 
 function sidebar(active, height) {
   const s = box("aside", SIDEBAR_W, height, { dir: "VERTICAL", pad: 16, fill: C.sidebar });
-  const brand = box("brand", null, null, { dir: "VERTICAL", gap: 2, padT: 8, padB: 24, padL: 12, padR: 12 });
-  add(brand, txt("Bugarin", { size: 18, weight: 700, color: C.white, ls: -0.45 }));
-  add(brand, txt("PT Platform", { size: 10, weight: 600, color: C.primary, ls: 0.5, upper: true }));
+  const brand = box("brand", null, null, { dir: "HORIZONTAL", gap: 10, align: "CENTER", padT: 8, padB: 24, padL: 12, padR: 12 });
+  add(brand, img("logo", 44, 44, { scaleMode: "CONTAIN", name: "brand-logo" }));
+  const brandCol = box("brand-col", null, null, { dir: "VERTICAL", gap: 2 });
+  add(brandCol, txt("Bugarin", { size: 18, weight: 700, color: C.white, ls: -0.45 }));
+  add(brandCol, txt("PT Platform", { size: 10, weight: 600, color: C.primary, ls: 0.5, upper: true }));
+  add(brand, brandCol);
   add(s, stretch(brand));
 
   const nav = box("nav", null, null, { dir: "VERTICAL", gap: 4 });
@@ -463,7 +580,7 @@ function buildVerifikasi(content) {
   const toolbar = box("toolbar", null, null, { dir: "HORIZONTAL", gap: 12, align: "CENTER" });
   const search = box("search", null, 40, { dir: "HORIZONTAL", gap: 8, padL: 16, padR: 16, align: "CENTER", radius: 9999, fill: C.tint });
   add(search, icon("search", 16, C.muted));
-  add(search, txt("Cari pendaftar berdasarkan nama...", { size: 14, weight: 400, color: C.muted }));
+  add(search, txt("Cari klien berdasarkan nama atau email...", { size: 14, weight: 400, color: C.muted }));
   grow(search);
   add(toolbar, search);
   add(toolbar, chip("Semua Menunggu (3)", true));
@@ -642,7 +759,7 @@ function buildRiwayat(content) {
 
   const toolbar = box("riwayat-toolbar", null, null, { dir: "HORIZONTAL", pad: 16, align: "CENTER", justify: "SPACE_BETWEEN", radius: 12, fill: C.white });
   add(toolbar, segmented(["Semua", "Naik BB", "Turun BB"], 0, "brand"));
-  add(toolbar, segmented(["Semua", "Perempuan", "Laki-laki"], 0, "white"));
+  add(toolbar, segmented(["Semua", "Perempuan", "Laki-laki"], 0, "brand"));
   add(content, stretch(toolbar));
 
   const card = box("matrix-card", null, null, { dir: "VERTICAL", radius: 12, fill: C.white });
@@ -770,9 +887,9 @@ function personalInfoCard() {
 
   const rows = [
     [["Nama Profesional", "Alex Vance", "user", {}], ["Alamat Email (read-only)", "alex.vance@bugarin.com", "mail", { readonly: true }]],
-    [["Username (read-only)", "@coach_alex", "lock", { readonly: true }], ["Lokasi Gym", "Fithub Orlando", "map-pin", {}]],
-    [["Jenis Kelamin", "Laki-laki", null, { select: true }], ["Usia", "33", "calendar-days", {}]],
-    [["Spesialisasi", "Turun BB", null, { select: true }], null],
+    [["Username (read-only)", "@coach_alex", "lock", { readonly: true }], ["Nomor WhatsApp", "+62 812 3456 7890", "phone", {}]],
+    [["Usia", "33", "calendar-days", {}], ["Jenis Kelamin (read-only)", "Laki-laki", null, { readonly: true }]],
+    [["Lokasi Gym (read-only)", "Fithub Orlando", "map-pin", { readonly: true }], ["Spesialisasi (read-only)", "Turun BB", null, { readonly: true }]],
   ];
   const grid = box("form-grid", null, null, { dir: "VERTICAL", gap: 16 });
   for (const r of rows) {
@@ -978,6 +1095,12 @@ function buildKlienDetail(content) {
   add(cols, grow(mcol));
   add(plan, stretch(cols));
 
+  const conflict = box("conflict-warning", null, null, { dir: "VERTICAL", gap: 6, pad: 16, radius: 12, fill: C.dangerContainer, opacity: 0.5 });
+  add(conflict, txt("Jadwal bentrok dengan klien lain:", { size: 14, weight: 700, color: C.dangerStrong }));
+  add(conflict, txt("Rabu 09:00 bentrok dengan Sarah Jenkins (Rabu 10:00)", { size: 12, weight: 400, color: C.dangerStrong }));
+  add(conflict, txt("Perbaiki lewat Override sebelum menyetujui.", { size: 12, weight: 400, color: C.dangerStrong }));
+  add(plan, stretch(conflict));
+
   add(plan, box("gap", null, 16, { dir: "VERTICAL" }));
   const pactions = box("plan-actions", null, null, { dir: "HORIZONTAL", gap: 12, justify: "MAX" });
   add(pactions, button("Override", { fill: C.s2, color: C.ink, radius: 9999, padX: 16, h: 40 }));
@@ -987,12 +1110,38 @@ function buildKlienDetail(content) {
 }
 
 function loginScreen() {
-  const root = box("Login (Web App)", SCREEN_W, 1117, { dir: "HORIZONTAL" });
-  const left = box("photo-panel", SCREEN_W / 2, 1117, { gradient: [C.primary, C.success, C.sidebar] });
+  const H = 1117;
+  const half = SCREEN_W / 2;
+  const root = box("Login (Light)", SCREEN_W, H, { dir: "HORIZONTAL" });
+
+  const left = img("login", half, H, { name: "photo-panel" });
+  const overlay = box("overlay", half, H, {});
+  overlay.fills = [
+    {
+      type: "GRADIENT_LINEAR",
+      gradientTransform: [[0, 1, 0], [1, 0, 0]],
+      gradientStops: [
+        { position: 0, color: Object.assign(rgb(C.primary), { a: 0.82 }) },
+        { position: 0.55, color: Object.assign(rgb(C.success), { a: 0.68 }) },
+        { position: 1, color: Object.assign(rgb(C.sidebar), { a: 0.9 }) },
+      ],
+    },
+  ];
+  add(left, overlay);
   add(root, left);
-  const right = box("form-panel", SCREEN_W / 2, 1117, { dir: "VERTICAL", align: "CENTER", justify: "CENTER", fill: C.tint });
+
+  const right = box("form-panel", half, H, { dir: "VERTICAL", align: "CENTER", justify: "CENTER", fill: C.tint });
   const form = box("form", 480, null, { dir: "VERTICAL", gap: 0 });
-  add(form, txt("Welcome Back, Coach", { size: 36, weight: 800, color: C.ink }));
+
+  const brandRow = box("login-brand", null, null, { dir: "HORIZONTAL", gap: 12, align: "CENTER" });
+  add(brandRow, img("logo", 64, 64, { scaleMode: "CONTAIN", name: "login-logo" }));
+  const brandCol = box("login-brand-col", null, null, { dir: "VERTICAL", gap: 2 });
+  add(brandCol, txt("Bugarin", { size: 34, weight: 800, color: C.ink, ls: -0.5 }));
+  add(brandCol, txt("Platform Personal Trainer", { size: 12, weight: 600, color: C.inkSoft, ls: 1.9, upper: true }));
+  add(brandRow, brandCol);
+  add(form, brandRow);
+  add(form, box("gap", null, 28, { dir: "VERTICAL" }));
+  add(form, txt("Selamat Datang, Coach!", { size: 36, weight: 800, color: C.ink }));
 
   const fields = box("fields", null, null, { dir: "VERTICAL", gap: 20, padT: 32 });
   const email = box("email-field", null, null, { dir: "VERTICAL", gap: 8 });
@@ -1026,18 +1175,96 @@ function loginScreen() {
   return root;
 }
 
+function findTargetPage() {
+  for (const p of figma.root.children) {
+    if (p.type === "PAGE" && p.name.replace(/\s+/g, " ").trim() === "UI Website PT") return p;
+  }
+  return figma.currentPage;
+}
+
+function screenSpecs() {
+  const pt = [
+    ["Dashboard", "dashboard", 1000, buildDashboard],
+    ["Verifikasi", "verifikasi", 1117, buildVerifikasi],
+    ["Klien", "klien", 1180, buildKlien],
+    ["Riwayat", "riwayat", 1050, buildRiwayat],
+    ["Feedback", "feedback", 1117, buildFeedback],
+    ["Feedback - Kosong", "feedback", 1117, buildFeedbackEmpty],
+    ["Profil", "profil", 1200, buildProfil],
+    ["Detail Klien", "klien", 1500, buildKlienDetail],
+  ];
+  const admin = [
+    ["Admin Dashboard", "dashboard", 1000, buildAdminDashboard],
+    ["Admin Kelola Pengguna - Klien", "users", 1180, buildAdminUsersKlien],
+    ["Admin Kelola Pengguna - PT", "users", 1180, buildAdminUsersPt],
+    ["Admin Riwayat - PT", "riwayat", 1100, buildAdminRiwayatPt],
+    ["Admin Riwayat - Audit", "riwayat", 1100, buildAdminRiwayatAudit],
+    ["Admin Riwayat - Request Log", "riwayat", 1100, buildAdminRiwayatLog],
+    ["Admin Profil - Info", "profil", 1150, buildAdminProfilInfo],
+    ["Admin Profil - Keamanan", "profil", 1000, buildAdminProfilSecurity],
+    ["Admin Edit PT", "users", 1100, buildAdminEditPt],
+  ];
+
+  const specs = [{ group: "Login", name: "Login (Light)", build: loginScreen }];
+  for (const [label, active, h, fn] of pt) {
+    specs.push({ group: "PT Light", name: label + " (Light)", build: () => ptScreen(label + " (Light)", active, h, fn) });
+  }
+  for (const [label, active, h, fn] of pt) {
+    specs.push({ group: "PT Dark", name: label + " (Dark)", build: () => darkCopy(() => ptScreen(label + " (Dark)", active, h, fn)) });
+  }
+  specs.push({ group: "Landing", name: "Landing Page (Light)", build: buildLandingPage });
+  for (const [label, active, h, fn] of admin) {
+    specs.push({ group: "Admin Light", name: label + " (Light)", build: () => adminScreen(label + " (Light)", active, h, fn) });
+  }
+  for (const [label, active, h, fn] of admin) {
+    specs.push({ group: "Admin Dark", name: label + " (Dark)", build: () => darkCopy(() => adminScreen(label + " (Dark)", active, h, fn)) });
+  }
+  for (const d of DIALOG_SPECS) specs.push({ group: "Dialog", name: d.name, build: d.build });
+  return specs;
+}
+
+function layoutBuilt(built, startX, startY) {
+  const order = ["Login", "PT Light", "PT Dark", "Landing", "Admin Light", "Admin Dark", "Dialog"];
+  const groups = {};
+  for (const b of built) (groups[b.group] = groups[b.group] || []).push(b);
+  let x = startX;
+  for (const key of order) {
+    const items = groups[key];
+    if (!items) continue;
+    let y = startY;
+    let maxW = 0;
+    for (const it of items) {
+      it.node.x = x;
+      it.node.y = y;
+      y += it.node.height + 120;
+      if (it.node.width > maxW) maxW = it.node.width;
+    }
+    x += maxW + 200;
+  }
+}
+
 async function main() {
   await loadFonts();
-  let page = null;
-  for (const p of figma.root.children) {
-    if (p.type === "PAGE" && p.name.replace(/\s+/g, " ").trim() === "UI Website PT") page = p;
-  }
-  if (!page && figma.currentPage.type === "PAGE") page = figma.currentPage;
-  if (!page) {
-    figma.closePlugin("Halaman 'UI Website PT' tidak ditemukan.");
-    return;
-  }
+  const page = findTargetPage();
   figma.currentPage = page;
+
+  const specs = screenSpecs();
+  const names = new Set(specs.map((s) => s.name));
+  const LEGACY = [
+    "Login (Web App)",
+    "Dashboard (Web App)",
+    "Verifikasi (Web App)",
+    "Klien (Web App)",
+    "Riwayat (Web App)",
+    "Feedback (Web App)",
+    "Feedback - Kosong (Web App)",
+    "Profil (Web App)",
+    "Detail Klien (Web App)",
+  ];
+  for (const n of LEGACY) names.add(n);
+  for (const child of [...page.children]) {
+    if (names.has(child.name)) child.remove();
+  }
 
   let maxRight = 0;
   let minY = 0;
@@ -1054,34 +1281,21 @@ async function main() {
       minY = y;
     }
   }
+  if (first) minY = 0;
 
-  const startX = maxRight + 400;
-  let cursorY = minY;
-  const gapY = 120;
-  const frames = [
-    loginScreen(),
-    ptScreen("Dashboard (Web App)", "dashboard", 1000, buildDashboard),
-    ptScreen("Verifikasi (Web App)", "verifikasi", 1117, buildVerifikasi),
-    ptScreen("Klien (Web App)", "klien", 1180, buildKlien),
-    ptScreen("Riwayat (Web App)", "riwayat", 1050, buildRiwayat),
-    ptScreen("Feedback (Web App)", "feedback", 1117, buildFeedback),
-    ptScreen("Feedback - Kosong (Web App)", "feedback", 1117, buildFeedbackEmpty),
-    ptScreen("Profil (Web App)", "profil", 1200, buildProfil),
-    ptScreen("Detail Klien (Web App)", "klien", 1500, buildKlienDetail),
-  ];
-  for (const f of frames) {
-    page.appendChild(f);
-    f.x = startX;
-    f.y = cursorY;
-    cursorY += f.height + gapY;
+  const built = [];
+  for (const s of specs) {
+    const node = s.build();
+    node.name = s.name;
+    page.appendChild(node);
+    built.push({ group: s.group, name: s.name, node });
   }
-  figma.viewport.scrollAndZoomIntoView(frames);
+
+  layoutBuilt(built, maxRight + 400, minY);
+  figma.viewport.scrollAndZoomIntoView(built.map((b) => b.node));
+
   const fontNote = USED_FALLBACK
     ? "Font: Inter (fallback) — pasang Plus Jakarta Sans untuk hasil 100%."
     : "Font: Plus Jakarta Sans.";
-  figma.closePlugin("Selesai: 9 frame baru dibuat di halaman 'UI Website PT' (desain lama tidak diubah). " + fontNote);
+  figma.closePlugin("Selesai: " + built.length + " frame digenerate/diperbarui di halaman '" + page.name + "'. " + fontNote);
 }
-
-main().catch((err) => {
-  figma.closePlugin("Gagal: " + (err && err.message ? err.message : String(err)));
-});
